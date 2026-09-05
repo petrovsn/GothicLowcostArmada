@@ -46,34 +46,66 @@ function Ship({ ship, selected }) {
     );
 }
 
-function CoordinateGrid() {
+function CoordinateGrid({ camera }) {
     const GRID_STEP = 50;
-    const GRID_SIZE = 1000;
+
+    const viewBoxSize = 1000;
+    const halfView = viewBoxSize / (2 * camera.zoom);
+
+    const minX =
+        Math.floor(
+            (camera.x - halfView) / GRID_STEP
+        ) * GRID_STEP;
+
+    const maxX =
+        Math.ceil(
+            (camera.x + halfView) / GRID_STEP
+        ) * GRID_STEP;
+
+    // SVG Y направлен вниз, поэтому мировая camera.y
+    // соответствует SVG-координате -camera.y.
+    const svgCameraY = -camera.y;
+
+    const minY =
+        Math.floor(
+            (svgCameraY - halfView) / GRID_STEP
+        ) * GRID_STEP;
+
+    const maxY =
+        Math.ceil(
+            (svgCameraY + halfView) / GRID_STEP
+        ) * GRID_STEP;
 
     const lines = [];
 
     for (
-        let coordinate = -GRID_SIZE / 2;
-        coordinate <= GRID_SIZE / 2;
-        coordinate += GRID_STEP
+        let x = minX;
+        x <= maxX;
+        x += GRID_STEP
     ) {
         lines.push(
             <line
-                key={`vertical-${coordinate}`}
-                x1={coordinate}
-                y1={-GRID_SIZE / 2}
-                x2={coordinate}
-                y2={GRID_SIZE / 2}
+                key={`vertical-${x}`}
+                x1={x}
+                y1={minY}
+                x2={x}
+                y2={maxY}
             />
         );
+    }
 
+    for (
+        let y = minY;
+        y <= maxY;
+        y += GRID_STEP
+    ) {
         lines.push(
             <line
-                key={`horizontal-${coordinate}`}
-                x1={-GRID_SIZE / 2}
-                y1={coordinate}
-                x2={GRID_SIZE / 2}
-                y2={coordinate}
+                key={`horizontal-${y}`}
+                x1={minX}
+                y1={y}
+                x2={maxX}
+                y2={y}
             />
         );
     }
@@ -367,11 +399,12 @@ function GameViewer() {
             >
                 <g
                     transform={`
-                        translate(${-camera.x} ${camera.y})
-                        scale(${camera.zoom})
-                    `}
+        translate(${-camera.x} ${camera.y})
+        scale(${camera.zoom})
+    `}
                 >
-                    <CoordinateGrid />
+                    <CoordinateGrid camera={camera} />
+
                     {Object.values(entities).map(ship => (
                         <Ship
                             key={ship.name}
