@@ -46,6 +46,44 @@ function Ship({ ship, selected }) {
     );
 }
 
+function CoordinateGrid() {
+    const GRID_STEP = 50;
+    const GRID_SIZE = 1000;
+
+    const lines = [];
+
+    for (
+        let coordinate = -GRID_SIZE / 2;
+        coordinate <= GRID_SIZE / 2;
+        coordinate += GRID_STEP
+    ) {
+        lines.push(
+            <line
+                key={`vertical-${coordinate}`}
+                x1={coordinate}
+                y1={-GRID_SIZE / 2}
+                x2={coordinate}
+                y2={GRID_SIZE / 2}
+            />
+        );
+
+        lines.push(
+            <line
+                key={`horizontal-${coordinate}`}
+                x1={-GRID_SIZE / 2}
+                y1={coordinate}
+                x2={GRID_SIZE / 2}
+                y2={coordinate}
+            />
+        );
+    }
+
+    return (
+        <g className="coordinate-grid">
+            {lines}
+        </g>
+    );
+}
 
 function GameViewer() {
     const dispatch = useDispatch();
@@ -69,6 +107,10 @@ function GameViewer() {
 
 
     useEffect(() => {
+        if (!gameState) {
+            return;
+        }
+
         const svg = svgRef.current;
 
         if (!svg) {
@@ -110,7 +152,7 @@ function GameViewer() {
                 handleWheel
             );
         };
-    }, []);
+    }, [Boolean(gameState)]);
 
 
     if (!gameState) {
@@ -329,6 +371,7 @@ function GameViewer() {
                         scale(${camera.zoom})
                     `}
                 >
+                    <CoordinateGrid />
                     {Object.values(entities).map(ship => (
                         <Ship
                             key={ship.name}
@@ -346,3 +389,4 @@ function GameViewer() {
 
 
 export default GameViewer;
+

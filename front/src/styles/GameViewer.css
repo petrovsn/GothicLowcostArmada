@@ -45,3 +45,14 @@
     stroke-width: 2;
     pointer-events: none;
 }
+
+
+
+.coordinate-grid {
+    pointer-events: none;
+}
+
+.coordinate-grid line {
+    stroke: #29452f;
+    stroke-width: 1;
+}
