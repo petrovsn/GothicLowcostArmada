@@ -1,248 +1,43 @@
-/* ============================================================ GAME VIEWER ============================================================ */
 .game-viewer {
-    position: relative;
-    width: min(50vw, 500px);
+    width: 100%;
     aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 12px;
-    background: #11151c;
+
+    overflow: hidden;
+
+    background: #080b10;
     border: 1px solid #2a303a;
-    border-radius: 16px;
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+    border-radius: 12px;
 }
 
-/* ============================================================ EMPTY ============================================================ */
+
 .game-viewer.empty {
-    aspect-ratio: auto;
-    min-height: 200px;
-    color: #7f8997;
-    font-size: 18px;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    color: #8d96a3;
 }
 
-/* ============================================================ BOARD ============================================================ */
+
 .game-board {
+    display: block;
+
     width: 100%;
     height: 100%;
-    display: grid;
-    grid-template-columns: repeat(var(--board-width), 1fr);
-    grid-template-rows: repeat(var(--board-height), 1fr);
-    overflow: hidden;
-    border-radius: 8px;
-    background: #151a21;
 }
 
-/* ============================================================ CELLS ============================================================ */
-.game-cell {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    aspect-ratio: 1 / 1;
-    border: 1px solid rgba(255, 255, 255, 0.06);
+
+.ship {
+    fill: #d8dce3;
+    stroke: #ffffff;
+    stroke-width: 1;
 }
 
-.game-cell.floor {
-    background: #1a2028;
-}
 
-.game-cell.wall {
-    background: #343b46;
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06), inset 0 3px 5px rgba(255, 255, 255, 0.04);
-}
-
-/* ============================================================ SNAKE ============================================================ */
-.snake {
-    z-index: 1;
-}
-
-/* ============================================================ SNAKE BODY transform: rotate(45deg); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.2); border: 2px solid #11151c; border-radius: 3px; #transform: rotate(45deg); left: 15%; top: 15%; ============================================================ */
-.snake-body-shape {
-    width: 100%;
-    height: 100%;
-    background-color: #1a2028;
-}
-
-.snake-body-shape::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-    background: var(--snake-color, #4fd17b);
-}
-
-.horizontal{
-    transform: rotate(90deg);
-}
-
-/* ============================================================ SNAKE HEAD ============================================================ */
-.snake-head {
-    z-index: 2;
-}
-
-.snake-head-shape {
-    width: 100%;
-    height: 100%;
-    background-color: #1a2028;
-}
-
-.snake-head-shape::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    clip-path: polygon(0% 20%, 50% 0%,
-            /* точка 1 — верхний левый угол */
-            75% 0%,
-            /* точка 2 — верхний правый угол */
-            100% 25%,
-            /* точка 3 — правый средний */
-            100% 75%,
-            /* точка 4 — нижний правый угол */
-            75% 100%,
-            /* точка 5 — нижний левый угол */
-            50% 100%,
-            /* точка 6 — левый средний */
-            0% 80%);
-    background: var(--snake-color, #4fd17b);
-    transform: rotate(var(--head-angle));
-}
-
-/* ============================================================ TURNING POINT ============================================================ */
-.snake-turning-shape {
-    width: 100%;
-    height: 100%;
-    background-color: #1a2028;
-}
-
-.snake-turning-shape::after {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    clip-path: polygon(25% 0%,
-            /* верхняя левая точка */
-            75% 0%,
-            /* верхняя правая точка */
-            100% 25%,
-            /* правый верхний скос */
-            100% 75%,
-            /* правый нижний скос */
-            75% 100%,
-            /* нижняя правая точка */
-            25% 100%,
-            /* нижняя левая точка */
-            0% 75%,
-            /* левый нижний скос */
-            0% 25%
-            /* левый верхний скос */
-        );
-    background: var(--snake-color, #4fd17b);
-    transform: rotate(var(--head-angle));
-}
-
-/* ============================================================ HEAD ROTATION ============================================================ */
-.direction-right {
-    --head-angle: 180deg;
-}
-
-.direction-down {
-    --head-angle: 270deg;
-}
-
-.direction-left {
-    --head-angle: 0deg;
-}
-
-.direction-up {
-    --head-angle: 90deg;
-}
-
-.dead {
-    opacity: 0.4;
-    filter: saturate(0.2) brightness(0.7);
-    background-color: #1a2028;
-}
-
-/* ============================================================ APPLE ============================================================ */
-.game-cell.apple {
-    position: relative;
-    overflow: hidden;
-    background-color: #1a2028;
-}
-
-/* Яблоко */
-.game-cell.apple::before {
-    content: "";
-    position: absolute;
-    width: 70%;
-    aspect-ratio: 1 / 1;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -45%);
-    background: #e53935;
-    border-radius: 50%;
-    z-index: 1;
-}
-
-/* Лист */
-.game-cell.apple::after {
-    content: "";
-    position: absolute;
-    width: 22%;
-    height: 12%;
-    left: 57%;
-    top: 27%;
-    background: #4caf50;
-    border-radius: 100% 0 100% 0;
-    transform: rotate(-25deg);
-    z-index: 2;
-}
-
-/* ============================================================ GAME OVERLAY ============================================================ */
-.game-over-overlay {
-    position: absolute;
-    inset: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    z-index: 100;
-}
-
-.game-over-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 18px;
-}
-
-.game-over-title {
-    color: #ffffff;
-    font-size: 42px;
-    font-weight: 800;
-    letter-spacing: 4px;
-    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.8);
-}
-
-.game-over-respawn-button {
-    padding: 10px 24px;
-    border: 0;
-    border-radius: 8px;
-    background: #4fd17b;
-    color: #11151c;
-    font-size: 16px;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.game-over-respawn-button:hover {
-    filter: brightness(1.08);
-}
-
-.game-over-respawn-button:active {
-    transform: translateY(1px);
+.ship-selection {
+    fill: none;
+    stroke: #e6c75a;
+    stroke-width: 2;
+    pointer-events: none;
 }

@@ -7,6 +7,7 @@ const gameSlice = createSlice({
         roomId: null,
         connected: false,
         gameState: null,
+        selectedShipId: null,
     },
 
     reducers: {
@@ -18,16 +19,21 @@ const gameSlice = createSlice({
             state.connected = action.payload;
         },
 
-        setGameState(state, action){
-            state.gameState = action
-        }
+        setGameState(state, action) {
+            state.gameState = action;
+        },
+
+        setSelectedShip(state, action) {
+            state.selectedShipId = action.payload;
+        },
     },
 });
 
 export const {
     setRoomId,
     setConnected,
-    setGameState
+    setGameState,
+    setSelectedShip,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

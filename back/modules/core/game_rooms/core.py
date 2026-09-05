@@ -22,7 +22,7 @@ class GameRoomStats:
     
 
 class GameRoom:
-    def __init__(self, shape: tuple = (1000,1000)):
+    def __init__(self):
         self.config = GameRoomConfig(
             room_id = uuid4().hex,
         )
@@ -33,7 +33,7 @@ class GameRoom:
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
-        self.fleets: dict[str, Fleet]
+        self.fleets: dict[str, Fleet] = {}
         self.ship = Ship("test_ship", "crusier", Position(0,0,0), 10, 0)
 
 
@@ -63,6 +63,9 @@ class GameRoom:
             color=player_color
         )
 
+        self.fleets[player_id] = [self.ship.name]
+        return player_id
+
     def update_entities(self):
         self.ship.update_position(self.statistics.game_tick)
 
@@ -88,6 +91,8 @@ class GameRoom:
     def handle_command(self, player_id, command):
         if command == "ready":
             self.participants[player_id].is_ready = True
+        elif command == "pause":
+            self.participants[player_id].is_ready = False
         else:
             pass
             
@@ -111,6 +116,7 @@ class GameRoom:
                 "exec_time_current": self.statistics.last_tick_execution_time,
                 "exec_time_max": self.statistics.game_tick
             },
+            "player_fleet": self.fleets[player_id],
             "entities":{
                 self.ship.name: self.ship.as_dict()
             }

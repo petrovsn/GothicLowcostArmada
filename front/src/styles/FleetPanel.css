@@ -1,0 +1,73 @@
+.fleet-panel {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px;
+
+    background: #11151c;
+    border: 1px solid #2a303a;
+    border-radius: 12px;
+}
+
+.fleet-panel-ships {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+}
+
+.fleet-ship-card {
+    display: flex;
+    flex-direction: column;
+
+    width: 120px;
+    min-width: 120px;
+    height: 100px;
+
+    padding: 6px;
+    box-sizing: border-box;
+
+    background: #1a2029;
+    border: 2px solid #303846;
+    border-radius: 6px;
+
+    color: #d8dce3;
+    cursor: pointer;
+}
+
+.fleet-ship-card:hover {
+    background: #222a35;
+}
+
+.fleet-ship-card.selected {
+    border-color: #e6c75a;
+}
+
+.fleet-ship-card-icon {
+    display: flex;
+    flex: 1;
+
+    align-items: center;
+    justify-content: center;
+
+    font-size: 32px;
+}
+
+.fleet-ship-card-info {
+    text-align: left;
+}
+
+.fleet-ship-card-name {
+    font-size: 13px;
+    font-weight: bold;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fleet-ship-card-tier {
+    margin-top: 2px;
+
+    font-size: 11px;
+    color: #8d96a3;
+    text-transform: uppercase;
+}

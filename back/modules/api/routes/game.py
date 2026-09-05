@@ -1,5 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, Body
-from modules.core.game_engine import GameRoom
+from modules.core.game_rooms.core import GameRoom
 from modules.core.game_manager import GameManager
 import asyncio
 from modules.api.schemas.schemas import RoomCreationRequest
@@ -74,10 +74,7 @@ async def websocket_endpoint(
 @game_router.post("/rooms")
 async def create_room(request: Request, room_creation_request: RoomCreationRequest = Body()):
     game_manager: GameManager = request.app.state.game_manager
-    room_id = game_manager.create_room(shape=(room_creation_request.size_x, room_creation_request.size_y),
-                                       speed=room_creation_request.speed,
-                                       n_bots=room_creation_request.n_bots,
-                                       respawn=room_creation_request.respawn)
+    room_id = game_manager.create_room()
     return {
         "room_id": room_id
     }

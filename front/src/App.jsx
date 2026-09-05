@@ -7,7 +7,7 @@ import CreateRoomWidget from "./widgets/CreateRoomWidget.jsx";
 import RoomStatusWidget from "./widgets/RoomStatusWidget.jsx";
 import JoinRoomWidget from "./widgets/JoinRoomWidget.jsx";
 import PlayerStatusWidget from "./widgets/PlayerStatusWidget.jsx";
-
+import FleetPanel from "./widgets/FleetPanel.jsx";
 import './styles/App.css'
 
 function App() {
@@ -80,6 +80,7 @@ function App() {
                 <aside className="game-sidebar">
 
                     <RoomStatusWidget />
+                   
 
                     <PlayerStatusWidget />
 
@@ -90,6 +91,8 @@ function App() {
                 <section className="game-area">
 
                     <GameViewer />
+                     <FleetPanel/>
+                    <RawGameDataViewer/>
 
                 </section>
 

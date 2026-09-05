@@ -8,5 +8,5 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
-   base: "/snakes2/",
+   base: "/gothic_lowcost_armada/",
 })
