@@ -1,19 +1,18 @@
 import time
 import asyncio
 from uuid import uuid4
-from modules.core.entities import Snake, Player, Direction, Bot, Participant
-from modules.core.maps.game_map import GameMap
-from modules.core.maps.tiles import Tile
-from modules.core.snake_collider import SnakesCollisionController
-from modules.core.ai import BotAi
+from modules.core.entities.space import Position, Vector2
+from modules.core.entities.entities import Fleet, Ship, ShipGameStats
+from modules.core.entities.participant import Participant, Player
 from modules.utils.colors import get_color
-from modules.utils.names import get_name
 from dataclasses import dataclass
 import traceback
 
 @dataclass
 class GameRoomConfig:
     room_id: str
+
+ENGINE_FPS = 30
 
 @dataclass
 class GameRoomStats:
@@ -23,17 +22,19 @@ class GameRoomStats:
     
 
 class GameRoom:
-    def __init__(self, shape: tuple = (20,20)):
+    def __init__(self, shape: tuple = (1000,1000)):
         self.config = GameRoomConfig(
             room_id = uuid4().hex,
         )
 
         self.statistics = GameRoomStats(
             timestamp = 0,
-            game_tick = 1.0/self.config.speed,
+            game_tick = 1.0/ENGINE_FPS,
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
+        self.fleets: dict[str, Fleet]
+        self.ship = Ship("test_ship", "crusier", Position(0,0,0), 10, 0)
 
 
     def start(self):
@@ -62,12 +63,15 @@ class GameRoom:
             color=player_color
         )
 
+    def update_entities(self):
+        self.ship.update_position(self.statistics.game_tick)
 
     def name_player(self, player_id, player_name):
         self.participants[player_id].name = player_name
 
     def remove_player(self,player_id):
         self.participants.pop(player_id)
+        self.fleets.pop(player_id)
 
     def players_are_ready(self):
         player_exists = False
@@ -81,40 +85,12 @@ class GameRoom:
                 return False
         return True
 
-    async def respawn_snake_with_latency(self, snake_id, latency):
-        await asyncio.sleep(latency)
-        self.respawn_snake(snake_id)
-
-    def respawn_snake(self, snake_id):
-        if self.config.respawn and not self.snakes[snake_id].is_alive:
-            self.snake_collision_controller.free_from(snake_id)
-            random_empty_position = self.game_map.get_random_free_place()       
-            self.snakes[snake_id].respawn(random_empty_position)
-
-    def handle_command(self, snake_id, command):
+    def handle_command(self, player_id, command):
         if command == "ready":
-            self.participants[snake_id].is_ready = True
-        elif command == "respawn":
-            self.respawn_snake(snake_id)
+            self.participants[player_id].is_ready = True
         else:
-            try:
-                direction = getattr(Direction, command.upper())
-                self.snakes[snake_id].set_direction(direction)
-            except AttributeError as e:
-                print("wrong command")
-
-
-    def update_snake_movement(self):
-        for snake in self.snakes.values():
-            snake.move()
-
-
-    def snake_death(self, snake_id):
-        self.participants[snake_id].change_points(-1)
-        self.snakes[snake_id].death()
-        if isinstance(self.participants[snake_id], Bot):
-            asyncio.create_task(self.respawn_snake_with_latency(snake_id,2))
-
+            pass
+            
 
     def check_world_collisions(self):
         ...
@@ -122,11 +98,9 @@ class GameRoom:
     def next_step(self):
         self.statistics.timestamp+=1
 
-
     def update_world(self):
-        ...
+        self.update_entities()
         
-
     def get_game_data(self, player_id):
         return {
             "player_id":player_id,
@@ -137,6 +111,10 @@ class GameRoom:
                 "exec_time_current": self.statistics.last_tick_execution_time,
                 "exec_time_max": self.statistics.game_tick
             },
+            "entities":{
+                self.ship.name: self.ship.as_dict()
+            }
+            
         }
 
     def update_views(self):

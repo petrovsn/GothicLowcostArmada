@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from modules.core.game_engine import GameEngine
 from modules.core.game_rooms.core import GameRoom
 from dataclasses import dataclass
+from modules.core.game_rooms.core import GameRoom
 
 @dataclass
 class RoomData:
@@ -28,8 +29,8 @@ class GameManager:
             except asyncio.CancelledError:
                 pass
 
-    def create_room(self, shape, speed, n_bots, respawn):
-        new_room = GameEngine.get_room("classic", shape, speed, n_bots, respawn)
+    def create_room(self, shape):
+        new_room = GameRoom(shape)
         room_id = new_room.room_id
         new_room.start()
         self.rooms[room_id] = RoomData(
