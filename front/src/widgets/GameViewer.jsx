@@ -1,5 +1,13 @@
-import { useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import {
+    useEffect,
+    useRef,
+    useState,
+} from "react";
+
+import {
+    useDispatch,
+    useSelector,
+} from "react-redux";
 
 import { setSelectedShip } from "../store/gameSlice.js";
 import * as orders_controller from "../controllers/orders_controller.js";
@@ -57,6 +65,53 @@ function GameViewer() {
     });
 
     const dragState = useRef(null);
+    const svgRef = useRef(null);
+
+
+    useEffect(() => {
+        const svg = svgRef.current;
+
+        if (!svg) {
+            return;
+        }
+
+        const handleWheel = (event) => {
+            event.preventDefault();
+
+            const zoomFactor =
+                event.deltaY < 0
+                    ? 1.1
+                    : 0.9;
+
+            setCamera(previous => ({
+                ...previous,
+
+                zoom: Math.min(
+                    5,
+                    Math.max(
+                        0.2,
+                        previous.zoom * zoomFactor
+                    )
+                ),
+            }));
+        };
+
+        svg.addEventListener(
+            "wheel",
+            handleWheel,
+            {
+                passive: false,
+            }
+        );
+
+        return () => {
+            svg.removeEventListener(
+                "wheel",
+                handleWheel
+            );
+        };
+    }, []);
+
 
     if (!gameState) {
         return (
@@ -66,6 +121,7 @@ function GameViewer() {
         );
     }
 
+
     const entities = gameState.entities ?? {};
     const playerFleet = gameState.player_fleet ?? [];
 
@@ -73,8 +129,10 @@ function GameViewer() {
 
 
     const getWorldPosition = (event) => {
-        const svg = event.currentTarget;
-        const rect = svg.getBoundingClientRect();
+        const svg = svgRef.current;
+
+        const rect =
+            svg.getBoundingClientRect();
 
         const screenX =
             event.clientX - rect.left;
@@ -108,10 +166,12 @@ function GameViewer() {
 
         for (const ship of Object.values(entities)) {
             const dx =
-                ship.position.x - position.x;
+                ship.position.x -
+                position.x;
 
             const dy =
-                ship.position.y - position.y;
+                ship.position.y -
+                position.y;
 
             const distance = Math.sqrt(
                 dx * dx +
@@ -156,16 +216,20 @@ function GameViewer() {
         }
 
         const dx =
-            event.clientX - drag.lastX;
+            event.clientX -
+            drag.lastX;
 
         const dy =
-            event.clientY - drag.lastY;
+            event.clientY -
+            drag.lastY;
 
         const totalDx =
-            event.clientX - drag.startX;
+            event.clientX -
+            drag.startX;
 
         const totalDy =
-            event.clientY - drag.startY;
+            event.clientY -
+            drag.startY;
 
         const distance = Math.sqrt(
             totalDx * totalDx +
@@ -248,41 +312,16 @@ function GameViewer() {
     };
 
 
-    const handleWheel = (event) => {
-        event.preventDefault();
-
-        const zoomFactor =
-            event.deltaY < 0
-                ? 1.1
-                : 0.9;
-
-        setCamera(previous => ({
-            ...previous,
-
-            zoom: Math.min(
-                5,
-                Math.max(
-                    0.2,
-                    previous.zoom * zoomFactor
-                )
-            )
-        }));
-    };
-
-
-
     return (
         <div className="game-viewer">
             <svg
+                ref={svgRef}
                 className="game-board"
-
                 viewBox="-500 -500 1000 1000"
-
                 onMouseDown={handleMouseDown}
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseLeave}
-                onWheelCapture={handleWheel}
             >
                 <g
                     transform={`
