@@ -1,11 +1,27 @@
-import { useDispatch, useSelector } from "react-redux";
+import {
+    useDispatch,
+    useSelector,
+} from "react-redux";
+
 import { setSelectedShip } from "../store/gameSlice.js";
+
 import "../styles/FleetPanel.css";
 
-function FleetShipCard({ ship, selected, onClick }) {
+
+function FleetShipCard({
+    ship,
+    selected,
+    onClick,
+}) {
     return (
         <button
-            className={`fleet-ship-card ${selected ? "selected" : ""}`}
+            className={
+                `fleet-ship-card ${
+                    selected
+                        ? "selected"
+                        : ""
+                }`
+            }
             onClick={onClick}
         >
             <div className="fleet-ship-card-icon">
@@ -13,6 +29,7 @@ function FleetShipCard({ ship, selected, onClick }) {
             </div>
 
             <div className="fleet-ship-card-info">
+
                 <div className="fleet-ship-card-name">
                     {ship.name}
                 </div>
@@ -20,51 +37,99 @@ function FleetShipCard({ ship, selected, onClick }) {
                 <div className="fleet-ship-card-tier">
                     {ship.tier}
                 </div>
+
             </div>
         </button>
     );
 }
 
-function FleetPanel() {
+
+function FleetPanel({
+    onCenterShip,
+}) {
     const dispatch = useDispatch();
 
     const gameState = useSelector(
-        state => state.game.gameState?.payload
+        state =>
+            state.game.gameState?.payload
     );
 
     const selectedShipId = useSelector(
-        state => state.game.selectedShipId
+        state =>
+            state.game.selectedShipId
     );
+
 
     if (!gameState) {
         return null;
     }
 
-    const playerFleet = gameState.player_fleet ?? [];
-    const entities = gameState.entities ?? {};
+
+    const playerFleet =
+        gameState.player_fleet ?? [];
+
+    const entities =
+        gameState.entities ?? {};
+
 
     const ships = playerFleet
-        .map(shipId => entities[shipId])
+        .map(
+            shipId =>
+                entities[shipId]
+        )
         .filter(Boolean);
 
-    const handleShipClick = (shipId) => {
-        dispatch(setSelectedShip(shipId));
+
+    const handleShipClick = (ship) => {
+        const isAlreadySelected =
+            ship.name === selectedShipId;
+
+        /*
+         * First click:
+         * select the ship.
+         *
+         * Second click:
+         * center the camera on it.
+         */
+        if (isAlreadySelected) {
+            onCenterShip?.(
+                ship.position
+            );
+
+            return;
+        }
+
+        dispatch(
+            setSelectedShip(ship.name)
+        );
     };
+
 
     return (
         <div className="fleet-panel">
+
             <div className="fleet-panel-ships">
+
                 {ships.map(ship => (
                     <FleetShipCard
                         key={ship.name}
                         ship={ship}
-                        selected={ship.name === selectedShipId}
-                        onClick={() => handleShipClick(ship.name)}
+                        selected={
+                            ship.name ===
+                            selectedShipId
+                        }
+                        onClick={() =>
+                            handleShipClick(ship)
+                        }
                     />
                 ))}
+
             </div>
+
         </div>
     );
 }
 
+
 export default FleetPanel;
+

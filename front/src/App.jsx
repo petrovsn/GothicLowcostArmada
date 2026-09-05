@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
+import {
+    useEffect,
+    useState,
+} from "react";
+
 import * as game_controller from "./controllers/game_controller.js";
+
 import GameViewer from "./widgets/GameViewer.jsx";
 import RawGameDataViewer from "./widgets/RawGameDataViewer.jsx";
 import PlayersTable from "./widgets/PlayersTable.jsx";
@@ -8,48 +13,72 @@ import RoomStatusWidget from "./widgets/RoomStatusWidget.jsx";
 import JoinRoomWidget from "./widgets/JoinRoomWidget.jsx";
 import PlayerStatusWidget from "./widgets/PlayerStatusWidget.jsx";
 import FleetPanel from "./widgets/FleetPanel.jsx";
-import './styles/App.css'
+
+import "./styles/App.css";
+
 
 function App() {
-  const [isConnected, setIsConnected] = useState(false);
-  useEffect(() => {
-    console.log("App.useEffect", isConnected)
-    if (!isConnected) {
-      return;
-    }
+    const [isConnected, setIsConnected] =
+        useState(false);
 
-    const handleKeyDown = (event) => {
-      const commands = {
-        ArrowUp: "up",
-        ArrowDown: "down",
-        ArrowLeft: "left",
-        ArrowRight: "right",
+    const [camera, setCamera] = useState({
+        x: 0,
+        y: 0,
+        zoom: 1,
+    });
 
-        KeyW: "up",
-        KeyA: "left",
-        KeyS: "down",
-        KeyD: "right",
-      };
 
-      const command = commands[event.code];
+    useEffect(() => {
+        console.log(
+            "App.useEffect",
+            isConnected
+        );
 
-      if (!command) {
-        return;
-      }
+        if (!isConnected) {
+            return;
+        }
 
-      event.preventDefault();
+        const handleKeyDown = (event) => {
+            const commands = {
+                ArrowUp: "up",
+                ArrowDown: "down",
+                ArrowLeft: "left",
+                ArrowRight: "right",
 
-      game_controller.send_command(command);
-    };
+                KeyW: "up",
+                KeyA: "left",
+                KeyS: "down",
+                KeyD: "right",
+            };
 
-    window.addEventListener("keydown", handleKeyDown);
+            const command =
+                commands[event.code];
 
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      game_controller.disconnect();
-    };
-  }, [isConnected]);
+            if (!command) {
+                return;
+            }
 
+            event.preventDefault();
+
+            game_controller.send_command(
+                command
+            );
+        };
+
+        window.addEventListener(
+            "keydown",
+            handleKeyDown
+        );
+
+        return () => {
+            window.removeEventListener(
+                "keydown",
+                handleKeyDown
+            );
+
+            game_controller.disconnect();
+        };
+    }, [isConnected]);
 
 
     return (
@@ -57,16 +86,22 @@ function App() {
 
             <header className="app-header">
 
-                <h1>SnakesKingdom</h1>
+                <h1>
+                    SnakesKingdom
+                </h1>
 
                 <div className="room-actions">
 
                     <CreateRoomWidget
-                        onConnectionChange={setIsConnected}
+                        onConnectionChange={
+                            setIsConnected
+                        }
                     />
 
                     <JoinRoomWidget
-                        onConnectionChange={setIsConnected}
+                        onConnectionChange={
+                            setIsConnected
+                        }
                     />
 
                 </div>
@@ -76,28 +111,42 @@ function App() {
 
             <main className="game-layout">
 
-                {/* СЛЕВА */}
                 <aside className="game-sidebar">
 
                     <RoomStatusWidget />
-                   
 
                     <PlayerStatusWidget />
 
                 </aside>
 
 
-                {/* ЦЕНТР */}
                 <section className="game-area">
 
-                    <GameViewer />
-                     <FleetPanel/>
-                    <RawGameDataViewer/>
+                    <GameViewer
+                        camera={camera}
+                        setCamera={setCamera}
+                    />
+
+                    <FleetPanel
+                        onCenterShip={
+                            (position) => {
+                                setCamera(
+                                    previous => ({
+                                        ...previous,
+
+                                        x: position.x,
+                                        y: position.y,
+                                    })
+                                );
+                            }
+                        }
+                    />
+
+                    <RawGameDataViewer />
 
                 </section>
 
 
-                {/* СПРАВА */}
                 <section className="players-area">
 
                     <PlayersTable />

@@ -1,7 +1,6 @@
 import {
     useEffect,
     useRef,
-    useState,
 } from "react";
 
 import {
@@ -15,11 +14,19 @@ import * as orders_controller from "../controllers/orders_controller.js";
 import "../styles/GameViewer.css";
 
 
+const VIEW_BOX_SIZE = 1000;
+const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
+
 const CLICK_THRESHOLD = 10;
 const SHIP_SELECTION_RADIUS = 30;
 
+const GRID_STEP = 50;
 
-function Ship({ ship, selected }) {
+
+function Ship({
+    ship,
+    selected,
+}) {
     const {
         x,
         y,
@@ -38,45 +45,67 @@ function Ship({ ship, selected }) {
             )}
 
             <polygon
-                points="0,-15 10,15 0,10 -10,15"
-                transform={`translate(${x} ${-y}) rotate(${rotation})`}
+                points="
+                    0,-15
+                    10,15
+                    0,10
+                    -10,15
+                "
+                transform={`
+                    translate(${x} ${-y})
+                    rotate(${rotation})
+                `}
                 className="ship"
             />
         </>
     );
 }
 
-function CoordinateGrid({ camera }) {
-    const GRID_STEP = 50;
 
-    const viewBoxSize = 1000;
-    const halfView = viewBoxSize / (2 * camera.zoom);
+function CoordinateGrid({
+    camera,
+}) {
+    const halfView =
+        VIEW_BOX_HALF /
+        camera.zoom;
+
 
     const minWorldX =
         Math.floor(
-            (camera.x / camera.zoom - halfView) /
-            GRID_STEP
+            (
+                camera.x -
+                halfView
+            ) / GRID_STEP
         ) * GRID_STEP;
 
     const maxWorldX =
         Math.ceil(
-            (camera.x / camera.zoom + halfView) /
-            GRID_STEP
+            (
+                camera.x +
+                halfView
+            ) / GRID_STEP
         ) * GRID_STEP;
+
 
     const minWorldY =
         Math.floor(
-            (camera.y / camera.zoom - halfView) /
-            GRID_STEP
+            (
+                camera.y -
+                halfView
+            ) / GRID_STEP
         ) * GRID_STEP;
 
     const maxWorldY =
         Math.ceil(
-            (camera.y / camera.zoom + halfView) /
-            GRID_STEP
+            (
+                camera.y +
+                halfView
+            ) / GRID_STEP
         ) * GRID_STEP;
 
+
     const lines = [];
+
 
     for (
         let x = minWorldX;
@@ -93,6 +122,7 @@ function CoordinateGrid({ camera }) {
             />
         );
     }
+
 
     for (
         let y = minWorldY;
@@ -112,6 +142,7 @@ function CoordinateGrid({ camera }) {
         );
     }
 
+
     return (
         <g className="coordinate-grid">
             {lines}
@@ -119,25 +150,29 @@ function CoordinateGrid({ camera }) {
     );
 }
 
-function GameViewer() {
+
+function GameViewer({
+    camera,
+    setCamera,
+}) {
     const dispatch = useDispatch();
 
     const gameState = useSelector(
-        state => state.game.gameState?.payload
+        state =>
+            state.game.gameState?.payload
     );
 
     const selectedShipId = useSelector(
-        state => state.game.selectedShipId
+        state =>
+            state.game.selectedShipId
     );
 
-    const [camera, setCamera] = useState({
-        x: 0,
-        y: 0,
-        zoom: 1,
-    });
 
-    const dragState = useRef(null);
-    const svgRef = useRef(null);
+    const dragState =
+        useRef(null);
+
+    const svgRef =
+        useRef(null);
 
 
     useEffect(() => {
@@ -151,6 +186,7 @@ function GameViewer() {
             return;
         }
 
+
         const handleWheel = (event) => {
             event.preventDefault();
 
@@ -159,6 +195,7 @@ function GameViewer() {
                     ? 1.1
                     : 0.9;
 
+
             setCamera(previous => ({
                 ...previous,
 
@@ -166,11 +203,13 @@ function GameViewer() {
                     5,
                     Math.max(
                         0.2,
-                        previous.zoom * zoomFactor
+                        previous.zoom *
+                        zoomFactor
                     )
                 ),
             }));
         };
+
 
         svg.addEventListener(
             "wheel",
@@ -180,13 +219,17 @@ function GameViewer() {
             }
         );
 
+
         return () => {
             svg.removeEventListener(
                 "wheel",
                 handleWheel
             );
         };
-    }, [Boolean(gameState)]);
+    }, [
+        Boolean(gameState),
+        setCamera,
+    ]);
 
 
     if (!gameState) {
@@ -198,49 +241,107 @@ function GameViewer() {
     }
 
 
-    const entities = gameState.entities ?? {};
-    const playerFleet = gameState.player_fleet ?? [];
+    const entities =
+        gameState.entities ?? {};
 
-    const playerShips = new Set(playerFleet);
+    const playerFleet =
+        gameState.player_fleet ?? [];
+
+    const playerShips =
+        new Set(playerFleet);
 
 
-    const getWorldPosition = (event) => {
-        const svg = svgRef.current;
+    /*
+     * Convert browser coordinates
+     * into world coordinates.
+     *
+     * Forward transformation:
+     *
+     *   svgX =
+     *       (worldX - camera.x) * zoom
+     *
+     *   svgY =
+     *       (-worldY + camera.y) * zoom
+     *
+     * Therefore:
+     *
+     *   worldX =
+     *       svgX / zoom + camera.x
+     *
+     *   worldY =
+     *       camera.y - svgY / zoom
+     */
+    const getWorldPosition = (
+        event
+    ) => {
+        const svg =
+            svgRef.current;
+
+        if (!svg) {
+            return {
+                x: 0,
+                y: 0,
+            };
+        }
+
 
         const rect =
             svg.getBoundingClientRect();
 
+
         const screenX =
-            event.clientX - rect.left;
+            event.clientX -
+            rect.left;
 
         const screenY =
-            event.clientY - rect.top;
+            event.clientY -
+            rect.top;
 
-        const viewBoxWidth = 1000;
-        const viewBoxHeight = 1000;
 
         const svgX =
-            (screenX / rect.width) *
-            viewBoxWidth -
-            500;
+            (
+                screenX /
+                rect.width
+            ) *
+            VIEW_BOX_SIZE -
+            VIEW_BOX_HALF;
+
 
         const svgY =
-            (screenY / rect.height) *
-            viewBoxHeight -
-            500;
+            (
+                screenY /
+                rect.height
+            ) *
+            VIEW_BOX_SIZE -
+            VIEW_BOX_HALF;
+
 
         return {
-            x: svgX / camera.zoom + camera.x,
-            y: -(svgY / camera.zoom + camera.y),
+            x:
+                svgX /
+                camera.zoom +
+                camera.x,
+
+            y:
+                camera.y -
+                svgY /
+                camera.zoom,
         };
     };
 
 
-    const findShipAtPosition = (position) => {
+    const findShipAtPosition = (
+        position
+    ) => {
         let closestShip = null;
-        let closestDistance = Infinity;
+        let closestDistance =
+            Infinity;
 
-        for (const ship of Object.values(entities)) {
+
+        for (
+            const ship of
+            Object.values(entities)
+        ) {
             const dx =
                 ship.position.x -
                 position.x;
@@ -249,28 +350,38 @@ function GameViewer() {
                 ship.position.y -
                 position.y;
 
-            const distance = Math.sqrt(
-                dx * dx +
-                dy * dy
-            );
+
+            const distance =
+                Math.sqrt(
+                    dx * dx +
+                    dy * dy
+                );
+
 
             if (
-                distance <= SHIP_SELECTION_RADIUS &&
-                distance < closestDistance
+                distance <=
+                    SHIP_SELECTION_RADIUS &&
+                distance <
+                    closestDistance
             ) {
                 closestShip = ship;
-                closestDistance = distance;
+                closestDistance =
+                    distance;
             }
         }
+
 
         return closestShip;
     };
 
 
-    const handleMouseDown = (event) => {
+    const handleMouseDown = (
+        event
+    ) => {
         if (event.button !== 0) {
             return;
         }
+
 
         dragState.current = {
             startX: event.clientX,
@@ -284,12 +395,16 @@ function GameViewer() {
     };
 
 
-    const handleMouseMove = (event) => {
-        const drag = dragState.current;
+    const handleMouseMove = (
+        event
+    ) => {
+        const drag =
+            dragState.current;
 
         if (!drag) {
             return;
         }
+
 
         const dx =
             event.clientX -
@@ -299,6 +414,7 @@ function GameViewer() {
             event.clientY -
             drag.lastY;
 
+
         const totalDx =
             event.clientX -
             drag.startX;
@@ -307,51 +423,80 @@ function GameViewer() {
             event.clientY -
             drag.startY;
 
-        const distance = Math.sqrt(
-            totalDx * totalDx +
-            totalDy * totalDy
-        );
 
-        if (distance >= CLICK_THRESHOLD) {
+        const distance =
+            Math.sqrt(
+                totalDx * totalDx +
+                totalDy * totalDy
+            );
+
+
+        if (
+            distance >=
+            CLICK_THRESHOLD
+        ) {
             drag.moved = true;
         }
+
 
         if (drag.moved) {
             setCamera(previous => ({
                 ...previous,
 
-                x: previous.x -
-                    dx / previous.zoom,
+                x:
+                    previous.x -
+                    dx /
+                    previous.zoom,
 
-                y: previous.y +
-                    dy / previous.zoom,
+                y:
+                    previous.y +
+                    dy /
+                    previous.zoom,
             }));
         }
 
-        drag.lastX = event.clientX;
-        drag.lastY = event.clientY;
+
+        drag.lastX =
+            event.clientX;
+
+        drag.lastY =
+            event.clientY;
     };
 
 
-    const handleMouseUp = (event) => {
-        const drag = dragState.current;
+    const handleMouseUp = (
+        event
+    ) => {
+        const drag =
+            dragState.current;
 
         if (!drag) {
             return;
         }
 
+
         dragState.current = null;
+
 
         if (drag.moved) {
             return;
         }
 
+
         const worldPosition =
             getWorldPosition(event);
 
-        const ship =
-            findShipAtPosition(worldPosition);
 
+        const ship =
+            findShipAtPosition(
+                worldPosition
+            );
+
+
+        /*
+         * Clicked empty space:
+         * move selected ship.
+         */
         if (!ship) {
             if (selectedShipId) {
                 orders_controller.move_ship(
@@ -363,17 +508,32 @@ function GameViewer() {
             return;
         }
 
-        const isPlayerShip =
-            playerShips.has(ship.name);
 
+        const isPlayerShip =
+            playerShips.has(
+                ship.name
+            );
+
+
+        /*
+         * Clicked own ship:
+         * select it.
+         */
         if (isPlayerShip) {
             dispatch(
-                setSelectedShip(ship.name)
+                setSelectedShip(
+                    ship.name
+                )
             );
 
             return;
         }
 
+
+        /*
+         * Clicked enemy ship:
+         * attack it.
+         */
         if (selectedShipId) {
             orders_controller.attack_ship(
                 selectedShipId,
@@ -388,36 +548,78 @@ function GameViewer() {
     };
 
 
+    /*
+     * World -> SVG transformation:
+     *
+     *   screenX =
+     *       (worldX - camera.x) * zoom
+     *
+     *   screenY =
+     *       (-worldY + camera.y) * zoom
+     *
+     * Using one matrix removes ambiguity
+     * about SVG transform ordering.
+     */
+    const cameraTransform = `
+        matrix(
+            ${camera.zoom}
+            0
+            0
+            ${camera.zoom}
+            ${-camera.x * camera.zoom}
+            ${camera.y * camera.zoom}
+        )
+    `;
+
+
     return (
         <div className="game-viewer">
+
             <svg
                 ref={svgRef}
                 className="game-board"
                 viewBox="-500 -500 1000 1000"
-                onMouseDown={handleMouseDown}
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseLeave}
+                onMouseDown={
+                    handleMouseDown
+                }
+                onMouseMove={
+                    handleMouseMove
+                }
+                onMouseUp={
+                    handleMouseUp
+                }
+                onMouseLeave={
+                    handleMouseLeave
+                }
             >
-                <g
-                    transform={`
-        translate(${-camera.x} ${camera.y})
-        scale(${camera.zoom})
-    `}
-                >
-                    <CoordinateGrid camera={camera} />
 
-                    {Object.values(entities).map(ship => (
+                <g
+                    transform={
+                        cameraTransform
+                    }
+                >
+
+                    <CoordinateGrid
+                        camera={camera}
+                    />
+
+                    {Object.values(
+                        entities
+                    ).map(ship => (
                         <Ship
                             key={ship.name}
                             ship={ship}
                             selected={
-                                ship.name === selectedShipId
+                                ship.name ===
+                                selectedShipId
                             }
                         />
                     ))}
+
                 </g>
+
             </svg>
+
         </div>
     );
 }

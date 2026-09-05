@@ -8,11 +8,13 @@ from modules.utils.colors import get_color
 from dataclasses import dataclass
 import traceback
 
+from modules.core.engine.engine import GameEngine
+from modules.core.entities.time import GAME_FPS
+
 @dataclass
 class GameRoomConfig:
     room_id: str
 
-ENGINE_FPS = 30
 
 @dataclass
 class GameRoomStats:
@@ -29,12 +31,16 @@ class GameRoom:
 
         self.statistics = GameRoomStats(
             timestamp = 0,
-            game_tick = 1.0/ENGINE_FPS,
+            game_tick = 1.0/GAME_FPS,
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
+
         self.fleets: dict[str, Fleet] = {}
-        self.ship = Ship("test_ship", "crusier", Position(0,0,0), 10, 0)
+
+        self.entities: list[Ship] = []
+
+        self.game_engine: GameEngine = GameEngine(self.statistics.game_tick)
 
 
     def start(self):
@@ -62,8 +68,6 @@ class GameRoom:
             is_ready = False,
             color=player_color
         )
-
-        self.fleets[player_id] = [self.ship.name]
         return player_id
 
     def update_entities(self):
@@ -104,7 +108,7 @@ class GameRoom:
         self.statistics.timestamp+=1
 
     def update_world(self):
-        self.update_entities()
+        self.game_engine.next_step()
         
     def get_game_data(self, player_id):
         return {
@@ -117,9 +121,7 @@ class GameRoom:
                 "exec_time_max": self.statistics.game_tick
             },
             "player_fleet": self.fleets[player_id],
-            "entities":{
-                self.ship.name: self.ship.as_dict()
-            }
+            "entities": self.game_engine.get_entities()
             
         }
 

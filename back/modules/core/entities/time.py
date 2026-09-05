@@ -1,0 +1,2 @@
+GAME_ROUND = 5
+GAME_FPS = 30
