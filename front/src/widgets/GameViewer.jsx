@@ -52,60 +52,62 @@ function CoordinateGrid({ camera }) {
     const viewBoxSize = 1000;
     const halfView = viewBoxSize / (2 * camera.zoom);
 
-    const minX =
+    const minWorldX =
         Math.floor(
-            (camera.x - halfView) / GRID_STEP
+            (camera.x / camera.zoom - halfView) /
+            GRID_STEP
         ) * GRID_STEP;
 
-    const maxX =
+    const maxWorldX =
         Math.ceil(
-            (camera.x + halfView) / GRID_STEP
+            (camera.x / camera.zoom + halfView) /
+            GRID_STEP
         ) * GRID_STEP;
 
-    // SVG Y направлен вниз, поэтому мировая camera.y
-    // соответствует SVG-координате -camera.y.
-    const svgCameraY = -camera.y;
-
-    const minY =
+    const minWorldY =
         Math.floor(
-            (svgCameraY - halfView) / GRID_STEP
+            (camera.y / camera.zoom - halfView) /
+            GRID_STEP
         ) * GRID_STEP;
 
-    const maxY =
+    const maxWorldY =
         Math.ceil(
-            (svgCameraY + halfView) / GRID_STEP
+            (camera.y / camera.zoom + halfView) /
+            GRID_STEP
         ) * GRID_STEP;
 
     const lines = [];
 
     for (
-        let x = minX;
-        x <= maxX;
+        let x = minWorldX;
+        x <= maxWorldX;
         x += GRID_STEP
     ) {
         lines.push(
             <line
                 key={`vertical-${x}`}
                 x1={x}
-                y1={minY}
+                y1={-maxWorldY}
                 x2={x}
-                y2={maxY}
+                y2={-minWorldY}
             />
         );
     }
 
     for (
-        let y = minY;
-        y <= maxY;
+        let y = minWorldY;
+        y <= maxWorldY;
         y += GRID_STEP
     ) {
+        const svgY = -y;
+
         lines.push(
             <line
                 key={`horizontal-${y}`}
-                x1={minX}
-                y1={y}
-                x2={maxX}
-                y2={y}
+                x1={minWorldX}
+                y1={svgY}
+                x2={maxWorldX}
+                y2={svgY}
             />
         );
     }
