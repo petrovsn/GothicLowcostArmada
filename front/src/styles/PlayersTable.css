@@ -1,0 +1,150 @@
+.players-table {
+    width: min(50vw, 500px);
+
+    background: #11151c;
+
+    border: 1px solid #2a303a;
+    border-radius: 12px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 8px 30px rgba(0, 0, 0, 0.25);
+
+    color: #d7dce3;
+}
+
+
+/* ============================================================
+   EMPTY
+   ============================================================ */
+
+.players-table.empty {
+    padding: 20px;
+
+    color: #7f8997;
+    text-align: center;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.players-table-header,
+.players-table-row {
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        80px
+        100px;
+
+    align-items: center;
+}
+
+
+.players-table-header {
+    min-height: 40px;
+
+    padding: 0 14px;
+
+    background: #191f27;
+
+    color: #7f8997;
+
+    font-size: 12px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+
+    border-bottom: 1px solid #2a303a;
+}
+
+
+/* ============================================================
+   ROW
+   ============================================================ */
+
+.players-table-row {
+    min-height: 48px;
+
+    padding: 0 14px;
+
+    border-bottom: 1px solid #232a33;
+}
+
+
+.players-table-row:last-child {
+    border-bottom: none;
+}
+
+
+/* ============================================================
+   PLAYER
+   ============================================================ */
+
+.player-name {
+    min-width: 0;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    overflow: hidden;
+}
+
+
+.player-name span:last-child {
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+.player-color {
+    flex: 0 0 auto;
+
+    width: 14px;
+    height: 14px;
+
+    border-radius: 3px;
+
+    border: 1px solid rgba(255, 255, 255, 0.25);
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+
+/* ============================================================
+   POINTS
+   ============================================================ */
+
+.player-points {
+    font-weight: 600;
+
+    text-align: center;
+}
+
+
+/* ============================================================
+   STATUS
+   ============================================================ */
+
+.player-status {
+    font-size: 13px;
+    text-align: center;
+}
+
+
+.player-status.ready {
+    color: #61e58d;
+}
+
+
+.player-status.waiting {
+    color: #7f8997;
+}

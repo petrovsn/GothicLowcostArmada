@@ -1,0 +1,1 @@
+sudo systemctl restart gothic_lowcost_armada.service

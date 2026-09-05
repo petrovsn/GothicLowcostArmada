@@ -1,0 +1,178 @@
+/* ============================================================
+   BUTTON
+   ============================================================ */
+
+.join-room-button {
+    padding: 10px 16px;
+
+    border: 1px solid #2a303a;
+    border-radius: 8px;
+
+    background: #1a2028;
+    color: #dce2ea;
+
+    cursor: pointer;
+}
+
+.join-room-button:hover {
+    background: #232a34;
+}
+
+
+/* ============================================================
+   OVERLAY
+   ============================================================ */
+
+.join-room-overlay {
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 1000;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.65);
+}
+
+
+/* ============================================================
+   WIDGET
+   ============================================================ */
+
+.join-room-widget {
+    width: min(400px, 100%);
+
+    padding: 24px;
+
+    background: #11151c;
+
+    border: 1px solid #2a303a;
+    border-radius: 14px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45);
+}
+
+
+/* ============================================================
+   FORM
+   ============================================================ */
+
+.join-room-form {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+}
+
+
+.join-room-form h2 {
+    margin: 0 0 4px;
+
+    color: #dce2ea;
+
+    font-size: 20px;
+}
+
+
+/* ============================================================
+   INPUT
+   ============================================================ */
+
+.join-room-form label {
+    display: flex;
+    flex-direction: column;
+
+    gap: 6px;
+
+    color: #9ba5b3;
+
+    font-size: 14px;
+}
+
+
+.join-room-form input {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 1px solid #343b46;
+    border-radius: 7px;
+
+    outline: none;
+
+    background: #1a2028;
+    color: #dce2ea;
+
+    font-size: 14px;
+}
+
+
+.join-room-form input:focus {
+    border-color: #61e58d;
+}
+
+
+/* ============================================================
+   ERROR
+   ============================================================ */
+
+.join-room-error {
+    padding: 9px 11px;
+
+    border-radius: 7px;
+
+    background: rgba(229, 57, 53, 0.12);
+    color: #ff7672;
+
+    font-size: 13px;
+}
+
+
+/* ============================================================
+   ACTIONS
+   ============================================================ */
+
+.join-room-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 4px;
+}
+
+
+.join-room-actions button {
+    padding: 9px 14px;
+
+    border: 1px solid #343b46;
+    border-radius: 7px;
+
+    background: #1a2028;
+    color: #dce2ea;
+
+    cursor: pointer;
+}
+
+
+.join-room-actions button[type="submit"] {
+    background: #61e58d;
+    border-color: #61e58d;
+
+    color: #11151c;
+}
+
+
+.join-room-actions button:disabled {
+    opacity: 0.5;
+
+    cursor: default;
+}

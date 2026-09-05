@@ -1,0 +1,80 @@
+/* ============================================================
+   ROOM STATUS
+   ============================================================ */
+
+.room-status-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    padding: 14px 16px;
+
+    background: #11151c;
+    border: 1px solid #2a303a;
+    border-radius: 12px;
+
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.25);
+}
+
+
+/* ============================================================
+   ROW
+   ============================================================ */
+
+.room-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+}
+
+
+/* ============================================================
+   LABEL
+   ============================================================ */
+
+.room-status-label {
+    color: #7f8997;
+    font-size: 13px;
+}
+
+
+/* ============================================================
+   VALUE
+   ============================================================ */
+
+.room-status-value {
+    color: #dce2ea;
+    font-size: 14px;
+}
+
+
+/* ============================================================
+   ROOM ID
+   ============================================================ */
+
+.room-id {
+    max-width: 220px;
+
+    padding: 0;
+
+    border: none;
+    background: transparent;
+
+    color: #61e58d;
+
+    font-family: monospace;
+    font-size: 13px;
+
+    cursor: pointer;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.room-id:hover {
+    text-decoration: underline;
+}

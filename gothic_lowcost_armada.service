@@ -1,0 +1,15 @@
+[Unit]
+Description=GothicLowcostArmada
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/root/python_envs/venv/bin/python3 main.py
+Restart=always
+RestartSec=5
+User=root
+WorkingDirectory=/root/Games/GothicLowcostArmada/back
+Environment=KEY=value
+
+[Install]
+WantedBy=multi-user.target

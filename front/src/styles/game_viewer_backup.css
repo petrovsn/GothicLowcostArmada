@@ -1,0 +1,247 @@
+/* ============================================================
+   GAME VIEWER
+   ============================================================ */
+
+.game-viewer {
+    width: min(50vw, 500px);
+    aspect-ratio: 1 / 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 12px;
+
+    background: #11151c;
+
+    border: 1px solid #2a303a;
+    border-radius: 16px;
+
+    box-shadow:
+        0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+
+/* ============================================================
+   EMPTY
+   ============================================================ */
+
+.game-viewer.empty {
+    aspect-ratio: auto;
+
+    min-height: 200px;
+
+    color: #7f8997;
+
+    font-size: 18px;
+}
+
+
+/* ============================================================
+   BOARD
+   ============================================================ */
+
+.game-board {
+    width: 100%;
+    height: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(var(--board-width), 1fr);
+
+    grid-template-rows:
+        repeat(var(--board-height), 1fr);
+
+    overflow: hidden;
+
+    border-radius: 8px;
+
+    background: #151a21;
+}
+
+
+/* ============================================================
+   CELLS
+   ============================================================ */
+
+.game-cell {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    aspect-ratio: 1 / 1;
+
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+
+.game-cell.floor {
+    background: #1a2028;
+}
+
+
+.game-cell.wall {
+    background: #343b46;
+
+    box-shadow:
+        inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+        inset 0 3px 5px rgba(255, 255, 255, 0.04);
+}
+
+
+/* ============================================================
+   SNAKE
+   ============================================================ */
+
+.snake {
+    z-index: 1;
+}
+
+
+/* ============================================================
+   SNAKE BODY
+   transform: rotate(45deg);
+       box-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.35),
+
+        inset
+        0 1px 1px
+        rgba(255, 255, 255, 0.2);
+        border: 2px solid #11151c;
+            border-radius: 3px;
+   ============================================================ */
+
+.snake-body-shape {
+    width: 100%;
+    height: 100%;
+
+    background: black
+}
+
+.snake-body-shape::after {
+    content: "";
+
+    position: absolute;
+    width: 70%;
+    height: 70%;
+
+    left: 15%;
+    top: 15%;
+
+    transform: rotate(45deg);
+
+    background: var(--snake-color, #4fd17b);
+}
+
+
+/* ============================================================
+   SNAKE HEAD
+
+   ============================================================ */
+
+.snake-head {
+    z-index: 2;
+}
+
+
+.snake-head-shape {
+    width: 100%;
+    height: 100%;
+
+    background: black
+}
+
+.snake-head-shape::after{
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+
+    clip-path: polygon(
+        100% 0%,
+        30% 50%,
+        100% 100%
+    );
+
+    background:
+    var(--snake-color, #4fd17b);
+
+    transform: rotate(var(--head-angle));
+}
+
+
+.direction-right {
+    --head-angle: 180deg;
+}
+
+.direction-down {
+    --head-angle: 270deg;
+}
+
+.direction-left {
+    --head-angle: 0deg;
+}
+
+.direction-up {
+    --head-angle: 90deg;
+}
+
+
+
+/* ============================================================
+   APPLE
+   ============================================================ */
+
+.game-cell.apple {
+    position: relative;
+    overflow: hidden;
+}
+
+
+/* Яблоко */
+
+.game-cell.apple::before {
+    content: "";
+
+    position: absolute;
+
+    width: 50%;
+    aspect-ratio: 1 / 1;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -45%);
+
+    background: #e53935;
+
+    border-radius: 50%;
+
+    z-index: 1;
+}
+
+
+/* Лист */
+
+.game-cell.apple::after {
+    content: "";
+
+    position: absolute;
+
+    width: 22%;
+    height: 12%;
+
+    left: 57%;
+    top: 27%;
+
+    background: #4caf50;
+
+    border-radius: 100% 0 100% 0;
+
+    transform: rotate(-25deg);
+
+    z-index: 2;
+}

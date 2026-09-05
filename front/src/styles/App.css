@@ -1,0 +1,320 @@
+/* ============================================================
+   APP
+   ============================================================ */
+
+.App {
+    min-height: 100vh;
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 32px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #202631 0%,
+            #11151c 45%,
+            #0b0e13 100%
+        );
+
+    color: #e8edf3;
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.app-header {
+    width: 100%;
+    max-width: 1400px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    margin-bottom: 28px;
+}
+
+
+.app-header h1 {
+    margin: 0 0 24px;
+
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+
+    color: #ffffff;
+
+    text-align: center;
+
+    text-shadow:
+        0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+
+/* ============================================================
+   ROOM ACTIONS
+   ============================================================ */
+
+.room-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 12px;
+
+    position: relative;
+    z-index: 100;
+}
+
+
+/* ============================================================
+   MAIN GAME LAYOUT
+   ============================================================ */
+
+.game-layout {
+    width: 100%;
+    max-width: 1400px;
+
+    display: grid;
+
+    /*
+        Левая колонка:
+        состояние комнаты + состояние игрока
+
+        Центральная:
+        игровое поле
+
+        Правая:
+        таблица игроков
+    */
+    grid-template-columns:
+        260px
+        minmax(400px, 600px)
+        300px;
+
+    gap: 24px;
+
+    align-items: start;
+
+    position: relative;
+    z-index: 1;
+}
+
+
+/* ============================================================
+   LEFT SIDEBAR
+   ============================================================ */
+
+.game-sidebar {
+    display: flex;
+    flex-direction: column;
+
+    gap: 16px;
+
+    width: 100%;
+}
+
+
+/* ============================================================
+   GAME AREA
+   ============================================================ */
+
+.game-area {
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+
+/*
+    GameViewer уже сам ограничивает свою ширину.
+    Здесь мы просто не даём ему вылезти
+    за центральную колонку.
+*/
+
+.game-area .game-viewer {
+    width: 100%;
+    max-width: 600px;
+}
+
+
+/* ============================================================
+   PLAYERS TABLE
+   ============================================================ */
+
+.players-area {
+    width: 100%;
+}
+
+
+/* ============================================================
+   COMMON PANELS
+   ============================================================ */
+
+.game-sidebar > *,
+.players-area > * {
+    box-sizing: border-box;
+
+    width: 100%;
+
+    background: rgba(17, 21, 28, 0.92);
+
+    border: 1px solid #2a303a;
+    border-radius: 14px;
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, 0.25);
+
+    backdrop-filter: blur(8px);
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.App button {
+    font: inherit;
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+    .App {
+        padding: 24px 16px 32px;
+    }
+
+
+    .game-layout {
+        grid-template-columns:
+            220px
+            minmax(350px, 1fr)
+            250px;
+
+        gap: 16px;
+    }
+}
+
+
+/* ============================================================
+   MOBILE / SMALL TABLET
+   ============================================================ */
+
+@media (max-width: 850px) {
+
+    .App {
+        padding: 20px 12px 32px;
+    }
+
+
+    .app-header h1 {
+        font-size: 28px;
+        margin-bottom: 20px;
+    }
+
+
+    .game-layout {
+        display: flex;
+        flex-direction: column;
+
+        align-items: center;
+
+        gap: 16px;
+    }
+
+
+    /*
+        На телефоне сначала игра,
+        затем состояние,
+        затем таблица.
+    */
+
+    .game-area {
+        order: 1;
+
+        width: 100%;
+        max-width: 600px;
+    }
+
+
+    .game-sidebar {
+        order: 2;
+
+        width: 100%;
+        max-width: 600px;
+
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+
+        gap: 12px;
+    }
+
+
+    .players-area {
+        order: 3;
+
+        width: 100%;
+        max-width: 600px;
+    }
+}
+
+
+/* ============================================================
+   PHONE
+   ============================================================ */
+
+@media (max-width: 520px) {
+
+    .App {
+        padding: 12px 8px 24px;
+    }
+
+
+    .app-header h1 {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+
+
+    .room-actions {
+        width: 100%;
+        gap: 8px;
+    }
+
+
+    .room-actions > * {
+        flex: 1;
+    }
+
+
+    .game-sidebar {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    .game-area .game-viewer {
+        width: 100%;
+    }
+}
