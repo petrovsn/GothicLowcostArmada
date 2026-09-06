@@ -6,12 +6,12 @@ const TIER_CONFIG = {
 
     cruiser: {
         size: 7,
-        topWidth: 0.20,
+        topWidth: 0.10,
     },
 
     battleship: {
         size: 12,
-        topWidth: 0.36,
+        topWidth: 0.20,
     },
 };
 
@@ -50,16 +50,17 @@ function ShipIcon({
 
             <rect
                 x="-0.10"
-                y="-0.05"
+                y="-0.15"
                 width="0.20"
-                height="0.25"
+                height="0.30"
             />
 
             <polygon
                 points={`
-                    0,-0.50
-                    ${config.topWidth / 2},-0.05
-                    ${-config.topWidth / 2},-0.05
+                    ${config.topWidth / 2},-0.50,
+                    ${-config.topWidth / 2},-0.50,
+                    -0.15,-0.15,
+                    0.15,-0.15
                 `}
             />
         </g>

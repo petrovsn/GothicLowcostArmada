@@ -11,68 +11,23 @@ import {
 import { setSelectedShip } from "../store/gameSlice.js";
 import * as orders_controller from "../controllers/orders_controller.js";
 
-import "../styles/GameViewer.css";
+import ShipIcon from "./ShipIcon.jsx";
 
+import "../styles/GameViewer.css";
+import EffectsLayer from "./EffectsLayer.jsx";
+import useEffects from "./useEffects.js";
 
 const VIEW_BOX_SIZE = 1000;
 const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
 
 const CLICK_THRESHOLD = 10;
 
-const SHIP_LENGTH = 1;
-const SHIP_WIDTH = 0.67;
 const SHIP_SELECTION_RADIUS = 0.5;
 
 const GRID_STEP = 10;
 
 const MIN_ZOOM = 0.5;
 const MAX_ZOOM = 50;
-
-
-function Ship({
-    ship,
-    selected,
-    color,
-}) {
-    const {
-        x,
-        y,
-        rotation,
-    } = ship.position;
-
-    const halfWidth =
-        SHIP_WIDTH / 2;
-
-    return (
-        <>
-            {selected && (
-                <circle
-                    cx={x}
-                    cy={-y}
-                    r={SHIP_SELECTION_RADIUS}
-                    className="ship-selection"
-                />
-            )}
-
-            <polygon
-                points={`
-                    0,${-SHIP_LENGTH / 2}
-                    ${halfWidth},${SHIP_LENGTH / 2}
-                    0,${SHIP_LENGTH / 3}
-                    ${-halfWidth},${SHIP_LENGTH / 2}
-                `}
-                transform={`
-                    translate(${x} ${-y})
-                    rotate(${rotation})
-                `}
-                className="ship"
-                style={{
-                    fill: color,
-                }}
-            />
-        </>
-    );
-}
 
 
 function CoordinateGrid({
@@ -168,6 +123,7 @@ function GameViewer({
         state =>
             state.game.gameState?.payload
     );
+    
 
     const selectedShipId = useSelector(
         state =>
@@ -179,7 +135,8 @@ function GameViewer({
 
     const svgRef =
         useRef(null);
-
+        
+    const { effects, addEffect } = useEffects();
 
     useEffect(() => {
         if (!gameState) {
@@ -577,23 +534,60 @@ function GameViewer({
                     />
 
                     {ships.map(
-                        ship => (
-                            <Ship
-                                key={ship.uuid}
-                                ship={ship}
-                                selected={
-                                    ship.uuid ===
-                                    selectedShipId
-                                }
-                                color={
-                                    getShipColor(
-                                        ship.uuid
-                                    )
-                                }
-                            />
-                        )
+                        ship => {
+                            const isSelected =
+                                ship.uuid ===
+                                selectedShipId;
+
+                            const tier =
+                                ship.tier ??
+                                ship.class ??
+                                "cruiser";
+
+                            return (
+                                <g
+                                    key={ship.uuid}
+                                >
+
+                                    {isSelected && (
+                                        <circle
+                                            cx={
+                                                ship.position.x
+                                            }
+                                            cy={
+                                                -ship.position.y
+                                            }
+                                            r={
+                                                SHIP_SELECTION_RADIUS
+                                            }
+                                            className="ship-selection"
+                                        />
+                                    )}
+
+                                    <ShipIcon
+                                        tier={tier}
+                                        x={
+                                            ship.position.x
+                                        }
+                                        y={
+                                            -ship.position.y
+                                        }
+                                        rotation={
+                                            ship.position.rotation
+                                        }
+                                        color={
+                                            getShipColor(
+                                                ship.uuid
+                                            )
+                                        }
+                                    />
+
+                                </g>
+                            );
+                        }
                     )}
 
+                    <EffectsLayer effects={effects} />
                 </g>
 
             </svg>

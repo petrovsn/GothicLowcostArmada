@@ -68,4 +68,5 @@ class Ship:
 class Target(Ship):
     def __init__(self):
         super().__init__()
+        self.tier = "escort"
         self.engine = ShipEngine(0,0)
