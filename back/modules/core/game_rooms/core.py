@@ -144,7 +144,7 @@ class GameRoom:
             "player_id":player_id,
             "service_info":{
                 "room_id": self.config.room_id,
-                "participants": self._get_participants()
+                "participants": self._get_participants(),
                 "timestamp": self.statistics.timestamp,
                 "exec_time_current": self.statistics.last_tick_execution_time,
                 "exec_time_max": self.statistics.game_tick
