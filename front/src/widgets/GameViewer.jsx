@@ -11,7 +11,9 @@ import {
 import { setSelectedShip } from "../store/gameSlice.js";
 import * as orders_controller from "../controllers/orders_controller.js";
 
-import ShipIcon from "./ShipIcon.jsx";
+import ShipIcon, {
+    TIER_CONFIG,
+} from "./ShipIcon.jsx";
 
 import "../styles/GameViewer.css";
 import EffectsLayer from "./EffectsLayer.jsx";
@@ -123,7 +125,7 @@ function GameViewer({
         state =>
             state.game.gameState?.payload
     );
-    
+
 
     const selectedShipId = useSelector(
         state =>
@@ -135,7 +137,7 @@ function GameViewer({
 
     const svgRef =
         useRef(null);
-        
+
     const { effects, addEffect } = useEffects();
 
     useEffect(() => {
@@ -306,6 +308,15 @@ function GameViewer({
         for (
             const ship of ships
         ) {
+            const tier =
+                ship.tier ??
+                ship.class ??
+                "cruiser";
+
+            const shipRadius =
+                TIER_CONFIG[tier]?.size ??
+                TIER_CONFIG.cruiser.size;
+
             const dx =
                 ship.position.x -
                 position.x;
@@ -322,9 +333,9 @@ function GameViewer({
 
             if (
                 distance <=
-                    SHIP_SELECTION_RADIUS &&
+                shipRadius/2 &&
                 distance <
-                    closestDistance
+                closestDistance
             ) {
                 closestShip = ship;
 
@@ -335,7 +346,6 @@ function GameViewer({
 
         return closestShip;
     };
-
 
     const handleMouseDown = (
         event
@@ -446,6 +456,21 @@ function GameViewer({
 
         if (!ship) {
             if (selectedShipId) {
+                const selectedShip =
+                    ships.find(
+                        currentShip =>
+                            currentShip.uuid ===
+                            selectedShipId
+                    );
+
+                if (selectedShip) {
+                    addEffect(
+                        "move",
+                        selectedShip.position,
+                        worldPosition
+                    );
+                }
+
                 orders_controller.move_ship(
                     selectedShipId,
                     worldPosition
@@ -458,7 +483,7 @@ function GameViewer({
 
         const shipOwnerId =
             shipFleetMap[
-                ship.uuid
+            ship.uuid
             ];
 
         const isPlayerShip =
@@ -477,13 +502,27 @@ function GameViewer({
 
 
         if (selectedShipId) {
+            const selectedShip =
+                ships.find(
+                    currentShip =>
+                        currentShip.uuid ===
+                        selectedShipId
+                );
+
+            if (selectedShip) {
+                addEffect(
+                    "attack",
+                    selectedShip.position,
+                    ship.position
+                );
+            }
+
             orders_controller.attack_ship(
                 selectedShipId,
                 ship.uuid
             );
         }
     };
-
 
     const handleMouseLeave = () => {
         dragState.current = null;
