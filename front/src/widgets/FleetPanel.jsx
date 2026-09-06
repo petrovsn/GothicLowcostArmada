@@ -49,10 +49,12 @@ function FleetPanel({
 }) {
     const dispatch = useDispatch();
 
+
     const gameState = useSelector(
         state =>
             state.game.gameState?.payload
     );
+
 
     const selectedShipId = useSelector(
         state =>
@@ -65,24 +67,53 @@ function FleetPanel({
     }
 
 
+    /*
+     * GameState contract:
+     *
+     * {
+     *     player_id,
+     *     service_info,
+     *     player_fleet,
+     *     entities: {
+     *         ships,
+     *         ordnance,
+     *     },
+     * }
+     *
+     * player_fleet contains ship UUIDs.
+     */
     const playerFleet =
         gameState.player_fleet ?? [];
+
 
     const entities =
         gameState.entities ?? {};
 
 
-    const ships = playerFleet
-        .map(
-            shipId =>
-                entities[shipId]
-        )
-        .filter(Boolean);
+    const ships =
+        entities.ships ?? [];
 
 
-    const handleShipClick = (ship) => {
+    /*
+     * Select only ships belonging
+     * to the current player's fleet.
+     */
+    const playerShips =
+        ships.filter(
+            ship =>
+                playerFleet.includes(
+                    ship.uuid
+                )
+        );
+
+
+    const handleShipClick = (
+        ship
+    ) => {
         const isAlreadySelected =
-            ship.name === selectedShipId;
+            ship.uuid ===
+            selectedShipId;
+
 
         /*
          * First click:
@@ -99,8 +130,11 @@ function FleetPanel({
             return;
         }
 
+
         dispatch(
-            setSelectedShip(ship.name)
+            setSelectedShip(
+                ship.uuid
+            )
         );
     };
 
@@ -110,19 +144,23 @@ function FleetPanel({
 
             <div className="fleet-panel-ships">
 
-                {ships.map(ship => (
-                    <FleetShipCard
-                        key={ship.name}
-                        ship={ship}
-                        selected={
-                            ship.name ===
-                            selectedShipId
-                        }
-                        onClick={() =>
-                            handleShipClick(ship)
-                        }
-                    />
-                ))}
+                {playerShips.map(
+                    ship => (
+                        <FleetShipCard
+                            key={ship.uuid}
+                            ship={ship}
+                            selected={
+                                ship.uuid ===
+                                selectedShipId
+                            }
+                            onClick={() =>
+                                handleShipClick(
+                                    ship
+                                )
+                            }
+                        />
+                    )
+                )}
 
             </div>
 
@@ -132,4 +170,3 @@ function FleetPanel({
 
 
 export default FleetPanel;
-

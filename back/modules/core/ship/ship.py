@@ -12,15 +12,18 @@ from modules.core.ship.engine import ShipEngine
 from modules.core.ship.weaponry import ShipWeaponry
 from modules.core.ship.defence import ShipDefence
 from modules.core.entities.commands import CommonCommand
-
+from uuid import uuid4
 
 class Ship:
     def __init__(self):
-        self.uuid = UUID().hex
+        self.uuid = uuid4().hex
         self.name = f"Ship #{self.uuid[-5:]}"
-        self.engine = ShipEngine(10,45)
+        self.engine = ShipEngine(25,45)
         self.weapons = ShipWeaponry()
         self.defence = ShipDefence()
+
+    def place(self, x, y, rotation):
+        self.engine.position = Position(x= x, y=y, rotation=rotation)
 
     def update_view(self):
         pass

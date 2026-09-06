@@ -1,9 +1,11 @@
 import { create_room } from "../network/backend_api.js";
 import { create_connection } from "../network/ws_api.js";
+
 import {
     setRoomId,
-    setGameState
+    setGameState,
 } from "../store/gameSlice.js";
+
 import { store } from "../store/store.js";
 
 
@@ -15,11 +17,15 @@ export async function create_room_and_connect(
     playerName,
     onConnected
 ) {
-    const data = await create_room(roomConfig);
+    const data =
+        await create_room(roomConfig);
 
-    const roomId = data.room_id;
+    const roomId =
+        data.room_id;
 
-    store.dispatch(setRoomId(roomId));
+    store.dispatch(
+        setRoomId(roomId)
+    );
 
     connect(
         roomId,
@@ -30,29 +36,32 @@ export async function create_room_and_connect(
     return roomId;
 }
 
+
 export function connect_to_room(
     roomId,
     playerName,
     onConnected
 ) {
-    return new Promise((resolve, reject) => {
-        try {
-            connect(
-                roomId,
-                playerName,
-                () => {
-                    if (onConnected) {
-                        onConnected();
-                    }
+    return new Promise(
+        (resolve, reject) => {
+            try {
+                connect(
+                    roomId,
+                    playerName,
+                    () => {
+                        if (onConnected) {
+                            onConnected();
+                        }
 
-                    resolve(roomId);
-                }
-            );
+                        resolve(roomId);
+                    }
+                );
+            }
+            catch (error) {
+                reject(error);
+            }
         }
-        catch (error) {
-            reject(error);
-        }
-    });
+    );
 }
 
 
@@ -65,21 +74,44 @@ function connect(
         connection.close();
     }
 
-    connection = create_connection(roomId, playerName);
+
+    connection =
+        create_connection(
+            roomId,
+            playerName
+        );
 
 
     connection.on_open(() => {
-        console.log("Game WebSocket connected",onConnected);
+        console.log(
+            "Game WebSocket connected"
+        );
 
         if (onConnected) {
-            console.log("Call onConnected")
             onConnected();
         }
     });
 
 
     connection.on_message((data) => {
-        store.dispatch(setGameState(data));
+        /*
+         * Backend sends the complete GameState:
+         *
+         * {
+         *     player_id,
+         *     service_info,
+         *     player_fleet,
+         *     entities: {
+         *         ships,
+         *         ordnance,
+         *     },
+         * }
+         *
+         * Store it without transformation.
+         */
+        store.dispatch(
+            setGameState(data)
+        );
     });
 
 
@@ -110,6 +142,7 @@ export function send_command(command) {
         return;
     }
 
+
     connection.send({
         command,
     });
@@ -122,3 +155,4 @@ export function disconnect() {
         connection = null;
     }
 }
+

@@ -48,11 +48,12 @@
 
 
 
-.coordinate-grid {
-    pointer-events: none;
+.coordinate-grid line {
+    stroke-width: 1px;
 }
 
-.coordinate-grid line {
-    stroke: #29452f;
-    stroke-width: 1;
+.ship-selection {
+    fill: none;
+    stroke-width: 1px;
+    vector-effect: non-scaling-stroke;
 }

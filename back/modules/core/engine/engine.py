@@ -8,12 +8,18 @@ class GameEngine:
         self.ships: dict[str, Ship] = {}
 
     def game_tick(self):
-        """
-        1. move ships
-        2. collect fire events
-        3. proceed fire events
+        for ship in self.ships.values():
+            ship.update_view()
 
-        """
+        for ship in self.ships.values():
+            ship.update_position()
+
+
+    def add_ship(self):
+        ship = Ship()
+        ship.place(0,0,0)
+        self.ships[ship.uuid] = ship
+        return ship.uuid
 
     def proceed_ship_command(self, new_command: CommonCommand):
         ship_command = parse_ship_command(new_command)
@@ -24,7 +30,8 @@ class GameEngine:
         ...
             
     def get_entities(self):
-        return {
-            "ships": [ship.as_dict() for ship in self.ships],
+        result =  {
+            "ships": [ship.as_dict() for ship in self.ships.values()],
             "ordnance": [],
         }
+        return result

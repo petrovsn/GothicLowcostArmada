@@ -11,7 +11,6 @@ def get_distance(pos1: Position, pos2: Position) -> float:
 
 def get_relative_bearing(
     position: Position,
-    rotation: float,
     signal: Vector2,
 ) -> float:
     """
@@ -38,7 +37,7 @@ def get_relative_bearing(
     absolute_bearing = math.degrees(math.atan2(dx, dy)) % 360
 
     # Переводим в систему координат корабля.
-    return (absolute_bearing - rotation) % 360
+    return (absolute_bearing - position.rotation) % 360
 
 
 def get_angle_between(vector1: Vector2, vector2: Vector2) -> float:
@@ -63,10 +62,9 @@ def get_angle_between(vector1: Vector2, vector2: Vector2) -> float:
 
 
 def get_relative_polar_position(position: Position,
-    rotation: float,
     signal: Vector2,
 ) -> float:
-    bearing = get_relative_bearing(position = position, rotation= rotation, signal= signal)
+    bearing = get_relative_bearing(position = position, signal= signal)
     distance = get_distance(position, signal)
 
     return RelativePolarPosition(

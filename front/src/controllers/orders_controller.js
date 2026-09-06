@@ -3,11 +3,14 @@ import * as game_controller from "./game_controller.js";
 
 export function move_ship(shipId, position) {
     game_controller.send_command({
-        type: "move",
-        ship_id: shipId,
-        target: {
-            x: position.x,
-            y: position.y,
+        type: "ship",
+        action: "move_to",
+        params: {
+            ship_id: shipId,
+            target: {
+                x: position.x,
+                y: position.y,
+            },
         },
     });
 }
@@ -15,9 +18,11 @@ export function move_ship(shipId, position) {
 
 export function attack_ship(shipId, targetShipId) {
     game_controller.send_command({
-        type: "attack",
-        ship_id: shipId,
-        target_id: targetShipId,
+        type: "ship",
+        action: "fire_to",
+        params: {
+            ship_id: shipId,
+            target: targetShipId,
+        },
     });
 }
-

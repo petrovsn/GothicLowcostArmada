@@ -1,5 +1,6 @@
 import { useSelector } from "react-redux";
 import * as game_controller from "../controllers/game_controller";
+import * as service_controller from "../controllers/service_controller"
 import "../styles/PlayerStatusWidget.css";
 
 function PlayerStatusWidget() {
@@ -19,11 +20,11 @@ function PlayerStatusWidget() {
     }
 
     const handleReady = () => {
-        game_controller.send_command("ready");
+        service_controller.resume()
     };
 
     const handlePause = () => {
-        game_controller.send_command("pause");
+        service_controller.pause()
     };
 
     return (

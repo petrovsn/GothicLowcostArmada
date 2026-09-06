@@ -2,7 +2,6 @@ import time
 import asyncio
 from uuid import uuid4
 from modules.core.entities.space import Position, Vector2
-from modules.core.entities.entities import Fleet, Ship, ShipGameStats
 from modules.core.entities.participant import Participant, Player, Bot
 from modules.utils.colors import get_color
 from modules.utils.names import get_name
@@ -36,8 +35,8 @@ class GameRoom:
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
-        self.fleets: dict[str, list] = defaultdict(list())
-        self.game_engine: GameEngine = GameEngine(self.statistics.game_tick)
+        self.fleets: dict[str, list] = defaultdict(list)
+        self.game_engine: GameEngine = GameEngine()
 
 
     def start(self):
@@ -75,6 +74,9 @@ class GameRoom:
         )
 
 
+        ship_id = self.game_engine.add_ship()
+        self.fleets[player_id].append(ship_id)
+
         return player_id
 
     def name_player(self, player_id, player_name):
@@ -107,7 +109,11 @@ class GameRoom:
                 self.game_engine.proceed_command(new_command)
 
     def _handle_room_command(self, player_id, command: CommonCommand):
-        pass
+        match command.action:
+            case "pause":
+                self.participants[player_id].is_ready = False
+            case "resume":
+                self.participants[player_id].is_ready = True
 
             
     def check_world_collisions(self):
@@ -120,7 +126,7 @@ class GameRoom:
         self.game_engine.game_tick()
         
     def get_game_data(self, player_id):
-        return {
+        result = {
             "player_id":player_id,
             "service_info":{
                 "room_id": self.config.room_id,
@@ -130,9 +136,11 @@ class GameRoom:
                 "exec_time_max": self.statistics.game_tick
             },
             "player_fleet": self.fleets[player_id],
-            "entities": self.game_engine.get_entities()
-            
+            "entities": self.game_engine.get_entities()   
         }
+
+
+        return result
 
     def update_views(self):
         for player_id, player in self.participants.items():

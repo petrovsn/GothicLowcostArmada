@@ -18,9 +18,15 @@ const VIEW_BOX_SIZE = 1000;
 const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
 
 const CLICK_THRESHOLD = 10;
-const SHIP_SELECTION_RADIUS = 30;
 
-const GRID_STEP = 50;
+const SHIP_LENGTH = 1;
+const SHIP_WIDTH = 0.67;
+const SHIP_SELECTION_RADIUS = 0.5;
+
+const GRID_STEP = 10;
+
+const MIN_ZOOM = 0.5;
+const MAX_ZOOM = 50;
 
 
 function Ship({
@@ -32,6 +38,9 @@ function Ship({
         y,
         rotation,
     } = ship.position;
+
+    const halfWidth =
+        SHIP_WIDTH / 2;
 
     return (
         <>
@@ -45,12 +54,12 @@ function Ship({
             )}
 
             <polygon
-                points="
-                    0,-15
-                    10,15
-                    0,10
-                    -10,15
-                "
+                points={`
+                    0,${-SHIP_LENGTH / 2}
+                    ${halfWidth},${SHIP_LENGTH / 2}
+                    0,${SHIP_LENGTH / 3}
+                    ${-halfWidth},${SHIP_LENGTH / 2}
+                `}
                 transform={`
                     translate(${x} ${-y})
                     rotate(${rotation})
@@ -69,7 +78,6 @@ function CoordinateGrid({
         VIEW_BOX_HALF /
         camera.zoom;
 
-
     const minWorldX =
         Math.floor(
             (
@@ -85,7 +93,6 @@ function CoordinateGrid({
                 halfView
             ) / GRID_STEP
         ) * GRID_STEP;
-
 
     const minWorldY =
         Math.floor(
@@ -103,9 +110,7 @@ function CoordinateGrid({
             ) / GRID_STEP
         ) * GRID_STEP;
 
-
     const lines = [];
-
 
     for (
         let x = minWorldX;
@@ -122,7 +127,6 @@ function CoordinateGrid({
             />
         );
     }
-
 
     for (
         let y = minWorldY;
@@ -141,7 +145,6 @@ function CoordinateGrid({
             />
         );
     }
-
 
     return (
         <g className="coordinate-grid">
@@ -167,7 +170,6 @@ function GameViewer({
             state.game.selectedShipId
     );
 
-
     const dragState =
         useRef(null);
 
@@ -186,7 +188,6 @@ function GameViewer({
             return;
         }
 
-
         const handleWheel = (event) => {
             event.preventDefault();
 
@@ -195,21 +196,19 @@ function GameViewer({
                     ? 1.1
                     : 0.9;
 
-
             setCamera(previous => ({
                 ...previous,
 
                 zoom: Math.min(
-                    5,
+                    MAX_ZOOM,
                     Math.max(
-                        0.2,
+                        MIN_ZOOM,
                         previous.zoom *
                         zoomFactor
                     )
                 ),
             }));
         };
-
 
         svg.addEventListener(
             "wheel",
@@ -218,7 +217,6 @@ function GameViewer({
                 passive: false,
             }
         );
-
 
         return () => {
             svg.removeEventListener(
@@ -244,6 +242,9 @@ function GameViewer({
     const entities =
         gameState.entities ?? {};
 
+    const ships =
+        entities.ships ?? [];
+
     const playerFleet =
         gameState.player_fleet ?? [];
 
@@ -251,26 +252,6 @@ function GameViewer({
         new Set(playerFleet);
 
 
-    /*
-     * Convert browser coordinates
-     * into world coordinates.
-     *
-     * Forward transformation:
-     *
-     *   svgX =
-     *       (worldX - camera.x) * zoom
-     *
-     *   svgY =
-     *       (-worldY + camera.y) * zoom
-     *
-     * Therefore:
-     *
-     *   worldX =
-     *       svgX / zoom + camera.x
-     *
-     *   worldY =
-     *       camera.y - svgY / zoom
-     */
     const getWorldPosition = (
         event
     ) => {
@@ -284,10 +265,8 @@ function GameViewer({
             };
         }
 
-
         const rect =
             svg.getBoundingClientRect();
-
 
         const screenX =
             event.clientX -
@@ -297,7 +276,6 @@ function GameViewer({
             event.clientY -
             rect.top;
 
-
         const svgX =
             (
                 screenX /
@@ -306,7 +284,6 @@ function GameViewer({
             VIEW_BOX_SIZE -
             VIEW_BOX_HALF;
 
-
         const svgY =
             (
                 screenY /
@@ -314,7 +291,6 @@ function GameViewer({
             ) *
             VIEW_BOX_SIZE -
             VIEW_BOX_HALF;
-
 
         return {
             x:
@@ -334,13 +310,12 @@ function GameViewer({
         position
     ) => {
         let closestShip = null;
+
         let closestDistance =
             Infinity;
 
-
         for (
-            const ship of
-            Object.values(entities)
+            const ship of ships
         ) {
             const dx =
                 ship.position.x -
@@ -350,13 +325,11 @@ function GameViewer({
                 ship.position.y -
                 position.y;
 
-
             const distance =
                 Math.sqrt(
                     dx * dx +
                     dy * dy
                 );
-
 
             if (
                 distance <=
@@ -365,11 +338,11 @@ function GameViewer({
                     closestDistance
             ) {
                 closestShip = ship;
+
                 closestDistance =
                     distance;
             }
         }
-
 
         return closestShip;
     };
@@ -381,7 +354,6 @@ function GameViewer({
         if (event.button !== 0) {
             return;
         }
-
 
         dragState.current = {
             startX: event.clientX,
@@ -405,7 +377,6 @@ function GameViewer({
             return;
         }
 
-
         const dx =
             event.clientX -
             drag.lastX;
@@ -413,7 +384,6 @@ function GameViewer({
         const dy =
             event.clientY -
             drag.lastY;
-
 
         const totalDx =
             event.clientX -
@@ -423,13 +393,11 @@ function GameViewer({
             event.clientY -
             drag.startY;
 
-
         const distance =
             Math.sqrt(
                 totalDx * totalDx +
                 totalDy * totalDy
             );
-
 
         if (
             distance >=
@@ -437,7 +405,6 @@ function GameViewer({
         ) {
             drag.moved = true;
         }
-
 
         if (drag.moved) {
             setCamera(previous => ({
@@ -454,7 +421,6 @@ function GameViewer({
                     previous.zoom,
             }));
         }
-
 
         drag.lastX =
             event.clientX;
@@ -474,18 +440,14 @@ function GameViewer({
             return;
         }
 
-
         dragState.current = null;
-
 
         if (drag.moved) {
             return;
         }
 
-
         const worldPosition =
             getWorldPosition(event);
-
 
         const ship =
             findShipAtPosition(
@@ -493,10 +455,6 @@ function GameViewer({
             );
 
 
-        /*
-         * Clicked empty space:
-         * move selected ship.
-         */
         if (!ship) {
             if (selectedShipId) {
                 orders_controller.move_ship(
@@ -511,18 +469,14 @@ function GameViewer({
 
         const isPlayerShip =
             playerShips.has(
-                ship.name
+                ship.uuid
             );
 
 
-        /*
-         * Clicked own ship:
-         * select it.
-         */
         if (isPlayerShip) {
             dispatch(
                 setSelectedShip(
-                    ship.name
+                    ship.uuid
                 )
             );
 
@@ -530,14 +484,10 @@ function GameViewer({
         }
 
 
-        /*
-         * Clicked enemy ship:
-         * attack it.
-         */
         if (selectedShipId) {
             orders_controller.attack_ship(
                 selectedShipId,
-                ship.name
+                ship.uuid
             );
         }
     };
@@ -548,18 +498,6 @@ function GameViewer({
     };
 
 
-    /*
-     * World -> SVG transformation:
-     *
-     *   screenX =
-     *       (worldX - camera.x) * zoom
-     *
-     *   screenY =
-     *       (-worldY + camera.y) * zoom
-     *
-     * Using one matrix removes ambiguity
-     * about SVG transform ordering.
-     */
     const cameraTransform = `
         matrix(
             ${camera.zoom}
@@ -603,18 +541,18 @@ function GameViewer({
                         camera={camera}
                     />
 
-                    {Object.values(
-                        entities
-                    ).map(ship => (
-                        <Ship
-                            key={ship.name}
-                            ship={ship}
-                            selected={
-                                ship.name ===
-                                selectedShipId
-                            }
-                        />
-                    ))}
+                    {ships.map(
+                        ship => (
+                            <Ship
+                                key={ship.uuid}
+                                ship={ship}
+                                selected={
+                                    ship.uuid ===
+                                    selectedShipId
+                                }
+                            />
+                        )
+                    )}
 
                 </g>
 
@@ -626,4 +564,3 @@ function GameViewer({
 
 
 export default GameViewer;
-
