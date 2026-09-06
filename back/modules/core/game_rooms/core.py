@@ -150,10 +150,10 @@ class GameRoom:
                 "exec_time_max": self.statistics.game_tick
             },
             "fleets": self.fleets,
-            "entities": self.game_engine.get_entities()   
+            "entities": self.game_engine.get_entities(),
+            "player_fleet": self.game_engine.get_fleet_info(self.fleets[player_id])
         }
 
-        print(result)
         return result
 
     def update_views(self):

@@ -253,7 +253,7 @@ function GameViewer({
         gameState.fleets ?? {};
 
     const participants =
-        gameState.participants ?? {};
+        gameState.service_info?.participants ?? {};
 
     const playerId =
         gameState.player_id;
@@ -262,21 +262,24 @@ function GameViewer({
     const shipFleetMap = {};
 
     for (const [
-        fleetId,
+        participantId,
         shipIds,
     ] of Object.entries(fleets)) {
         for (const shipId of shipIds) {
-            shipFleetMap[shipId] = fleetId;
+            shipFleetMap[shipId] =
+                participantId;
         }
     }
 
 
-    const getShipColor = (shipId) => {
-        const fleetId =
+    const getShipColor = (
+        shipId
+    ) => {
+        const participantId =
             shipFleetMap[shipId];
 
         return participants[
-            fleetId
+            participantId
         ]?.color;
     };
 
@@ -496,13 +499,13 @@ function GameViewer({
         }
 
 
-        const shipFleetId =
+        const shipOwnerId =
             shipFleetMap[
                 ship.uuid
             ];
 
         const isPlayerShip =
-            shipFleetId === playerId;
+            shipOwnerId === playerId;
 
 
         if (isPlayerShip) {

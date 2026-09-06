@@ -5,11 +5,9 @@ import "../styles/PlayersTable.css";
 
 function PlayersTable() {
     const gameState = useSelector(
-        state => state.game.gameState?.payload
+        state =>
+            state.game.gameState?.payload
     );
-
-    const participants =
-        gameState?.participants ?? {};
 
     if (!gameState) {
         return (
@@ -19,8 +17,13 @@ function PlayersTable() {
         );
     }
 
+
+    const participants =
+        gameState.service_info?.participants ?? {};
+
     const participantEntries =
         Object.entries(participants);
+
 
     if (participantEntries.length === 0) {
         return (
@@ -30,14 +33,17 @@ function PlayersTable() {
         );
     }
 
+
     const sortedParticipants =
         participantEntries.sort(
             ([, a], [, b]) =>
                 b.points - a.points
         );
 
+
     return (
         <div className="players-table">
+
             <div className="players-table-header">
                 <div>Player</div>
                 <div>Points</div>
@@ -45,6 +51,7 @@ function PlayersTable() {
             </div>
 
             <div className="players-table-body">
+
                 {sortedParticipants.map(
                     ([
                         participantId,
@@ -54,7 +61,9 @@ function PlayersTable() {
                             className="players-table-row"
                             key={participantId}
                         >
+
                             <div className="player-name">
+
                                 <span
                                     className="player-color"
                                     style={{
@@ -66,11 +75,14 @@ function PlayersTable() {
                                 <span>
                                     {participant.name}
                                 </span>
+
                             </div>
+
 
                             <div className="player-points">
                                 {participant.points}
                             </div>
+
 
                             <div
                                 className={
@@ -83,10 +95,13 @@ function PlayersTable() {
                                     ? "Ready"
                                     : "Waiting"}
                             </div>
+
                         </div>
                     )
                 )}
+
             </div>
+
         </div>
     );
 }
