@@ -3,14 +3,15 @@ import asyncio
 from uuid import uuid4
 from modules.core.entities.space import Position, Vector2
 from modules.core.entities.entities import Fleet, Ship, ShipGameStats
-from modules.core.entities.participant import Participant, Player
+from modules.core.entities.participant import Participant, Player, Bot
 from modules.utils.colors import get_color
+from modules.utils.names import get_name
 from dataclasses import dataclass
 import traceback
-
+from modules.core.entities.commands import CommonCommand, CommandType
 from modules.core.engine.engine import GameEngine
 from modules.core.entities.time import GAME_FPS
-
+from collections import defaultdict
 @dataclass
 class GameRoomConfig:
     room_id: str
@@ -35,11 +36,7 @@ class GameRoom:
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
-
-        self.fleets: dict[str, Fleet] = {}
-
-        self.entities: list[Ship] = []
-
+        self.fleets: dict[str, list] = defaultdict(list())
         self.game_engine: GameEngine = GameEngine(self.statistics.game_tick)
 
 
@@ -56,7 +53,15 @@ class GameRoom:
         return self.config.room_id
 
     def add_bot(self):
-        ...
+        participant_id = uuid4().hex
+        participant_color = get_color(participant_id)
+        name = get_name(participant_id)
+        self.participants[participant_id] = Bot(
+            name=name,
+            is_ready = True,
+            color=participant_color
+        )
+        return participant_id
 
 
     def add_player(self) -> int:
@@ -68,10 +73,9 @@ class GameRoom:
             is_ready = False,
             color=player_color
         )
-        return player_id
 
-    def update_entities(self):
-        self.ship.update_position(self.statistics.game_tick)
+
+        return player_id
 
     def name_player(self, player_id, player_name):
         self.participants[player_id].name = player_name
@@ -92,15 +96,20 @@ class GameRoom:
                 return False
         return True
 
-    def handle_command(self, player_id, command):
-        if command == "ready":
-            self.participants[player_id].is_ready = True
-        elif command == "pause":
-            self.participants[player_id].is_ready = False
-        else:
-            pass
-            
+    def handle_command(self, player_id, command: dict):
+        new_command = CommonCommand(**command)
+        match new_command.type:
+            case CommandType.GAME_ROOM:
+                self._handle_room_command(player_id, new_command)
+            case CommandType.SHIP:
+                self.game_engine.proceed_ship_command(new_command)
+            case CommandType.ENGINE:
+                self.game_engine.proceed_command(new_command)
 
+    def _handle_room_command(self, player_id, command: CommonCommand):
+        pass
+
+            
     def check_world_collisions(self):
         ...
                     
@@ -108,7 +117,7 @@ class GameRoom:
         self.statistics.timestamp+=1
 
     def update_world(self):
-        self.game_engine.next_step()
+        self.game_engine.game_tick()
         
     def get_game_data(self, player_id):
         return {

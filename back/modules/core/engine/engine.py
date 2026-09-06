@@ -1,27 +1,28 @@
-from modules.core.entities.entities import Ship
+from modules.core.ship.ship import Ship
+from modules.core.ship.commands import parse_ship_command, ShipCommand
+from modules.core.entities.commands import CommonCommand, CommandType
+
 
 class GameEngine:
-    def __init__(self, dt):
-        self.dt = dt
-        self.ships: list[Ship] = []
+    def __init__(self):
+        self.ships: dict[str, Ship] = {}
 
-    def add_ship(self, ship):
-        self.ships.append(ship)
+    def game_tick(self):
+        """
+        1. move ships
+        2. collect fire events
+        3. proceed fire events
 
-    def move_ships(self):
-        for ship in self.ships:
-            ship.update_position(self.dt)
+        """
 
-    def select_movement(self):
-        for ship in self.ships:
-            velocity, angle_velocity = 1,0 #tactial_ai
-            ship.velocity = velocity
-            ship.ang_velocity = angle_velocity
+    def proceed_ship_command(self, new_command: CommonCommand):
+        ship_command = parse_ship_command(new_command)
+        if ship_command.ship_id in self.ships:
+            self.ships[ship_command.ship_id].handle_command(ship_command)
 
-    def next_step(self):
-        self.select_movement()
-        self.move_ships()
-
+    def proceed_command(self, new_command: CommonCommand):
+        ...
+            
     def get_entities(self):
         return {
             "ships": [ship.as_dict() for ship in self.ships],
