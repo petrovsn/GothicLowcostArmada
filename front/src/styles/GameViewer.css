@@ -35,25 +35,27 @@
 .ship {
     fill: #d8dce3;
     stroke: #ffffff;
-    stroke-width: 1;
+    stroke-width: 0.08;
 }
 
 
 .ship-selection {
     fill: none;
     stroke: #e6c75a;
-    stroke-width: 2;
+    stroke-width: 0.12;
     pointer-events: none;
+    r: 5;
 }
 
+
+.coordinate-grid {
+    pointer-events: none;
+    stroke: #2a303a;
+    stroke-width: 0.12;
+    opacity: 0.8;
+}
 
 
 .coordinate-grid line {
-    stroke-width: 1px;
-}
-
-.ship-selection {
     fill: none;
-    stroke-width: 1px;
-    vector-effect: non-scaling-stroke;
 }

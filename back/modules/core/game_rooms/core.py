@@ -11,6 +11,8 @@ from modules.core.entities.commands import CommonCommand, CommandType
 from modules.core.engine.engine import GameEngine
 from modules.core.entities.time import GAME_FPS
 from collections import defaultdict
+from modules.core.ship.commands import parse_ship_command, ShipCommand
+
 @dataclass
 class GameRoomConfig:
     room_id: str
@@ -38,6 +40,7 @@ class GameRoom:
         self.fleets: dict[str, list] = defaultdict(list)
         self.game_engine: GameEngine = GameEngine()
 
+        self.add_bot()
 
     def start(self):
         self.game_loop_task = asyncio.create_task(self.game_loop())
@@ -60,6 +63,11 @@ class GameRoom:
             is_ready = True,
             color=participant_color
         )
+
+        for i in range(5):
+            ship_id = self.game_engine.add_target()
+            self.fleets[participant_id].append(ship_id)
+
         return participant_id
 
 
@@ -104,7 +112,9 @@ class GameRoom:
             case CommandType.GAME_ROOM:
                 self._handle_room_command(player_id, new_command)
             case CommandType.SHIP:
-                self.game_engine.proceed_ship_command(new_command)
+                ship_command = parse_ship_command(new_command)
+                if ship_command.ship_id in self.fleets[player_id]:
+                    self.game_engine.proceed_ship_command(ship_command)
             case CommandType.ENGINE:
                 self.game_engine.proceed_command(new_command)
 
@@ -124,22 +134,26 @@ class GameRoom:
 
     def update_world(self):
         self.game_engine.game_tick()
+
+
+    def _get_participants(self):
+        return {participant_id: participant.to_dict() for participant_id, participant in self.participants.items()}
         
     def get_game_data(self, player_id):
         result = {
             "player_id":player_id,
             "service_info":{
                 "room_id": self.config.room_id,
-                "participants": [participant.to_dict() for participant in self.participants.values()],
+                "participants": self._get_participants()
                 "timestamp": self.statistics.timestamp,
                 "exec_time_current": self.statistics.last_tick_execution_time,
                 "exec_time_max": self.statistics.game_tick
             },
-            "player_fleet": self.fleets[player_id],
+            "fleets": self.fleets,
             "entities": self.game_engine.get_entities()   
         }
 
-
+        print(result)
         return result
 
     def update_views(self):

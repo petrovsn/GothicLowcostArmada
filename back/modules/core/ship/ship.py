@@ -14,10 +14,13 @@ from modules.core.ship.defence import ShipDefence
 from modules.core.entities.commands import CommonCommand
 from uuid import uuid4
 
+
+
 class Ship:
     def __init__(self):
         self.uuid = uuid4().hex
         self.name = f"Ship #{self.uuid[-5:]}"
+        self.tier = "cruiser"
         self.engine = ShipEngine(25,45)
         self.weapons = ShipWeaponry()
         self.defence = ShipDefence()
@@ -40,11 +43,29 @@ class Ship:
         return {
             "uuid":self.uuid,
             "name":self.name,
+            "tier": self.tier,
             "position": self.engine.position.as_dict(),
         }
+
+    def get_info(self):
+        return {
+                    "uuid":self.uuid,
+                    "name":self.name,
+                    "tier": self.tier,
+                    "engine": self.engine.as_dict(),
+                    "weapons": self.weapons.as_dict(),
+                    "defence": self.defence.as_dict()
+            }
+
 
     def get_events(self):
         ...
 
     def proceed_events(self):
         ...
+
+
+class Target(Ship):
+    def __init__(self):
+        super().__init__()
+        self.engine = ShipEngine(0,0)

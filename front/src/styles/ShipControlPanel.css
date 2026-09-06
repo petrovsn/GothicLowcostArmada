@@ -1,0 +1,283 @@
+.ship-control-panel {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 8px;
+
+    background: #10141b;
+    border: 1px solid #2a303a;
+    border-radius: 10px;
+
+    color: #d8dce3;
+}
+
+
+.ship-control-header {
+    display: flex;
+
+    align-items: baseline;
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+    padding-bottom: 5px;
+
+    border-bottom: 1px solid #2a303a;
+}
+
+
+.ship-control-name {
+    font-size: 13px;
+    font-weight: 600;
+}
+
+
+.ship-control-tier {
+    color: #8d96a3;
+
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+
+.ship-sectors {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 3px;
+}
+
+
+.ship-sector-row {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 3px;
+
+    width: 100%;
+}
+
+
+.ship-sector {
+    width: 100%;
+    max-width: 170px;
+    box-sizing: border-box;
+
+    padding: 5px;
+
+    background: #171c24;
+    border: 1px solid #303743;
+    border-radius: 5px;
+}
+
+
+.ship-sector-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 4px;
+}
+
+
+.ship-sector-title {
+    color: #aeb6c2;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+
+.ship-sector-armor {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 18px;
+    height: 18px;
+
+    background: #242b35;
+    border-radius: 3px;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.ship-weapons-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    font-size: 9px;
+}
+
+
+.ship-weapons-table th {
+    padding: 2px 3px;
+
+    border-bottom: 1px solid #303743;
+
+    color: #68727f;
+
+    font-size: 8px;
+    font-weight: 500;
+    text-align: left;
+}
+
+
+.ship-weapons-table td {
+    padding: 3px;
+
+    border-bottom: 1px solid #242a33;
+
+    color: #b8c0cb;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.ship-weapons-table th:nth-child(1),
+.ship-weapons-table td:nth-child(1) {
+    width: 45%;
+}
+
+
+.ship-weapons-table th:nth-child(2),
+.ship-weapons-table td:nth-child(2) {
+    width: 27.5%;
+
+    text-align: right;
+}
+
+
+.ship-weapons-table th:nth-child(3),
+.ship-weapons-table td:nth-child(3) {
+    width: 27.5%;
+
+    text-align: right;
+}
+
+
+.ship-weapons-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.ship-sector-empty {
+    padding: 3px 0;
+
+    color: #5f6875;
+
+    font-size: 8px;
+}
+
+
+.ship-engine-panel,
+.ship-weapons-control {
+    margin-top: 7px;
+    padding-top: 7px;
+
+    border-top: 1px solid #2a303a;
+}
+
+
+.ship-control-section-title {
+    margin-bottom: 5px;
+
+    color: #aeb6c2;
+
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+
+.ship-engine-thrust {
+    margin-bottom: 5px;
+
+    color: #d8dce3;
+
+    font-size: 10px;
+}
+
+
+.ship-engine-controls,
+.ship-weapons-controls {
+    display: grid;
+
+    gap: 3px;
+}
+
+
+.ship-engine-controls {
+    grid-template-columns:
+        0.6fr
+        0.6fr
+        0.8fr
+        1.5fr;
+}
+
+
+.ship-weapons-controls {
+    grid-template-columns:
+        1fr
+        1fr
+        1.5fr;
+}
+
+
+.ship-engine-controls button,
+.ship-weapons-controls button {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 26px;
+
+    padding: 3px 4px;
+
+    border: 1px solid #303743;
+    border-radius: 4px;
+
+    background: #171c24;
+
+    color: #aeb6c2;
+
+    font-family: inherit;
+    font-size: 9px;
+
+    cursor: pointer;
+
+    appearance: none;
+}
+
+
+.ship-engine-controls button:hover,
+.ship-weapons-controls button:hover {
+    background: #242b35;
+
+    color: #ffffff;
+}
+
+
+.ship-engine-controls button:active,
+.ship-weapons-controls button:active {
+    background: #303743;
+}
+
+
+.ship-weapons-controls button {
+    min-height: 28px;
+
+    font-size: 9px;
+    text-transform: uppercase;
+}

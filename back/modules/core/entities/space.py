@@ -5,10 +5,14 @@ from uuid import UUID
 from typing import Any
 
 
+
 @dataclass
 class Vector2:
     x: float
     y: float
+
+    def as_dict(self):
+        return asdict(self)
 
 @dataclass
 class Position:
@@ -23,3 +27,6 @@ class Position:
 class RelativePolarPosition:
     bearing: float
     distance: float
+
+    def as_dict(self):
+        return asdict(self)

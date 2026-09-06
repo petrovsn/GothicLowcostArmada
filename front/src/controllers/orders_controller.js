@@ -1,7 +1,10 @@
 import * as game_controller from "./game_controller.js";
 
 
-export function move_ship(shipId, position) {
+export function move_ship(
+    shipId,
+    position
+) {
     game_controller.send_command({
         type: "ship",
         action: "move_to",
@@ -16,7 +19,10 @@ export function move_ship(shipId, position) {
 }
 
 
-export function attack_ship(shipId, targetShipId) {
+export function attack_ship(
+    shipId,
+    targetShipId
+) {
     game_controller.send_command({
         type: "ship",
         action: "fire_to",
@@ -26,3 +32,32 @@ export function attack_ship(shipId, targetShipId) {
         },
     });
 }
+
+
+export function set_full_speed(
+    shipId
+) {
+    // TODO
+}
+
+
+export function set_half_speed(
+    shipId
+) {
+    // TODO
+}
+
+
+export function set_automatic_speed(
+    shipId
+) {
+    // TODO
+}
+
+
+export function clear_ship_target(
+    shipId
+) {
+    // TODO
+}
+

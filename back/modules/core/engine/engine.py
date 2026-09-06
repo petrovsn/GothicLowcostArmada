@@ -1,7 +1,7 @@
-from modules.core.ship.ship import Ship
+from modules.core.ship.ship import Ship, Target
 from modules.core.ship.commands import parse_ship_command, ShipCommand
 from modules.core.entities.commands import CommonCommand, CommandType
-
+from random import randint
 
 class GameEngine:
     def __init__(self):
@@ -21,13 +21,26 @@ class GameEngine:
         self.ships[ship.uuid] = ship
         return ship.uuid
 
-    def proceed_ship_command(self, new_command: CommonCommand):
-        ship_command = parse_ship_command(new_command)
+    def add_target(self):
+        target = Target()
+        x = randint(-30, 30)
+        y = randint(-30, 30)
+        target.place(x,y,0)
+        self.ships[target.uuid] = target
+        return target.uuid
+
+
+    def proceed_ship_command(self, ship_command: ShipCommand):
         if ship_command.ship_id in self.ships:
             self.ships[ship_command.ship_id].handle_command(ship_command)
 
     def proceed_command(self, new_command: CommonCommand):
         ...
+
+    def get_fleet_info(self, fleet_list: list[str]):
+        return {
+            ship_id: self.ships[ship_id].get_info() for ship_id in fleet_list
+        }
             
     def get_entities(self):
         result =  {

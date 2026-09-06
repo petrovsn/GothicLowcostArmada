@@ -41,3 +41,11 @@ class ShipDefence:
 
     def take_shot(
         self) -> ShotResult: ...
+
+    def as_dict(self):
+            return {
+                "hp":self.hp,
+                "shield": self.shield,
+                "armor": self.armor,
+                "aa_point": self.aa_points
+            }

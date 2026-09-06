@@ -13,7 +13,7 @@ import RoomStatusWidget from "./widgets/RoomStatusWidget.jsx";
 import JoinRoomWidget from "./widgets/JoinRoomWidget.jsx";
 import PlayerStatusWidget from "./widgets/PlayerStatusWidget.jsx";
 import FleetPanel from "./widgets/FleetPanel.jsx";
-
+import ShipControlPanel from "./widgets/ShipControlPanel.jsx";
 import "./styles/App.css";
 
 
@@ -87,7 +87,7 @@ function App() {
             <header className="app-header">
 
                 <h1>
-                    SnakesKingdom
+                    Gothic Lowcost Armada
                 </h1>
 
                 <div className="room-actions">
@@ -142,6 +142,8 @@ function App() {
                         }
                     />
 
+                    
+
                     <RawGameDataViewer />
 
                 </section>
@@ -150,6 +152,8 @@ function App() {
                 <section className="players-area">
 
                     <PlayersTable />
+                    <ShipControlPanel/>
+                    
 
                 </section>
 

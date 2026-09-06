@@ -1,7 +1,7 @@
 import asyncio
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 import enum
-from uuid import UUID
+from uuid import uuid4
 from typing import Any
 from modules.core.entities.space import Position, Vector2, RelativePolarPosition
 import math
@@ -40,10 +40,9 @@ class Weapon:
     fire_arc: FireArc
     range: float
     power: float
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.uuid = UUID()
+    uuid: str = field(
+        default_factory=lambda: uuid4().hex
+    )
 
 
 class WeaponMountingPoint(str, enum.Enum):
@@ -55,19 +54,29 @@ class WeaponMountingPoint(str, enum.Enum):
 
 
 from itertools import chain
+from datetime import datetime
+from collections import defaultdict
 
 @dataclass
 class ShipWeaponry:
-    mounting_points: dict[WeaponMountingPoint, Weapon]
-    fire_arcs: dict[FireArc, Weapon]
+    mounting_points: dict[WeaponMountingPoint, list[Weapon]]
+    fire_arcs: dict[FireArc,list[Weapon]]
 
     def __init__(self):
-        self.mounting_points = {}
-        self.fire_arcs = {}
+        self.mounting_points = defaultdict(list)
+        self.fire_arcs = defaultdict(list)
+        #self.reloadig: dict[str, datetime]
+
+        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.FRONT, power=6, range=30)
+        self.add_weapon(WeaponMountingPoint.PROW, new_weapon)
+        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.RIGHT, power=6, range=30)
+        self.add_weapon(WeaponMountingPoint.STARBOARD, new_weapon)
+        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.LEFT, power=6, range=30)
+        self.add_weapon(WeaponMountingPoint.PORT, new_weapon)
 
     def add_weapon(self, mounting_point: WeaponMountingPoint, weapon: Weapon):
-        self.mounting_points[mounting_point] = weapon
-        self.fire_arcs[weapon.fire_arc] = weapon
+        self.mounting_points[mounting_point].append(weapon)
+        self.fire_arcs[weapon.fire_arc].append(weapon)
 
     def get_weapons_for_target(
         self, polar_position: RelativePolarPosition
@@ -86,3 +95,21 @@ class ShipWeaponry:
 
     def fire_to(self, polar_position: RelativePolarPosition): 
         weapons: list[Weapon] = self.get_weapons_for_target(polar_position)
+
+    def as_dict(self):
+        return {
+            "mounting_points": {
+                mounting_point.value: [
+                    {
+                        "uuid": weapon.uuid,
+                        "type": weapon.type.value,
+                        "fire_arc": weapon.fire_arc.value,
+                        "range": weapon.range,
+                        "power": weapon.power,
+                    }
+                    for weapon in weapons
+                ]
+                for mounting_point, weapons
+                in self.mounting_points.items()
+            }
+        }

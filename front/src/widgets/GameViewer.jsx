@@ -32,6 +32,7 @@ const MAX_ZOOM = 50;
 function Ship({
     ship,
     selected,
+    color,
 }) {
     const {
         x,
@@ -65,6 +66,9 @@ function Ship({
                     rotate(${rotation})
                 `}
                 className="ship"
+                style={{
+                    fill: color,
+                }}
             />
         </>
     );
@@ -245,11 +249,36 @@ function GameViewer({
     const ships =
         entities.ships ?? [];
 
-    const playerFleet =
-        gameState.player_fleet ?? [];
+    const fleets =
+        gameState.fleets ?? {};
 
-    const playerShips =
-        new Set(playerFleet);
+    const participants =
+        gameState.participants ?? {};
+
+    const playerId =
+        gameState.player_id;
+
+
+    const shipFleetMap = {};
+
+    for (const [
+        fleetId,
+        shipIds,
+    ] of Object.entries(fleets)) {
+        for (const shipId of shipIds) {
+            shipFleetMap[shipId] = fleetId;
+        }
+    }
+
+
+    const getShipColor = (shipId) => {
+        const fleetId =
+            shipFleetMap[shipId];
+
+        return participants[
+            fleetId
+        ]?.color;
+    };
 
 
     const getWorldPosition = (
@@ -467,10 +496,13 @@ function GameViewer({
         }
 
 
-        const isPlayerShip =
-            playerShips.has(
+        const shipFleetId =
+            shipFleetMap[
                 ship.uuid
-            );
+            ];
+
+        const isPlayerShip =
+            shipFleetId === playerId;
 
 
         if (isPlayerShip) {
@@ -549,6 +581,11 @@ function GameViewer({
                                 selected={
                                     ship.uuid ===
                                     selectedShipId
+                                }
+                                color={
+                                    getShipColor(
+                                        ship.uuid
+                                    )
                                 }
                             />
                         )

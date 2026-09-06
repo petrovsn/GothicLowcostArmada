@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+
 import "../styles/PlayersTable.css";
 
 
@@ -8,7 +9,7 @@ function PlayersTable() {
     );
 
     const participants =
-        gameState?.service_info?.participants ?? [];
+        gameState?.participants ?? {};
 
     if (!gameState) {
         return (
@@ -18,7 +19,10 @@ function PlayersTable() {
         );
     }
 
-    if (participants.length === 0) {
+    const participantEntries =
+        Object.entries(participants);
+
+    if (participantEntries.length === 0) {
         return (
             <div className="players-table empty">
                 No players
@@ -26,9 +30,11 @@ function PlayersTable() {
         );
     }
 
-    const sortedParticipants = [...participants].sort(
-        (a, b) => b.points - a.points
-    );
+    const sortedParticipants =
+        participantEntries.sort(
+            ([, a], [, b]) =>
+                b.points - a.points
+        );
 
     return (
         <div className="players-table">
@@ -39,42 +45,47 @@ function PlayersTable() {
             </div>
 
             <div className="players-table-body">
-                {sortedParticipants.map((participant, index) => (
-                    <div
-                        className="players-table-row"
-                        key={index}
-                    >
-                        <div className="player-name">
-                            <span
-                                className="player-color"
-                                style={{
-                                    backgroundColor:
-                                        participant.color
-                                }}
-                            />
-
-                            <span>
-                                {participant.name}
-                            </span>
-                        </div>
-
-                        <div className="player-points">
-                            {participant.points}
-                        </div>
-
+                {sortedParticipants.map(
+                    ([
+                        participantId,
+                        participant,
+                    ]) => (
                         <div
-                            className={
-                                participant.is_ready
-                                    ? "player-status ready"
-                                    : "player-status waiting"
-                            }
+                            className="players-table-row"
+                            key={participantId}
                         >
-                            {participant.is_ready
-                                ? "Ready"
-                                : "Waiting"}
+                            <div className="player-name">
+                                <span
+                                    className="player-color"
+                                    style={{
+                                        backgroundColor:
+                                            participant.color
+                                    }}
+                                />
+
+                                <span>
+                                    {participant.name}
+                                </span>
+                            </div>
+
+                            <div className="player-points">
+                                {participant.points}
+                            </div>
+
+                            <div
+                                className={
+                                    participant.is_ready
+                                        ? "player-status ready"
+                                        : "player-status waiting"
+                                }
+                            >
+                                {participant.is_ready
+                                    ? "Ready"
+                                    : "Waiting"}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )
+                )}
             </div>
         </div>
     );

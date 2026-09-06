@@ -6,6 +6,7 @@ from modules.core.entities.commands import CommonCommand
 class ShipCommandType(str, enum.Enum):
     MOVE_TO = "move_to"
     FIRE_TO = "fire_to"
+    SET_THRUST = "set_thrust"
 
 class ShipCommand(BaseModel):
     ship_id: str

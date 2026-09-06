@@ -49,62 +49,49 @@ function FleetPanel({
 }) {
     const dispatch = useDispatch();
 
-
     const gameState = useSelector(
         state =>
             state.game.gameState?.payload
     );
-
 
     const selectedShipId = useSelector(
         state =>
             state.game.selectedShipId
     );
 
-
     if (!gameState) {
         return null;
     }
 
+    const playerId =
+        gameState.player_id;
 
-    /*
-     * GameState contract:
-     *
-     * {
-     *     player_id,
-     *     service_info,
-     *     player_fleet,
-     *     entities: {
-     *         ships,
-     *         ordnance,
-     *     },
-     * }
-     *
-     * player_fleet contains ship UUIDs.
-     */
-    const playerFleet =
-        gameState.player_fleet ?? [];
-
-
-    const entities =
-        gameState.entities ?? {};
-
+    const fleets =
+        gameState.fleets ?? {};
 
     const ships =
-        entities.ships ?? [];
+        gameState.entities?.ships ?? [];
 
-
-    /*
-     * Select only ships belonging
-     * to the current player's fleet.
-     */
-    const playerShips =
-        ships.filter(
-            ship =>
-                playerFleet.includes(
-                    ship.uuid
-                )
+    const shipsById =
+        Object.fromEntries(
+            ships.map(
+                ship => [
+                    ship.uuid,
+                    ship,
+                ]
+            )
         );
+
+    const playerShipIds =
+        fleets[playerId] ?? [];
+
+    const playerShips =
+        playerShipIds
+            .map(
+                shipId =>
+                    shipsById[shipId]
+            )
+            .filter(Boolean);
 
 
     const handleShipClick = (
@@ -114,14 +101,6 @@ function FleetPanel({
             ship.uuid ===
             selectedShipId;
 
-
-        /*
-         * First click:
-         * select the ship.
-         *
-         * Second click:
-         * center the camera on it.
-         */
         if (isAlreadySelected) {
             onCenterShip?.(
                 ship.position
@@ -129,7 +108,6 @@ function FleetPanel({
 
             return;
         }
-
 
         dispatch(
             setSelectedShip(
@@ -141,9 +119,7 @@ function FleetPanel({
 
     return (
         <div className="fleet-panel">
-
             <div className="fleet-panel-ships">
-
                 {playerShips.map(
                     ship => (
                         <FleetShipCard
@@ -161,9 +137,7 @@ function FleetPanel({
                         />
                     )
                 )}
-
             </div>
-
         </div>
     );
 }
