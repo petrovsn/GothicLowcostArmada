@@ -37,7 +37,7 @@ class GameRoom:
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
-        self.fleets: dict[str, list] = defaultdict(list)
+        
         self.game_engine: GameEngine = GameEngine()
 
         self.add_bot()
@@ -65,8 +65,7 @@ class GameRoom:
         )
 
         for i in range(5):
-            ship_id = self.game_engine.add_target()
-            self.fleets[participant_id].append(ship_id)
+            self.game_engine.add_target(participant_id)
 
         return participant_id
 
@@ -82,9 +81,7 @@ class GameRoom:
         )
 
 
-        ship_id = self.game_engine.add_ship()
-        self.fleets[player_id].append(ship_id)
-
+        self.game_engine.add_ship(player_id)
         return player_id
 
     def name_player(self, player_id, player_name):
@@ -113,8 +110,7 @@ class GameRoom:
                 self._handle_room_command(player_id, new_command)
             case CommandType.SHIP:
                 ship_command = parse_ship_command(new_command)
-                if ship_command.ship_id in self.fleets[player_id]:
-                    self.game_engine.proceed_ship_command(ship_command)
+                self.game_engine.proceed_ship_command(ship_command)
             case CommandType.ENGINE:
                 self.game_engine.proceed_command(new_command)
 
@@ -149,9 +145,9 @@ class GameRoom:
                 "exec_time_current": self.statistics.last_tick_execution_time,
                 "exec_time_max": self.statistics.game_tick
             },
-            "fleets": self.fleets,
+            "fleets": self.game_engine.fleets,
             "entities": self.game_engine.get_entities(),
-            "player_fleet": self.game_engine.get_fleet_info(self.fleets[player_id])
+            "player_fleet": self.game_engine.get_fleet_info(player_id)
         }
 
         return result

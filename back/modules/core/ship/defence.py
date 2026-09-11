@@ -7,6 +7,10 @@ from modules.core.entities.space import Position, Vector2, RelativePolarPosition
 import math
 from dataclasses import asdict
 from modules.core.entities.time import GAME_FPS, GAME_ROUND
+from modules.core.engine.game_events import Event, FireEventResult, FireEvent
+from modules.utils.geometry import get_relative_polar_position
+from modules.core.ship.weaponry import WeaponDamage
+from modules.utils.random import get_success_tries
 
 class DefenceSector(str, enum.Enum):
     FRONT = "front"
@@ -25,13 +29,6 @@ class DefenceSector(str, enum.Enum):
         else:
             return DefenceSector.FRONT
 
-
-@dataclass
-class ShotResult:
-    success: bool
-    hit_taken: int
-
-
 class ShipDefence:
     def __init__(self):
         self.armor = {DefenceSector.from_bearing(bearing):1 for bearing in [0, 90, 180, 270]}
@@ -39,9 +36,19 @@ class ShipDefence:
         self.shield = 2
         self.aa_points = 2
 
-    def take_shot(
-        self) -> ShotResult: ...
+    def _take_laser_shot(self, damage):
+        success = get_success_tries(damage, 3)
+        return success
 
+    def _take_macro_shot(self, damage):
+        return 0
+
+    def take_shot(self, source_polar: RelativePolarPosition, weapon_damage: WeaponDamage):
+        hit_taken = self._take_macro_shot(weapon_damage.MACRO)
+        hit_taken+= self._take_laser_shot(weapon_damage.LASERS)
+        self.hp -= hit_taken
+        return hit_taken
+        
     def as_dict(self):
             return {
                 "hp":self.hp,

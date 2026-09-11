@@ -20,10 +20,13 @@ class Position:
     y: float
     rotation: float
 
+    def to_vector(self):
+        return Vector2(self.x, self.y)
+
     def as_dict(self):
         return asdict(self)
 
-@dataclass
+@dataclass(frozen=True)
 class RelativePolarPosition:
     bearing: float
     distance: float

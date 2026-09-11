@@ -40,6 +40,7 @@ class ShipEngine:
         if self.max_round_rotation < bearing < (360 - self.max_round_rotation):
             return True
         return False
+        
 
     def update_velocities(self):
         if self.target is None:
@@ -67,7 +68,6 @@ class ShipEngine:
         self.position.x += math.sin(angle) * self.velocity * self.thrust * dt
         self.position.y += math.cos(angle) * self.velocity * self.thrust * dt
         self.position.rotation = (self.position.rotation + self.ang_velocity * dt) % 360
-
 
     def update(self):
         if self.position is not None:

@@ -1,5 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Request, Body
-from modules.core.game_rooms.core import GameRoom
+from modules.core.engine.game_room import GameRoom
 from modules.core.game_manager import GameManager
 import asyncio
 from modules.api.schemas.schemas import RoomCreationRequest
