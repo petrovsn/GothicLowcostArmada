@@ -15,7 +15,7 @@ class GameEngine:
         self.ships: dict[str, Ship] = {}
         self.fleets: dict[str, list] = defaultdict(list)
         self.events = Queue()
-        self.events_output = Queue()
+        self.events_output = []
 
     @lru_cache()
     def _get_owner_id(self, ship_id):
@@ -45,6 +45,7 @@ class GameEngine:
         return perception
 
     def game_tick(self):
+        self.events_output = []
         for ship in self.ships.values():
             perception = self._get_perception_for_ship(ship.uuid)
             ship.update_perception(perception)
@@ -65,7 +66,7 @@ class GameEngine:
             if ship is not None:
                 ship.handle_event(event)
         if type(event) in [FireEventResult]:
-            self.events_output.put(event)
+            self.events_output.append(event.as_dict())
 
 
     def add_ship(self, player_id):
@@ -96,14 +97,9 @@ class GameEngine:
         }
             
     def get_entities(self):
-        events = []
-        while not self.events_output.empty():
-            events.append(
-                self.events_output.get().as_dict()
-            )
         result =  {
             "ships": [ship.as_dict() for ship in self.ships.values()],
-            "events": events,
+            "events": self.events_output,
             "ordnance": [],
         }
         return result

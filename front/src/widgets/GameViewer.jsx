@@ -138,7 +138,28 @@ function GameViewer({
     const svgRef =
         useRef(null);
 
-    const { effects, addEffect } = useEffects();
+    const {
+        effects,
+        addEffect,
+        addFireEffect,
+    } = useEffects();
+
+
+    useEffect(() => {
+        if (!gameState) {
+            return;
+        }
+
+        const events =
+            gameState.entities?.events ?? [];
+
+        for (const event of events) {
+            addFireEffect(event);
+        }
+    }, [
+        gameState,
+        addFireEffect,
+    ]);
 
     useEffect(() => {
         if (!gameState) {
@@ -333,7 +354,7 @@ function GameViewer({
 
             if (
                 distance <=
-                shipRadius/2 &&
+                shipRadius / 2 &&
                 distance <
                 closestDistance
             ) {
