@@ -8,7 +8,7 @@ from modules.utils.names import get_name
 from dataclasses import dataclass
 import traceback
 from modules.core.entities.commands import CommonCommand, CommandType
-from modules.core.engine.engine import GameEngine
+from modules.core.engine.game_engine import GameEngine
 from modules.core.entities.time import GAME_FPS
 from collections import defaultdict
 from modules.core.ship.commands import parse_ship_command, ShipCommand

@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from dataclasses import dataclass
-from modules.core.game_rooms.core import GameRoom
+from modules.core.engine.game_room import GameRoom
 
 @dataclass
 class RoomData:

@@ -43,7 +43,7 @@ function ShipIcon({
         >
             <rect
                 x="-0.15"
-                y="0.20"
+                y="0.15"
                 width="0.30"
                 height="0.30"
             />

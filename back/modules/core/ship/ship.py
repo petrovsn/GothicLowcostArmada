@@ -14,22 +14,35 @@ from modules.core.ship.defence import ShipDefence
 from modules.core.entities.commands import CommonCommand
 from uuid import uuid4
 
+class TacticalBenavior:
+    def __init__(self):
+        pass
 
+    def tick(self, perception, weapons, engine):
+        pass
 
 class Ship:
-    def __init__(self):
+    def __init__(self, publish_event_queue = None):
         self.uuid = uuid4().hex
         self.name = f"Ship #{self.uuid[-5:]}"
         self.tier = "cruiser"
-        self.engine = ShipEngine(25,45)
+        self.engine = ShipEngine(25,90)
         self.weapons = ShipWeaponry()
         self.defence = ShipDefence()
+
+        self.tactical_ai = TacticalBenavior()
+
+        self.perception = None
+        self.event_queue = publish_event_queue
 
     def place(self, x, y, rotation):
         self.engine.position = Position(x= x, y=y, rotation=rotation)
 
-    def update_view(self):
-        pass
+    def update_perception(self, new_perception):
+        self.perception = new_perception
+
+    def update_decisions(self):
+        self.tactical_ai.tick(self.perception, self.weapons, self.engine)
 
     def update_position(self):
         self.engine.update()

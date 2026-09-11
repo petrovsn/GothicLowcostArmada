@@ -9,7 +9,7 @@ class GameEngine:
 
     def game_tick(self):
         for ship in self.ships.values():
-            ship.update_view()
+            ship.update_perception()
 
         for ship in self.ships.values():
             ship.update_position()
@@ -28,7 +28,6 @@ class GameEngine:
         target.place(x,y,0)
         self.ships[target.uuid] = target
         return target.uuid
-
 
     def proceed_ship_command(self, ship_command: ShipCommand):
         if ship_command.ship_id in self.ships:
