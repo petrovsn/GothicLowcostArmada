@@ -15,6 +15,13 @@ from modules.core.entities.commands import CommonCommand
 from uuid import uuid4
 from modules.core.ship.perception import ShipPerception
 from modules.core.engine.game_events import FireEvent
+from modules.core.ai.reports import CommandReport, ReportStatus
+from dataclasses import dataclass
+
+@dataclass
+class TacticalTickReport:
+    events: list
+    reports: list
 
 class TacticalBenavior:
     def __init__(self, uuid):
@@ -30,11 +37,21 @@ class TacticalBenavior:
 
     def tick(self, perception: ShipPerception, weapons:ShipWeaponry, engine:ShipEngine):
         output_events = []
+        output_reports = []
 
         if engine.destination != self.destination:
             engine.set_destination(self.destination)
 
-        if self.target_id is None: return []
+        if self.destination is not None:
+            if engine.position.to_vector().distance(self.destination)<1:
+                output_reports.append(CommandReport(
+                    uuid=self.uuid,
+                    status=ReportStatus.SUCCESS,
+                    command_type=ShipCommandType.MOVE_TO
+                ))
+
+
+        if self.target_id is None: return TacticalTickReport(events=[], reports=[])
         target_info = perception.enemy_entities.get(self.target_id, None)
         if target_info is not None:
             weapon_damage = weapons.fire_to(target_info.position)
@@ -47,5 +64,8 @@ class TacticalBenavior:
                 )
                 output_events.append(fire_event)
 
-        return output_events
+        return TacticalTickReport(
+            events = output_events,
+            reports = output_reports
+        )
 

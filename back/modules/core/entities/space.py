@@ -3,7 +3,7 @@ from dataclasses import dataclass, asdict
 import enum
 from uuid import UUID
 from typing import Any
-
+import math
 
 
 @dataclass
@@ -13,6 +13,12 @@ class Vector2:
 
     def as_dict(self):
         return asdict(self)
+
+    def distance(self, other) -> float:
+        return math.hypot(
+            self.x - other.x,
+            self.y - other.y,
+        )
 
 @dataclass
 class Position:

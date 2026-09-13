@@ -8,3 +8,4 @@ def get_success_tries(N_tries:int, treshold:int):
         if random_dice>treshold:
             count +=1
     return count
+

@@ -12,6 +12,7 @@ from modules.core.engine.game_events import Event, FireEvent, FireEventResult, S
 from modules.core.ship.ship import Ship
 from modules.core.ship.target import Target
 from modules.core.ship.debris import Debris
+from modules.core.ai.core_ai import CoreAi, AiPerception
 
 class GameEngine:
     def __init__(self):
@@ -19,6 +20,7 @@ class GameEngine:
         self.fleets: dict[str, list] = defaultdict(list)
         self.events = Queue()
         self.events_output = []
+        self.ai:dict[str, CoreAi] = {}
 
     @lru_cache()
     def _get_owner_id(self, ship_id):
@@ -26,6 +28,8 @@ class GameEngine:
             if ship_id in fleet:
                 return owner_id
         return None
+
+
 
     def _get_relative_ship_info(self, observer_position: Position, ship: Ship) -> ShipPerceptionInfo:
         relative_polar_position = get_relative_polar_position(observer_position, ship.position.to_vector())
@@ -47,11 +51,25 @@ class GameEngine:
         )
         return perception
 
+    def _get_perception_for_ai(self,owner_id):
+        perception = AiPerception(
+            fleet=self.get_fleet_info(owner_id),
+            entities=self.get_entities()
+        )
+        return perception
+
     def game_tick(self):
         self.events_output = []
         for ship in self.ships.values():
             perception = self._get_perception_for_ship(ship.uuid)
             ship.update_perception(perception)
+
+        for ai_id, ai in self.ai.items():
+            ai_perception = self._get_perception_for_ai(ai_id)
+            ai.update_perception(ai_perception)
+            orders: list[ShipCommand] = ai.make_decisions()
+            for order in orders:
+                self.proceed_ship_command(order)
 
         for ship in self.ships.values():
             ship.update_decisions()
@@ -83,11 +101,21 @@ class GameEngine:
         debris.place(**self.ships[ship_id].position.as_dict())
         self.ships[ship_id] = debris
 
+    def add_bot(self, participant_id):
+        self.ai[participant_id] = CoreAi()
+        
     def add_ship(self, player_id):
         ship = Ship(events_queue=self.events)
-        ship.place(0,0,0)
+
+        ship.place(randint(-30,30),randint(-30,30),randint(0,359))
+
+        if player_id in self.ai:
+            ship.set_ai_report_channel(self.ai.get(player_id).order_report_queue)
+
         self.ships[ship.uuid] = ship
         self.fleets[player_id].append(ship.uuid)
+
+        
 
     def add_target(self, participant_id):
         target = Target(events_queue=self.events)

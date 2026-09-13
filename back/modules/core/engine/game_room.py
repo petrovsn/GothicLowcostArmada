@@ -26,7 +26,7 @@ class GameRoomStats:
     
 
 class GameRoom:
-    def __init__(self):
+    def __init__(self, n_players):
         self.config = GameRoomConfig(
             room_id = uuid4().hex,
         )
@@ -39,6 +39,8 @@ class GameRoom:
         self.participants: dict[str, Participant] = {}
         
         self.game_engine: GameEngine = GameEngine()
+
+        self.game_engine.set_spawn_points(n_players)
 
         self.add_bot()
 
@@ -64,8 +66,10 @@ class GameRoom:
             color=participant_color
         )
 
+        self.game_engine.add_bot(participant_id)
+
         for i in range(5):
-            self.game_engine.add_target(participant_id)
+            self.game_engine.add_ship(participant_id)
 
         return participant_id
 
@@ -80,8 +84,9 @@ class GameRoom:
             color=player_color
         )
 
+        for i in range(3):
+            self.game_engine.add_ship(player_id)
 
-        self.game_engine.add_ship(player_id)
         return player_id
 
     def name_player(self, player_id, player_name):
@@ -120,10 +125,7 @@ class GameRoom:
             case "resume":
                 self.participants[player_id].is_ready = True
 
-            
-    def check_world_collisions(self):
-        ...
-                    
+                        
     def next_step(self):
         self.statistics.timestamp+=1
 

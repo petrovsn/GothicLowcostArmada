@@ -72,11 +72,11 @@ class ShipWeaponry:
         self.fire_arcs = defaultdict(list)
         self.reloading: Counter = Counter()
 
-        new_weapon = Weapon(type = WeaponType.LASERS, fire_arc=FireArc.FRONT, power=6, range=30, reloading = 30*5)
+        new_weapon = Weapon(type = WeaponType.LASERS, fire_arc=FireArc.FRONT, power=6, range=35, reloading = 30*5)
         self.add_weapon(WeaponMountingPoint.PROW, new_weapon)
         new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.RIGHT, power=10, range=30, reloading = 30*5)
         self.add_weapon(WeaponMountingPoint.STARBOARD, new_weapon)
-        new_weapon = Weapon(type = WeaponType.LASERS, fire_arc=FireArc.LEFT, power=6, range=30, reloading = 30*5)
+        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.LEFT, power=6, range=30, reloading = 30*5)
         self.add_weapon(WeaponMountingPoint.PORT, new_weapon)
 
     def add_weapon(self, mounting_point: WeaponMountingPoint, weapon: Weapon):
