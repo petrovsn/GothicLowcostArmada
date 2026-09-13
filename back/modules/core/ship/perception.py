@@ -3,7 +3,7 @@ from modules.core.entities.space import RelativePolarPosition
 
 @dataclass
 class ShipPerceptionInfo:
-    tier: str
+    vessel_class: str
     position: RelativePolarPosition
     rotation: float
 

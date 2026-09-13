@@ -28,7 +28,7 @@ class GameEngine:
         relative_polar_position = get_relative_polar_position(observer_position, ship.position.to_vector())
 
         return ShipPerceptionInfo(
-            tier = ship.tier,
+            vessel_class = ship.vessel_class,
             position = relative_polar_position,
             rotation = ship.position.rotation,
 

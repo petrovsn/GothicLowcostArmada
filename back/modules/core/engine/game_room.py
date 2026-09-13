@@ -89,7 +89,6 @@ class GameRoom:
 
     def remove_player(self,player_id):
         self.participants.pop(player_id)
-        self.fleets.pop(player_id)
 
     def players_are_ready(self):
         player_exists = False
