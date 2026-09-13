@@ -142,6 +142,7 @@ function GameViewer({
         effects,
         addEffect,
         addFireEffect,
+        addDeathEffect,
     } = useEffects();
 
 
@@ -155,6 +156,7 @@ function GameViewer({
 
         for (const event of events) {
             addFireEffect(event);
+            addDeathEffect(event)
         }
     }, [
         gameState,
