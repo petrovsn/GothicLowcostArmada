@@ -29,7 +29,8 @@ class GameEngine:
                 return owner_id
         return None
 
-
+    def set_spawn_points(self, n_spawn_points):
+        pass
 
     def _get_relative_ship_info(self, observer_position: Position, ship: Ship) -> ShipPerceptionInfo:
         relative_polar_position = get_relative_polar_position(observer_position, ship.position.to_vector())

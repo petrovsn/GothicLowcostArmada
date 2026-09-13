@@ -27,8 +27,8 @@ class GameManager:
             except asyncio.CancelledError:
                 pass
 
-    def create_room(self):
-        new_room = GameRoom()
+    def create_room(self, *args, **kwargs):
+        new_room = GameRoom(*args, **kwargs)
         room_id = new_room.room_id
         new_room.start()
         self.rooms[room_id] = RoomData(
