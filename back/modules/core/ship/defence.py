@@ -77,9 +77,15 @@ class ShipDefence:
     def __init__(self, vessel_class: str):
         self.armor = {DefenceSector.from_bearing(bearing):1 for bearing in [0, 90, 180, 270]}
         self.hp = 8
+        self.max_shield = 2
         self.shield = 2
         self.aa_points = 2
         self.vessel_class = vessel_class
+
+        self.shield_recovery_time = 0
+
+    def is_alive(self):
+        return self.hp>0
 
     def _take_laser_shot(self, damage):
         if damage == 0: return 0
@@ -97,8 +103,26 @@ class ShipDefence:
     def take_shot(self, source_polar: RelativePolarPosition, weapon_damage: WeaponDamage):
         hit_taken = self._take_macro_shot(source_polar, weapon_damage.MACRO)
         hit_taken+= self._take_laser_shot(weapon_damage.LASERS)
-        self.hp -= hit_taken
+
+        self.handle_hits(hit_taken)
+
         return hit_taken
+
+    def handle_hits(self, hit_count):
+        if hit_count == 0: return
+        hp_damage = hit_count - self.shield
+        if self.shield > 0:
+            self.shield = max(0, self.shield-hit_count)
+            self.shield_recovery_time = 10*30
+        self.hp-=hp_damage
+
+
+    def tick(self):
+        if self.shield < self.max_shield:
+            self.shield_recovery_time -=1
+            if self.shield_recovery_time == 0:
+                self.shield = min(self.max_shield, self.shield+1)
+
         
     def as_dict(self):
             return {

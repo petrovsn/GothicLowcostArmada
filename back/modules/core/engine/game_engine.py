@@ -1,4 +1,4 @@
-from modules.core.ship.ship import Ship, Target
+
 from modules.core.ship.commands import parse_ship_command, ShipCommand
 from modules.core.entities.commands import CommonCommand, CommandType
 from modules.core.entities.space import Vector2, Position, RelativePolarPosition
@@ -8,7 +8,10 @@ from collections import defaultdict
 from modules.core.ship.perception import ShipPerception, ShipPerceptionInfo
 from functools import lru_cache
 from queue import Queue
-from modules.core.engine.game_events import Event, FireEvent, FireEventResult
+from modules.core.engine.game_events import Event, FireEvent, FireEventResult, ShipDeathEvent
+from modules.core.ship.ship import Ship
+from modules.core.ship.target import Target
+from modules.core.ship.debris import Debris
 
 class GameEngine:
     def __init__(self):
@@ -68,6 +71,17 @@ class GameEngine:
         if type(event) in [FireEventResult]:
             self.events_output.append(event.as_dict())
 
+        if isinstance(event, ShipDeathEvent):
+            self.events_output.append(event.as_dict())
+            self._handle_ship_death(event.target_id)
+
+    def _handle_ship_death(self, ship_id):
+        owner_id = self._get_owner_id(ship_id)
+        self.fleets[owner_id].remove(ship_id)
+        debris = Debris()
+        debris.from_ship_dict(self.ships[ship_id].as_dict())
+        debris.place(**self.ships[ship_id].position.as_dict())
+        self.ships[ship_id] = debris
 
     def add_ship(self, player_id):
         ship = Ship(events_queue=self.events)

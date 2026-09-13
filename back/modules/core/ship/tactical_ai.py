@@ -20,13 +20,20 @@ class TacticalBenavior:
     def __init__(self, uuid):
         self.uuid = uuid
         self.target_id = None
-        self.req_position = None
+        self.destination = None
+
+    def set_destination(self, destination: Vector2):
+        self.destination = destination
 
     def set_target(self, target_id: str):
         self.target_id = target_id
 
     def tick(self, perception: ShipPerception, weapons:ShipWeaponry, engine:ShipEngine):
         output_events = []
+
+        if engine.destination != self.destination:
+            engine.set_destination(self.destination)
+
         if self.target_id is None: return []
         target_info = perception.enemy_entities.get(self.target_id, None)
         if target_info is not None:
