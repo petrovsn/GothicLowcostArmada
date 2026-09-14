@@ -1,13 +1,14 @@
-import asyncio
-from dataclasses import dataclass, field
 import enum
+from collections import Counter, defaultdict
+from dataclasses import dataclass, field
+from itertools import chain
 from uuid import uuid4
-from typing import Any
-from modules.core.entities.space import Position, Vector2, RelativePolarPosition
-import math
-from dataclasses import asdict
-from modules.core.entities.time import GAME_FPS, GAME_ROUND
-from collections import Counter
+
+from modules.core.entities.space import RelativePolarPosition
+from modules.utils.config_loader import ConfigLoader
+
+GAME_ROUND = ConfigLoader().get_round_duration()
+GAME_FPS = ConfigLoader().get_fps()
 
 class WeaponType(enum.StrEnum):
     TORPEDOS = "torpedos"
@@ -57,11 +58,6 @@ class WeaponMountingPoint(str, enum.Enum):
     DORSAL = "dorsal"
     KEEL = "keel"
 
-
-from itertools import chain
-from datetime import datetime
-from collections import defaultdict
-
 @dataclass
 class ShipWeaponry:
     mounting_points: dict[WeaponMountingPoint, list[Weapon]]
@@ -72,11 +68,11 @@ class ShipWeaponry:
         self.fire_arcs = defaultdict(list)
         self.reloading: Counter = Counter()
 
-        new_weapon = Weapon(type = WeaponType.LASERS, fire_arc=FireArc.FRONT, power=6, range=35, reloading = 30*5)
+        new_weapon = Weapon(type = WeaponType.LASERS, fire_arc=FireArc.FRONT, power=6, range=35, reloading = GAME_ROUND*GAME_FPS)
         self.add_weapon(WeaponMountingPoint.PROW, new_weapon)
-        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.RIGHT, power=10, range=30, reloading = 30*5)
+        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.RIGHT, power=10, range=30, reloading = GAME_ROUND*GAME_FPS)
         self.add_weapon(WeaponMountingPoint.STARBOARD, new_weapon)
-        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.LEFT, power=6, range=30, reloading = 30*5)
+        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.LEFT, power=6, range=30, reloading = GAME_ROUND*GAME_FPS)
         self.add_weapon(WeaponMountingPoint.PORT, new_weapon)
 
     def add_weapon(self, mounting_point: WeaponMountingPoint, weapon: Weapon):

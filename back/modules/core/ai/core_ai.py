@@ -12,7 +12,7 @@ from modules.core.ship.commands import ShipCommand, ShipCommandType
 from modules.core.ship.engine import ShipEngine
 from modules.core.ship.weaponry import ShipWeaponry
 from modules.core.ship.defence import ShipDefence
-from modules.core.ship.tactical_ai import TacticalBenavior
+from modules.core.ship.tactical_ai import TacticalBehavior
 from modules.core.entities.commands import CommonCommand
 from modules.core.ship.perception import ShipPerception
 from modules.core.ship.entities import VesselClass
@@ -21,7 +21,7 @@ from queue import Queue
 from modules.core.engine.game_events import Event, FireEventResult, FireEvent, ShipDeathEvent
 from modules.utils.geometry import get_relative_polar_position
 from abc import ABC, abstractmethod
-from modules.core.ship.abc_vessel import AbstractVeccel
+from modules.core.ship.abc_vessel import AbstractVessel
 import random
 from modules.core.ai.reports import CommandReport, ReportStatus
 

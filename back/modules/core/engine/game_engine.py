@@ -9,6 +9,7 @@ from modules.core.ship.perception import ShipPerception, ShipPerceptionInfo
 from functools import lru_cache
 from queue import Queue
 from modules.core.engine.game_events import Event, FireEvent, FireEventResult, ShipDeathEvent
+from modules.core.ship.abc_vessel import AbstractVessel
 from modules.core.ship.ship import Ship
 from modules.core.ship.target import Target
 from modules.core.ship.debris import Debris
@@ -16,18 +17,15 @@ from modules.core.ai.core_ai import CoreAi, AiPerception
 
 class GameEngine:
     def __init__(self):
-        self.ships: dict[str, Ship] = {}
+        self.ships: dict[str, AbstractVessel] = {}
+        self.owning: dict[str,str] = {}
         self.fleets: dict[str, list] = defaultdict(list)
         self.events = Queue()
         self.events_output = []
         self.ai:dict[str, CoreAi] = {}
 
-    @lru_cache()
     def _get_owner_id(self, ship_id):
-        for owner_id, fleet in self.fleets.items():
-            if ship_id in fleet:
-                return owner_id
-        return None
+        return self.owning.get(ship_id, None)
 
     def set_spawn_points(self, n_spawn_points):
         pass
@@ -101,6 +99,15 @@ class GameEngine:
         debris.from_ship_dict(self.ships[ship_id].as_dict())
         debris.place(**self.ships[ship_id].position.as_dict())
         self.ships[ship_id] = debris
+        self.owning.pop(ship_id,-1)
+
+    def remove_participant(self, participant_id):
+        fleet_to_remove = self.fleets[participant_id]
+        for ship_id in fleet_to_remove:
+            self._handle_ship_death(ship_id)
+        self.fleets.pop(participant_id, -1)
+        self.ai.pop(participant_id, -1)
+        
 
     def add_bot(self, participant_id):
         self.ai[participant_id] = CoreAi()
@@ -115,9 +122,9 @@ class GameEngine:
 
         self.ships[ship.uuid] = ship
         self.fleets[player_id].append(ship.uuid)
+        self.owning[ship.uuid] = player_id
 
         
-
     def add_target(self, participant_id):
         target = Target(events_queue=self.events)
         x = randint(-30, 30)
@@ -125,6 +132,7 @@ class GameEngine:
         target.place(x,y,0)
         self.ships[target.uuid] = target
         self.fleets[participant_id].append(target.uuid)
+        self.owning[target.uuid] = participant_id
         return target.uuid
 
     def proceed_ship_command(self, ship_command: ShipCommand):

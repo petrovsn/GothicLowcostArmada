@@ -1,10 +1,10 @@
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from enum import StrEnum
-from typing import Any
-from modules.core.ship.weaponry import WeaponDamage
-from modules.core.entities.space import Vector2
-from modules.core.entities.space import RelativePolarPosition
 from typing import ClassVar
+
+from modules.core.entities.space import Vector2
+from modules.core.ship.weaponry import WeaponDamage
+
 
 class EventType(StrEnum):
     SHOT = "shot"

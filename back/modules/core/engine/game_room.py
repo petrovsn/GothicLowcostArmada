@@ -1,17 +1,18 @@
-import time
 import asyncio
+import time
+import traceback
+from dataclasses import dataclass
 from uuid import uuid4
-from modules.core.entities.space import Position, Vector2
-from modules.core.entities.participant import Participant, Player, Bot
+
+from modules.core.engine.game_engine import GameEngine
+from modules.core.entities.commands import CommandType, CommonCommand
+from modules.core.entities.participant import Bot, Participant, Player
+from modules.core.entities.time import GAME_FPS
+from modules.core.ship.commands import parse_ship_command
 from modules.utils.colors import get_color
 from modules.utils.names import get_name
-from dataclasses import dataclass
-import traceback
-from modules.core.entities.commands import CommonCommand, CommandType
-from modules.core.engine.game_engine import GameEngine
-from modules.core.entities.time import GAME_FPS
-from collections import defaultdict
-from modules.core.ship.commands import parse_ship_command, ShipCommand
+
+from modules.utils.config_loader import ConfigLoader
 
 @dataclass
 class GameRoomConfig:
@@ -33,7 +34,7 @@ class GameRoom:
 
         self.statistics = GameRoomStats(
             timestamp = 0,
-            game_tick = 1.0/GAME_FPS,
+            game_tick = 1.0/ConfigLoader().get_fps(),
             last_tick_execution_time = 0.0
         )
         self.participants: dict[str, Participant] = {}
@@ -56,9 +57,12 @@ class GameRoom:
     def room_id(self):
         return self.config.room_id
 
+    def _get_used_colors(self):
+        return [p.color for p in self.participants.values()]
+
     def add_bot(self):
         participant_id = uuid4().hex
-        participant_color = get_color(participant_id)
+        participant_color = get_color(self._get_used_colors())
         name = get_name(participant_id)
         self.participants[participant_id] = Bot(
             name=name,
@@ -76,7 +80,7 @@ class GameRoom:
 
     def add_player(self) -> int:
         player_id = uuid4().hex
-        player_color = get_color(player_id)
+        player_color = get_color(self._get_used_colors())
         self.participants[player_id] = Player(
             name="UnknownPlayer",
             connector=asyncio.Queue(maxsize=1),
@@ -94,6 +98,7 @@ class GameRoom:
 
     def remove_player(self,player_id):
         self.participants.pop(player_id)
+        self.game_engine.remove_participant(player_id)
 
     def players_are_ready(self):
         player_exists = False

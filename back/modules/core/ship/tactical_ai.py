@@ -23,7 +23,7 @@ class TacticalTickReport:
     events: list
     reports: list
 
-class TacticalBenavior:
+class TacticalBehavior:
     def __init__(self, uuid):
         self.uuid = uuid
         self.target_id = None
@@ -44,6 +44,8 @@ class TacticalBenavior:
 
         if self.destination is not None:
             if engine.position.to_vector().distance(self.destination)<1:
+                self.set_destination(None)
+                engine.set_destination(None)
                 output_reports.append(CommandReport(
                     uuid=self.uuid,
                     status=ReportStatus.SUCCESS,

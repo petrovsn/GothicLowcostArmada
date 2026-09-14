@@ -6,9 +6,11 @@ from typing import Any
 from modules.core.entities.space import Position, Vector2, RelativePolarPosition
 import math
 from dataclasses import asdict
-from modules.core.entities.time import GAME_FPS, GAME_ROUND
 from modules.utils.geometry import get_relative_polar_position
+from modules.utils.config_loader import ConfigLoader
 
+GAME_ROUND = ConfigLoader().get_round_duration()
+GAME_FPS = ConfigLoader().get_fps()
 
 @dataclass
 class ShipEngine:
@@ -43,6 +45,8 @@ class ShipEngine:
         
 
     def update_velocities(self):
+        self.thrust = 1.0
+        self.ang_velocity = 0
         if self.destination is None:
             return 
         destination_polar_position:RelativePolarPosition = get_relative_polar_position(self.position, self.destination)
@@ -51,7 +55,6 @@ class ShipEngine:
         else:
             closest_turn = self.get_closest_turn(destination_polar_position.bearing)
             self.ang_velocity = closest_turn*self.max_ang_velocity
-            self.thrust = 1.0
             if self._bearing_out_of_turn(destination_polar_position.bearing):
                 self.thrust = 0.5
 

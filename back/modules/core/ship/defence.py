@@ -1,19 +1,16 @@
-import asyncio
-from dataclasses import dataclass
 import enum
-from uuid import UUID
-from typing import Any
-from modules.core.entities.space import Position, Vector2, RelativePolarPosition
-import math
-from dataclasses import asdict
-from modules.core.entities.time import GAME_FPS, GAME_ROUND
-from modules.core.engine.game_events import Event, FireEventResult, FireEvent
-from modules.utils.geometry import get_relative_polar_position
-from modules.core.ship.weaponry import WeaponDamage
-from modules.utils.random import get_success_tries
-from modules.core.ship.entities import VesselClass
+
 import pandas as pd
 
+from modules.core.entities.space import RelativePolarPosition
+from modules.core.entities.time import GAME_FPS, GAME_ROUND
+from modules.core.ship.entities import VesselClass
+from modules.core.ship.weaponry import WeaponDamage
+from modules.utils.config_loader import ConfigLoader
+from modules.utils.random import get_success_tries
+
+GAME_ROUND = ConfigLoader().get_round_duration()
+GAME_FPS = ConfigLoader().get_fps()
 
 class DefenceSector(str, enum.Enum):
     FRONT = "front"
@@ -113,7 +110,7 @@ class ShipDefence:
         hp_damage = hit_count - self.shield
         if self.shield > 0:
             self.shield = max(0, self.shield-hit_count)
-            self.shield_recovery_time = 10*30
+            self.shield_recovery_time = GAME_FPS*GAME_ROUND*2
         self.hp-=hp_damage
 
 

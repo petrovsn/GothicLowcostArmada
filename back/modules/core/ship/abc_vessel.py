@@ -11,7 +11,7 @@ from modules.core.ship.commands import ShipCommand, ShipCommandType
 from modules.core.ship.engine import ShipEngine
 from modules.core.ship.weaponry import ShipWeaponry
 from modules.core.ship.defence import ShipDefence
-from modules.core.ship.tactical_ai import TacticalBenavior
+from modules.core.ship.tactical_ai import TacticalBehavior
 from modules.core.entities.commands import CommonCommand
 from modules.core.ship.perception import ShipPerception
 from modules.core.ship.entities import VesselClass
@@ -21,7 +21,7 @@ from modules.core.engine.game_events import Event, FireEventResult, FireEvent, S
 from modules.utils.geometry import get_relative_polar_position
 from abc import ABC, abstractmethod
 
-class AbstractVeccel:
+class AbstractVessel:
     def __init__(self, events_queue: Queue = None):
         self.uuid = uuid4().hex
         self.vessel_class = VesselClass.ESCORT
