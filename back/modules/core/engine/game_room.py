@@ -180,7 +180,7 @@ class GameRoom:
 
             time_end = time.perf_counter()
             exec_time = time_end-time_start
-            self.last_tick_execution_time = exec_time
+            self.statistics.last_tick_execution_time = exec_time
             await asyncio.sleep(max(0,self.statistics.game_tick-exec_time))
 
     def get_data_connector(self, player_id):

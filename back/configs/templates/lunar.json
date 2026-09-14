@@ -1,0 +1,27 @@
+{
+    "pattern": "Lunar",
+    "cost":180,
+    "vessel_class": "cruiser",
+    "defence":{
+        "hp":8,
+        "shield":2,
+        "turrets": 2 
+    },
+    "engine":{
+        "speed": 25,
+        "turns": 45
+    },
+    "weapons":{
+        "prow":[
+            "front/T/30/6"
+        ],
+        "port":[
+            "left/M/30/6",
+            "left/L/30/2"
+        ],
+        "starboard":[
+            "right/M/30/6",
+            "right/L/30/2"
+        ]
+    }
+}

@@ -19,14 +19,7 @@ class ConfigLoader(metaclass = SingletonMeta):
 
     def __init__(self):
         self.config = configparser.ConfigParser()
-        parser = argparse.ArgumentParser(description='Add user')
-        parser.add_argument('-c',
-                                '--config',
-                                type=str,
-                                help='path to config file')
-        args = parser.parse_args()
-        print("ConfigLoader.args:", args)
-        self.filename = args.config if args.config else "configs/server.ini"
+        self.filename =  "configs/server.ini"
         if not os.path.exists(self.filename):
              raise Exception("no config file")
         self.config.read(self.filename)

@@ -4,15 +4,26 @@ import "../styles/RoomStatusWidget.css";
 
 
 function RoomStatusWidget() {
-    const [copied, setCopied] = useState(false);
+    const [copied, setCopied] =
+        useState(false);
 
-    const serviceInfo = useSelector(
-        state => state.game.gameState?.payload?.service_info
-    );
+    const serviceInfo =
+        useSelector(
+            state =>
+                state.game.gameState?.payload?.service_info
+        );
+
+    const gameStateFps =
+        useSelector(
+            state =>
+                state.game.gameStateFps
+        );
+
 
     if (!serviceInfo) {
         return null;
     }
+
 
     const {
         room_id,
@@ -26,7 +37,9 @@ function RoomStatusWidget() {
 
     const handleCopyRoomId = async () => {
         try {
-            await navigator.clipboard.writeText(room_id);
+            await navigator.clipboard.writeText(
+                room_id
+            );
 
             setCopied(true);
 
@@ -35,7 +48,10 @@ function RoomStatusWidget() {
             }, 1200);
         }
         catch (error) {
-            console.error("Failed to copy room ID:", error);
+            console.error(
+                "Failed to copy room ID:",
+                error
+            );
         }
     };
 
@@ -48,13 +64,13 @@ function RoomStatusWidget() {
                     Room
                 </span>
 
-                <button
-                    className="room-id"
+                <span
+                    className="room-status-value room-id"
                     onClick={handleCopyRoomId}
                     title="Copy room ID"
                 >
                     {copied ? "Copied!" : room_id}
-                </button>
+                </span>
             </div>
 
 
@@ -75,7 +91,7 @@ function RoomStatusWidget() {
                 </span>
 
                 <span className="room-status-value">
-                    {respawn ? "On" : "Off"}
+                    {respawn ? "ON" : "OFF"}
                 </span>
             </div>
 
@@ -90,16 +106,25 @@ function RoomStatusWidget() {
                 </span>
             </div>
 
+
             <div className="room-status-row">
                 <span className="room-status-label">
                     Performance
                 </span>
 
                 <span className="room-status-value">
-                    {exec_time_current.toFixed(2)}/{exec_time_max.toFixed(2)}/{(exec_time_current/exec_time_max).toFixed(2)}
+                    {exec_time_current.toFixed(2)}
+                    /
+                    {exec_time_max.toFixed(2)}
+                    /
+                    {(exec_time_current / exec_time_max).toFixed(2)}
+                    /
+                    {gameStateFps !== null
+                        ? gameStateFps.toFixed(1)
+                        : "—"
+                    }
                 </span>
             </div>
-
         </div>
     );
 }

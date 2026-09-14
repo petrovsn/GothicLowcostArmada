@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+
 const gameSlice = createSlice({
     name: "game",
 
@@ -7,6 +8,7 @@ const gameSlice = createSlice({
         roomId: null,
         connected: false,
         gameState: null,
+        gameStateFps: null,
         selectedShipId: null,
     },
 
@@ -23,17 +25,24 @@ const gameSlice = createSlice({
             state.gameState = action;
         },
 
+        setGameStateFps(state, action) {
+            state.gameStateFps = action.payload;
+        },
+
         setSelectedShip(state, action) {
             state.selectedShipId = action.payload;
         },
     },
 });
 
+
 export const {
     setRoomId,
     setConnected,
     setGameState,
+    setGameStateFps,
     setSelectedShip,
 } = gameSlice.actions;
+
 
 export default gameSlice.reducer;

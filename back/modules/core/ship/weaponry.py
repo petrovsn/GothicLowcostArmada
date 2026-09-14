@@ -45,10 +45,13 @@ class Weapon:
     fire_arc: FireArc
     range: float
     power: float
-    reloading: int
     uuid: str = field(
         default_factory=lambda: uuid4().hex
     )
+
+    @property
+    def reloaing(self):
+        return GAME_ROUND*GAME_FPS
 
 
 class WeaponMountingPoint(str, enum.Enum):
@@ -58,22 +61,11 @@ class WeaponMountingPoint(str, enum.Enum):
     DORSAL = "dorsal"
     KEEL = "keel"
 
-@dataclass
 class ShipWeaponry:
-    mounting_points: dict[WeaponMountingPoint, list[Weapon]]
-    fire_arcs: dict[FireArc,list[Weapon]]
-
     def __init__(self):
         self.mounting_points = defaultdict(list)
         self.fire_arcs = defaultdict(list)
         self.reloading: Counter = Counter()
-
-        new_weapon = Weapon(type = WeaponType.LASERS, fire_arc=FireArc.FRONT, power=6, range=35, reloading = GAME_ROUND*GAME_FPS)
-        self.add_weapon(WeaponMountingPoint.PROW, new_weapon)
-        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.RIGHT, power=10, range=30, reloading = GAME_ROUND*GAME_FPS)
-        self.add_weapon(WeaponMountingPoint.STARBOARD, new_weapon)
-        new_weapon = Weapon(type = WeaponType.MACRO, fire_arc=FireArc.LEFT, power=6, range=30, reloading = GAME_ROUND*GAME_FPS)
-        self.add_weapon(WeaponMountingPoint.PORT, new_weapon)
 
     def add_weapon(self, mounting_point: WeaponMountingPoint, weapon: Weapon):
         self.mounting_points[mounting_point].append(weapon)

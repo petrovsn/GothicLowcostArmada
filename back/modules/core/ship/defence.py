@@ -71,14 +71,13 @@ class DefenceMacroTable:
 
 
 class ShipDefence:
-    def __init__(self, vessel_class: str):
+    def __init__(self, vessel_class: VesselClass, hp:int = 1, shield: int = 0, turrets: int = 0):
         self.armor = {DefenceSector.from_bearing(bearing):1 for bearing in [0, 90, 180, 270]}
-        self.hp = 8
-        self.max_shield = 2
-        self.shield = 2
-        self.aa_points = 2
+        self.hp = hp
+        self.max_shield = shield
+        self.shield = shield
+        self.turrets = turrets
         self.vessel_class = vessel_class
-
         self.shield_recovery_time = 0
 
     def is_alive(self):

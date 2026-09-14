@@ -17,7 +17,7 @@ class ShipEngine:
     position: Position
     destination: Vector2 = None
 
-    def __init__(self, max_round_velocity, max_round_rotation):
+    def __init__(self, max_round_velocity = 0, max_round_rotation = 0):
         self.max_round_velocity = max_round_velocity
         self.max_round_rotation = max_round_rotation
 
