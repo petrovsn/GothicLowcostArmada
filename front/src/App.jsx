@@ -156,10 +156,13 @@ function App() {
                     <FleetPanel
                         onCenterShip={
                             (position) => {
+                                if (!position) {
+                                    return;
+                                }
+
                                 setCamera(
                                     previous => ({
                                         ...previous,
-
                                         x: position.x,
                                         y: position.y,
                                     })
@@ -175,7 +178,7 @@ function App() {
 
                 <section className="players-area">
 
-                    <ShipControlPanel/>
+                    <ShipControlPanel />
 
                 </section>
 
