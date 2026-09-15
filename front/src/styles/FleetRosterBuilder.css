@@ -1,0 +1,859 @@
+.fleet-roster-builder {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 10px;
+
+    background: #10141b;
+    border: 1px solid #2a303a;
+    border-radius: 10px;
+
+    color: #d8dce3;
+
+    font-family: inherit;
+}
+
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+
+.fleet-roster-builder-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 8px;
+    padding-bottom: 7px;
+
+    border-bottom: 1px solid #2a303a;
+}
+
+
+.fleet-roster-builder-title {
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    letter-spacing: 0.04em;
+}
+
+
+.fleet-roster-points {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color: #8d96a3;
+
+    font-size: 10px;
+}
+
+
+.fleet-roster-points strong {
+    color: #ffffff;
+
+    font-size: 13px;
+}
+
+
+.fleet-roster-points.negative strong {
+    color: #ff7777;
+}
+
+
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+
+.fleet-roster-builder-content {
+    display: grid;
+
+    grid-template-columns:
+        190px
+        minmax(300px, 1fr)
+        210px;
+
+    gap: 8px;
+
+    min-height: 430px;
+}
+
+
+/* ============================================================
+   COMMON
+   ============================================================ */
+
+.fleet-roster-list-title {
+    margin-bottom: 6px;
+
+    color: #8d96a3;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    letter-spacing: 0.06em;
+}
+
+
+/* ============================================================
+   TEMPLATE LIST
+   ============================================================ */
+
+.fleet-roster-template-list {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    min-width: 0;
+}
+
+
+.fleet-roster-template-item {
+    display: flex;
+
+    align-items: center;
+
+    width: 100%;
+    min-height: 45px;
+
+    padding: 5px;
+
+    box-sizing: border-box;
+
+    border: 1px solid #303743;
+    border-radius: 5px;
+
+    background: #171c24;
+
+    color: #aeb6c2;
+
+    font-family: inherit;
+
+    text-align: left;
+
+    cursor: pointer;
+
+    appearance: none;
+}
+
+
+.fleet-roster-template-item:hover {
+    background: #202631;
+
+    color: #ffffff;
+}
+
+
+.fleet-roster-template-item.selected {
+    border-color: #687584;
+
+    background: #242b35;
+
+    color: #ffffff;
+}
+
+
+.fleet-roster-template-icon {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 28px;
+    min-width: 28px;
+
+    color: #c3cad4;
+
+    font-size: 15px;
+}
+
+
+.fleet-roster-template-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.fleet-roster-template-name {
+    overflow: hidden;
+
+    color: #d8dce3;
+
+    font-size: 10px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.fleet-roster-template-class {
+    margin-top: 2px;
+
+    color: #68727f;
+
+    font-size: 8px;
+    text-transform: uppercase;
+}
+
+
+.fleet-roster-template-cost {
+    margin-left: 5px;
+
+    color: #d8dce3;
+
+    font-size: 10px;
+    font-weight: 700;
+}
+
+
+/* ============================================================
+   DETAILS
+   ============================================================ */
+
+.fleet-roster-details-area {
+    min-width: 0;
+
+    display: flex;
+}
+
+
+.fleet-roster-details {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 8px;
+
+    background: #11161e;
+
+    border: 1px solid #303743;
+    border-radius: 6px;
+}
+
+
+.fleet-roster-details-empty {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+
+    color: #5f6875;
+
+    font-size: 10px;
+}
+
+
+.fleet-roster-details-header {
+    display: flex;
+
+    align-items: baseline;
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+    padding-bottom: 6px;
+
+    border-bottom: 1px solid #2a303a;
+}
+
+
+.fleet-roster-details-name {
+    color: #ffffff;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+.fleet-roster-details-class {
+    margin-top: 2px;
+
+    color: #8d96a3;
+
+    font-size: 9px;
+    text-transform: uppercase;
+}
+
+
+.fleet-roster-details-cost {
+    color: #d8dce3;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.fleet-roster-details-content {
+    flex: 1;
+}
+
+
+/* ============================================================
+   SHIP SECTORS
+   ============================================================ */
+
+.roster-ship-sectors {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    gap: 3px;
+}
+
+
+.roster-ship-sector-row {
+    display: flex;
+
+    justify-content: center;
+
+    width: 100%;
+
+    gap: 3px;
+}
+
+
+.roster-ship-sector {
+    width: 100%;
+    max-width: 170px;
+
+    box-sizing: border-box;
+
+    padding: 5px;
+
+    background: #171c24;
+
+    border: 1px solid #303743;
+    border-radius: 5px;
+}
+
+
+.roster-ship-sector-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-bottom: 4px;
+
+    color: #aeb6c2;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+
+.roster-ship-sector-armor {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 18px;
+    height: 18px;
+
+    background: #242b35;
+
+    border-radius: 3px;
+
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+.roster-ship-weapons-table,
+.roster-ship-weapons-table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    table-layout: fixed;
+
+    font-size: 9px;
+}
+
+
+.roster-ship-weapons-table th {
+    padding: 2px 3px;
+
+    border-bottom: 1px solid #303743;
+
+    color: #68727f;
+
+    font-size: 8px;
+    font-weight: 500;
+
+    text-align: left;
+}
+
+
+.roster-ship-weapons-table td {
+    padding: 3px;
+
+    border-bottom: 1px solid #242a33;
+
+    color: #b8c0cb;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+}
+
+
+.roster-ship-weapons-table th:nth-child(1),
+.roster-ship-weapons-table td:nth-child(1) {
+    width: 45%;
+}
+
+
+.roster-ship-weapons-table th:nth-child(2),
+.roster-ship-weapons-table td:nth-child(2) {
+    width: 27.5%;
+
+    text-align: right;
+}
+
+
+.roster-ship-weapons-table th:nth-child(3),
+.roster-ship-weapons-table td:nth-child(3) {
+    width: 27.5%;
+
+    text-align: right;
+}
+
+
+.roster-ship-weapons-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.roster-ship-sector-empty {
+    padding: 3px 0;
+
+    color: #5f6875;
+
+    font-size: 8px;
+}
+
+
+/* ============================================================
+   DEFENCE / ENGINE
+   ============================================================ */
+
+.roster-ship-defence,
+.roster-ship-engine {
+    margin-top: 7px;
+    padding-top: 7px;
+
+    border-top: 1px solid #2a303a;
+}
+
+
+.roster-section-title {
+    margin-bottom: 4px;
+
+    color: #aeb6c2;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    text-transform: uppercase;
+}
+
+
+.roster-stat-row {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    min-height: 18px;
+
+    color: #8d96a3;
+
+    font-size: 9px;
+}
+
+
+.roster-stat-row strong {
+    color: #d8dce3;
+
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   ADD BUTTON
+   ============================================================ */
+
+.fleet-roster-add-button {
+    width: 100%;
+
+    min-height: 30px;
+
+    margin-top: 8px;
+
+    padding: 4px 8px;
+
+    border: 1px solid #303743;
+    border-radius: 5px;
+
+    background: #202631;
+
+    color: #d8dce3;
+
+    font-family: inherit;
+    font-size: 10px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    appearance: none;
+}
+
+
+.fleet-roster-add-button:hover:not(:disabled) {
+    background: #303743;
+
+    color: #ffffff;
+}
+
+
+.fleet-roster-add-button:active:not(:disabled) {
+    background: #3a424e;
+}
+
+
+.fleet-roster-add-button:disabled {
+    color: #555e6b;
+
+    background: #151a21;
+
+    cursor: not-allowed;
+}
+
+
+/* ============================================================
+   CURRENT ROSTER
+   ============================================================ */
+
+.fleet-roster-current {
+    display: flex;
+    flex-direction: column;
+
+    min-width: 0;
+
+    padding: 6px;
+
+    background: #11161e;
+
+    border: 1px solid #303743;
+    border-radius: 6px;
+}
+
+
+.fleet-roster-current-header {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding-bottom: 6px;
+
+    border-bottom: 1px solid #2a303a;
+}
+
+
+.fleet-roster-current-header .fleet-roster-list-title {
+    margin: 0;
+}
+
+
+.fleet-roster-current-count {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 18px;
+
+    background: #242b35;
+
+    border-radius: 3px;
+
+    color: #d8dce3;
+
+    font-size: 9px;
+    font-weight: 700;
+}
+
+
+.fleet-roster-items {
+    display: flex;
+    flex-direction: column;
+
+    gap: 3px;
+
+    flex: 1;
+
+    padding-top: 5px;
+
+    overflow-y: auto;
+}
+
+
+.fleet-roster-empty {
+    padding: 15px 5px;
+
+    color: #5f6875;
+
+    font-size: 9px;
+
+    text-align: center;
+}
+
+
+.fleet-roster-item {
+    display: flex;
+
+    align-items: center;
+
+    min-height: 31px;
+
+    padding: 3px;
+
+    box-sizing: border-box;
+
+    background: #171c24;
+
+    border: 1px solid #2a303a;
+    border-radius: 4px;
+}
+
+
+.fleet-roster-item-number {
+    width: 18px;
+
+    color: #5f6875;
+
+    font-size: 8px;
+
+    text-align: center;
+}
+
+
+.fleet-roster-item-info {
+    min-width: 0;
+
+    flex: 1;
+}
+
+
+.fleet-roster-item-name {
+    overflow: hidden;
+
+    color: #cbd1d9;
+
+    font-size: 9px;
+    font-weight: 600;
+
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+
+.fleet-roster-item-class {
+    color: #5f6875;
+
+    font-size: 7px;
+
+    text-transform: uppercase;
+}
+
+
+.fleet-roster-item-cost {
+    margin-left: 4px;
+
+    color: #aeb6c2;
+
+    font-size: 9px;
+}
+
+
+.fleet-roster-remove-button {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    width: 20px;
+    height: 20px;
+
+    margin-left: 3px;
+
+    padding: 0;
+
+    border: none;
+    border-radius: 3px;
+
+    background: transparent;
+
+    color: #68727f;
+
+    font-family: inherit;
+    font-size: 16px;
+
+    cursor: pointer;
+}
+
+
+.fleet-roster-remove-button:hover {
+    background: #303743;
+
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   TOTAL
+   ============================================================ */
+
+.fleet-roster-total {
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    margin-top: 6px;
+    padding-top: 6px;
+
+    border-top: 1px solid #2a303a;
+
+    color: #8d96a3;
+
+    font-size: 9px;
+}
+
+
+.fleet-roster-total strong {
+    color: #ffffff;
+
+    font-size: 12px;
+}
+
+
+/* ============================================================
+   STATES
+   ============================================================ */
+
+.fleet-roster-loading,
+.fleet-roster-error {
+    padding: 30px;
+
+    color: #8d96a3;
+
+    font-size: 10px;
+
+    text-align: center;
+}
+
+
+.fleet-roster-error {
+    color: #ff7777;
+}
+
+
+/* ============================================================
+   TABLET
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+    .fleet-roster-builder-content {
+        grid-template-columns:
+            160px
+            minmax(280px, 1fr)
+            180px;
+    }
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 850px) {
+
+    .fleet-roster-builder-content {
+        grid-template-columns: 1fr;
+
+        min-height: 0;
+    }
+
+
+    .fleet-roster-template-list {
+        max-height: 220px;
+
+        overflow-y: auto;
+    }
+
+
+    .fleet-roster-details-area {
+        min-height: 400px;
+    }
+
+
+    .fleet-roster-current {
+        min-height: 180px;
+    }
+
+}
+
+
+@media (max-width: 520px) {
+
+    .fleet-roster-builder {
+        padding: 7px;
+    }
+
+
+    .fleet-roster-builder-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 5px;
+    }
+
+
+    .fleet-roster-details-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 4px;
+    }
+
+
+    .roster-ship-sector {
+        max-width: 100%;
+    }
+
+}
+

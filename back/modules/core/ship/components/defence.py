@@ -71,8 +71,8 @@ class DefenceMacroTable:
 
 
 class ShipDefence:
-    def __init__(self, vessel_class: VesselClass, hp:int = 1, shield: int = 0, turrets: int = 0):
-        self.armor = {DefenceSector.from_bearing(bearing):1 for bearing in [0, 90, 180, 270]}
+    def __init__(self, vessel_class: VesselClass, hp:int = 1, armor:dict[DefenceSector, int] = None, shield: int = 0, turrets: int = 0):
+        self.armor = {DefenceSector.from_bearing(bearing):1 for bearing in [0, 90, 180, 270]} if armor is None else armor
         self.hp = hp
         self.max_shield = shield
         self.shield = shield

@@ -3,9 +3,12 @@ import {
     useState,
 } from "react";
 
+import { useSelector } from "react-redux";
+
 import * as game_controller from "./controllers/game_controller.js";
 
 import GameViewer from "./widgets/GameViewer.jsx";
+import FleetRosterBuilder from "./widgets/FleetRosterBuilder.jsx";
 import RawGameDataViewer from "./widgets/RawGameDataViewer.jsx";
 import PlayersTable from "./widgets/PlayersTable.jsx";
 import CreateRoomWidget from "./widgets/CreateRoomWidget.jsx";
@@ -26,6 +29,13 @@ function App() {
         y: 0,
         zoom: 10,
     });
+
+    const gameState = useSelector(
+        state => state.game.gameState?.payload
+    );
+
+    const currentPhase =
+        gameState?.service_info?.current_phase;
 
 
     useEffect(() => {
@@ -122,10 +132,16 @@ function App() {
 
                 <section className="game-area">
 
-                    <GameViewer
-                        camera={camera}
-                        setCamera={setCamera}
-                    />
+                    {currentPhase === "preparation" ? (
+                        <FleetRosterBuilder
+                            gameState={gameState}
+                        />
+                    ) : (
+                        <GameViewer
+                            camera={camera}
+                            setCamera={setCamera}
+                        />
+                    )}
 
                     <FleetPanel
                         onCenterShip={
@@ -142,8 +158,6 @@ function App() {
                         }
                     />
 
-                    
-
                     <RawGameDataViewer />
 
                 </section>
@@ -153,7 +167,6 @@ function App() {
 
                     <PlayersTable />
                     <ShipControlPanel/>
-                    
 
                 </section>
 

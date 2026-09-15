@@ -6,6 +6,12 @@
     "defence": {
         "hp": 1,
         "shield": 1,
+        "armor": {
+            "front": 5,
+            "left": 5,
+            "right": 5,
+            "rear": 5
+        },
         "turrets": 2
     },
     "engine": {

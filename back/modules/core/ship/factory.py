@@ -31,7 +31,7 @@
 from modules.core.ship.vessels.ship import Ship
 from modules.core.ship.components.weaponry import ShipWeaponry, Weapon, FireArc, WeaponMountingPoint, WeaponType
 from modules.core.ship.components.engine import ShipEngine
-from modules.core.ship.components.defence import ShipDefence
+from modules.core.ship.components.defence import ShipDefence, DefenceSector
 from modules.core.ship.vessel_class import VesselClass
 import random
 from pydantic import BaseModel
@@ -40,6 +40,7 @@ class DefenceTemplate(BaseModel):
     hp: int
     shield: int
     turrets: int
+    armor: dict[DefenceSector, int]
 
 class EngineTemplate(BaseModel):
     speed: int
@@ -76,7 +77,7 @@ class ShipFactory:
 
     @staticmethod
     def defence_from_template(vessel_class: str,defence_dto: DefenceTemplate):
-        return ShipDefence(vessel_class, defence_dto.hp, defence_dto.shield, defence_dto.turrets)
+        return ShipDefence(vessel_class, defence_dto.hp, defence_dto.armor, defence_dto.shield, defence_dto.turrets)
 
     @staticmethod
     def engine_from_template(engine_dto: EngineTemplate):

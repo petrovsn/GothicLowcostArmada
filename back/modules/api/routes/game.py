@@ -74,7 +74,7 @@ async def websocket_endpoint(
 @game_router.post("/rooms")
 async def create_room(request: Request, room_creation_request: RoomCreationRequest = Body()):
     game_manager: GameManager = request.app.state.game_manager
-    room_id = game_manager.create_room(room_creation_request.n_bots)
+    room_id = game_manager.create_room(room_creation_request.n_players, room_creation_request.max_fleet_points)
     return {
         "room_id": room_id
     }

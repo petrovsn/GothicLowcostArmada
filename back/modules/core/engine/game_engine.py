@@ -23,7 +23,7 @@ from modules.core.ship.vessels.target import Target
 from modules.core.ship.vessels.torpedo import Torpedo
 from modules.utils.geometry import get_relative_polar_position
 from typing import Any
-
+import math
 
 class FleetRoster:
     def __init__(self, max_fleet_points):
@@ -196,15 +196,65 @@ class GameEngine:
         }
 
 
-    def place_rosters(self, n_total_players, rosters: dict[str, FleetRoster]):
+    def place_rosters(
+        self,
+        n_total_players,
+        rosters: dict[str, FleetRoster],
+    ):
         RADIUS = 100
-        SPANW_AREA_RADIUS = 20
+        SPAWN_AREA_RADIUS = 20
 
-        for player_id, roster in rosters.items():
+        if n_total_players <= 0:
+            return
+
+        angle_step = 360 / n_total_players
+
+        for player_index, (player_id, roster) in enumerate(rosters.items()):
+            fleet_angle = math.radians(
+                player_index * angle_step
+            )
+
+            fleet_center_x = (
+                math.sin(fleet_angle) * RADIUS
+            )
+
+            fleet_center_y = (
+                math.cos(fleet_angle) * RADIUS
+            )
+
+            rotation_to_center = (
+                player_index * angle_step + 180
+            ) % 360
+
             for ship_pattern in roster.content:
-                selected_position = 
-                self.add_ship(player_id, ship_pattern)
+                spawn_angle = math.radians(
+                    randint(0, 359)
+                )
 
+                spawn_radius = (
+                    SPAWN_AREA_RADIUS *
+                    math.sqrt(randint(0, 10000) / 10000)
+                )
+
+                selected_position = Position(
+                    x=(
+                        fleet_center_x +
+                        math.sin(spawn_angle) *
+                        spawn_radius
+                    ),
+                    y=(
+                        fleet_center_y +
+                        math.cos(spawn_angle) *
+                        spawn_radius
+                    ),
+                    rotation=rotation_to_center,
+                )
+
+                self.add_ship(
+                    player_id,
+                    ship_pattern,
+                    selected_position,
+                )
 
             
 

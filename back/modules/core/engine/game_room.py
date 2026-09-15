@@ -123,6 +123,7 @@ class GameRoom:
                 return False
         if self.current_phase == GameRoomPhase.PREPARATION:
             self.current_phase = GameRoomPhase.BATTLE
+            self.game_engine.place_rosters(self.rosters)
         return True
 
     def handle_command(self, player_id, command: dict):
