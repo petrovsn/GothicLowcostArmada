@@ -1,5 +1,6 @@
 import enum
 from pydantic import BaseModel
+from typing import Any
 
 class CommandType(str, enum.Enum):
     GAME_ROOM = "game_room"
@@ -9,4 +10,4 @@ class CommandType(str, enum.Enum):
 class CommonCommand(BaseModel):
     type: CommandType
     action: str
-    params: dict = None
+    params: Any

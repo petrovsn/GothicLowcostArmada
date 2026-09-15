@@ -37,14 +37,15 @@ class FleetRoster:
 
     def add(self, pattern_name):
         cost = ShipFactory.get_cost(pattern_name)
-        if self.current_fleet_points+cost < self.max_fleet_points:
+        if self.current_fleet_points+cost <= self.max_fleet_points:
             self.current_fleet_points+=cost
             self.content.append(pattern_name)
 
     def autofill(self):
         pattern = ShipFactory.get_random_template(self.max_fleet_points - self.current_fleet_points)
-        while pattern is None:
+        while pattern is not None:
             self.add(pattern)
+            pattern = ShipFactory.get_random_template(self.max_fleet_points - self.current_fleet_points)
 
 
 class GameEngine:
@@ -59,9 +60,6 @@ class GameEngine:
 
     def _get_owner_id(self, ship_id):
         return self.owning.get(ship_id, None)
-
-    def set_spawn_points(self, n_spawn_points):
-        pass
 
     def _get_relative_ship_info(self, observer_position: Position, ship: Ship) -> ShipPerceptionInfo:
         relative_polar_position = get_relative_polar_position(observer_position, ship.position.to_vector())
@@ -79,9 +77,9 @@ class GameEngine:
 
         perception = ShipPerception(
             allied_entities={ship.uuid: self._get_relative_ship_info(owner_position,ship) for ship_id, ship in self.ships.items() 
-                             if ship_id in self.fleets.get(owner_id, []) and not isinstance(ship, Debris)},
+                             if self.owning[ship_id] == owner_id and not isinstance(ship, Debris)},
             enemy_entities={ship.uuid: self._get_relative_ship_info(owner_position,ship) for ship_id, ship in self.ships.items()
-                             if ship_id not in self.fleets.get(owner_id, []) and not isinstance(ship, Debris)}
+                             if self.owning[ship_id] != owner_id and not isinstance(ship, Debris)}
         )
         return perception
 
@@ -136,10 +134,11 @@ class GameEngine:
             spawn_position = Position(event.source.x, event.source.y, event.bearing)
             torpedo_instance.place(spawn_position)
             self.ships[torpedo_instance.uuid] = torpedo_instance
+            self.owning[torpedo_instance.uuid] = self._get_owner_id(event.initiator_id)
 
     def _handle_ship_death(self, ship_id):
         owner_id = self._get_owner_id(ship_id)
-        if owner_id is not None:
+        if self.ships[ship_id].remain_debris():
             if ship_id in self.fleets[owner_id]:
                 self.fleets[owner_id].remove(ship_id)
             debris = Debris(self.ships[ship_id].as_dict())

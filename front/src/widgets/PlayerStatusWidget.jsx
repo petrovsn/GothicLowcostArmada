@@ -5,7 +5,9 @@ import * as service_controller from "../controllers/service_controller";
 import "../styles/PlayerStatusWidget.css";
 
 
-function PlayerStatusWidget() {
+function PlayerStatusWidget({
+    roster = [],
+}) {
     const gameState = useSelector(
         state =>
             state.game.gameState?.payload
@@ -25,6 +27,9 @@ function PlayerStatusWidget() {
             playerId
         ];
 
+    const currentPhase =
+        gameState.service_info?.current_phase;
+
 
     if (!participant) {
         return null;
@@ -32,6 +37,12 @@ function PlayerStatusWidget() {
 
 
     const handleReady = () => {
+        if (currentPhase === "preparation") {
+            service_controller.setup_roster(
+                roster
+            );
+        }
+
         service_controller.resume();
     };
 

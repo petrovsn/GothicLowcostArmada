@@ -47,10 +47,16 @@ function CreateRoomWidget({ onCreated, onConnectionChange }) {
                     roomConfig,
                     player_name,
                     () => {
-                        console.log("CreateRoomWidget.create_room_and_connect")
+                        console.log(
+                            "CreateRoomWidget.create_room_and_connect"
+                        );
+
                         if (onConnectionChange) {
-                            console.log("CreateRoomWidget.if onConnected")
-                            onConnectionChange(true)
+                            console.log(
+                                "CreateRoomWidget.if onConnected"
+                            );
+
+                            onConnectionChange(true);
                         }
                     }
                 );
@@ -79,7 +85,7 @@ function CreateRoomWidget({ onCreated, onConnectionChange }) {
     const handleOpen = () => {
         setError(null);
         setIsOpen(true);
-        onConnectionChange(false)
+        onConnectionChange(false);
     };
 
 
@@ -135,27 +141,31 @@ function CreateRoomWidget({ onCreated, onConnectionChange }) {
                         />
                     </label>
 
+
                     <label>
                         Players
 
                         <input
                             type="number"
-                            name="n_bots"
-                            min="0"
-                            value={form.n_bots}
+                            name="n_players"
+                            min="1"
+                            value={form.n_players}
                             onChange={handleChange}
+                            required
                         />
                     </label>
+
 
                     <label>
                         Fleet points
 
                         <input
                             type="number"
-                            name="n_bots"
-                            min="0"
+                            name="max_fleet_points"
+                            min="1"
                             value={form.max_fleet_points}
                             onChange={handleChange}
+                            required
                         />
                     </label>
 

@@ -104,6 +104,9 @@ class AbstractVessel(ABC):
                 )
             )
 
+    def remain_debris(self)->bool:
+        return self.vessel_class != VesselClass.TORPEDOS
+        
     def _get_bearing(self, signal: Vector2):
         return get_relative_polar_position(self.position, signal)
 

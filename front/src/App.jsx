@@ -30,6 +30,10 @@ function App() {
         zoom: 10,
     });
 
+    const [roster, setRoster] =
+        useState([]);
+
+
     const gameState = useSelector(
         state => state.game.gameState?.payload
     );
@@ -125,7 +129,9 @@ function App() {
 
                     <RoomStatusWidget />
 
-                    <PlayerStatusWidget />
+                    <PlayerStatusWidget
+                        roster={roster}
+                    />
 
                 </aside>
 
@@ -135,6 +141,9 @@ function App() {
                     {currentPhase === "preparation" ? (
                         <FleetRosterBuilder
                             gameState={gameState}
+                            onRosterChange={
+                                setRoster
+                            }
                         />
                     ) : (
                         <GameViewer
@@ -142,6 +151,7 @@ function App() {
                             setCamera={setCamera}
                         />
                     )}
+
 
                     <FleetPanel
                         onCenterShip={

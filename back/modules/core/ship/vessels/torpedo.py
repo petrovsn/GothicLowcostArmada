@@ -9,11 +9,10 @@ from modules.core.ship.components.weaponry import WeaponDamage, TorpedosLaunchDa
 
 class Torpedo(EngineedVessel):
     def __init__(self, owner_id: str, params: TorpedosLaunchData, events_queue: Queue = None):
-        super().__init__(events_queue)
+        super().__init__(VesselClass.TORPEDOS, events_queue)
         self.owner_id = owner_id
         self.power = params.power
         self.engine.velocity = params.speed
-        self.events_queue= events_queue
         self.perception: ShipPerception = ShipPerception(allied_entities={}, enemy_entities={})
 
     def update_perception(self, new_perception: ShipPerception):

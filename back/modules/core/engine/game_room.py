@@ -19,6 +19,7 @@ from enum import StrEnum
 class GameRoomConfig:
     room_id: str
     max_fleet_points: int
+    n_players: int
 
 
 @dataclass
@@ -36,7 +37,8 @@ class GameRoom:
     def __init__(self, n_players: int, max_fleet_points: int):
         self.config = GameRoomConfig(
             room_id = uuid4().hex,
-            max_fleet_points = max_fleet_points
+            max_fleet_points = max_fleet_points,
+            n_players = n_players
         )
 
         self.statistics = GameRoomStats(
@@ -48,11 +50,9 @@ class GameRoom:
         
         self.game_engine: GameEngine = GameEngine()
 
-        self.game_engine.set_spawn_points(n_players)
-
         self.current_phase = GameRoomPhase.PREPARATION
 
-        self.rosters: dict[str,FleetRoster] = defaultdict(lambda x: FleetRoster(self.config.max_fleet_points))
+        self.rosters: dict[str,FleetRoster] = defaultdict(lambda: FleetRoster(self.config.max_fleet_points))
 
 
 
@@ -124,9 +124,12 @@ class GameRoom:
 
     def _activate_battlefield(self):
         self.current_phase = GameRoomPhase.BATTLE
+        while len(self.participants) < self.config.n_players:
+            self.add_bot()
         self.game_engine.place_rosters(self.rosters)
 
     def handle_command(self, player_id, command: dict):
+        print("raw command:",command)
         new_command = CommonCommand(**command)
         match new_command.type:
             case CommandType.GAME_ROOM:

@@ -41,6 +41,13 @@ function parseWeapon(weapon) {
         power,
     ] = parts;
 
+    const weaponArcs = {
+        front: "F",
+        left: "L",
+        right: "R",
+        all_around: "O",
+    };
+
     const weaponTypes = {
         M: "MACRO",
         L: "LASER",
@@ -49,7 +56,7 @@ function parseWeapon(weapon) {
 
     return {
         raw: weapon,
-        arc,
+        arc: weaponArcs[arc] ?? arc,
         type: weaponTypes[type] ?? type,
         range,
         power,
@@ -72,6 +79,7 @@ function WeaponsTable({
         <table className="roster-ship-weapons-table">
             <thead>
                 <tr>
+                    <th>Сектор</th>
                     <th>Тип</th>
                     <th>Дальн.</th>
                     <th>Мощн.</th>
@@ -92,6 +100,10 @@ function WeaponsTable({
                                     `${weapon}-${index}`
                                 }
                             >
+                                <td>
+                                    {parsed.arc}
+                                </td>
+
                                 <td>
                                     {parsed.type}
                                 </td>
@@ -389,6 +401,7 @@ function RosterItem({
 
 function FleetRosterBuilder({
     gameState,
+    onRosterChange,
 }) {
     const [templates, setTemplates] =
         useState({});
@@ -432,7 +445,6 @@ function FleetRosterBuilder({
                 setTemplates(
                     data ?? {}
                 );
-
             }
             catch (requestError) {
                 if (cancelled) {
@@ -461,6 +473,20 @@ function FleetRosterBuilder({
             cancelled = true;
         };
     }, []);
+
+
+    useEffect(() => {
+        if (onRosterChange) {
+            onRosterChange(
+                roster.map(
+                    template => template.pattern
+                )
+            );
+        }
+    }, [
+        roster,
+        onRosterChange,
+    ]);
 
 
     const templateList =

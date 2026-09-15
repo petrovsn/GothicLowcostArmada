@@ -11,8 +11,8 @@ class Debris:
         self.name = ship_dict.get("name")+"[D]"
         self.vessel_class = VesselClass(ship_dict.get("vessel_class"))
 
-    def place(self, x, y, rotation):
-        self._position = Position(x, y, rotation)
+    def place(self, position: Position):
+        self._position = position
 
     def update_state(self, *args, **kwargs):
         pass

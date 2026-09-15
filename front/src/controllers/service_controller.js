@@ -11,6 +11,15 @@ export function pause() {
 }
 
 
+export function setup_roster(roster) {
+    game_controller.send_command({
+        type: "game_room",
+        action: "setup_roster",
+        params: roster,
+    });
+}
+
+
 export function resume() {
     game_controller.send_command({
         type: "game_room",
