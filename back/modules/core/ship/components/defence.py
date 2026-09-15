@@ -87,13 +87,17 @@ class ShipDefence:
         if damage == 0: return 0
         defence_sector = DefenceSector.from_bearing(source_polar.bearing)
         armor_value = self.armor[defence_sector]
+        if self.vessel_class == VesselClass.TORPEDOS:
+            armor_value = 6
         success = get_success_tries(damage, armor_value-1)
         return success
 
-
     def _take_laser_shot(self, damage):
         if damage == 0: return 0
-        success = get_success_tries(damage, 3)
+        armor_value = 3
+        if self.vessel_class == VesselClass.TORPEDOS:
+                armor_value = 6
+        success = get_success_tries(damage, armor_value)
         return success
 
     def _take_macro_shot(self, source_polar: RelativePolarPosition, damage):
