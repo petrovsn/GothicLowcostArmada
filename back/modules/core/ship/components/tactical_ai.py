@@ -34,7 +34,7 @@ class FireBehavior(StrEnum):
 class TacticalBehavior:
     def __init__(self, uuid):
         self.uuid = uuid
-        self.fire_behavior = FireBehavior.FIRE_AT_WILL
+        self.fire_behavior = FireBehavior.CEASE_FIRE
         self.target_id = None
         self.destination = None
 
@@ -79,7 +79,7 @@ class TacticalBehavior:
                     if weapon_damage is not None:
                         fire_event = FireEvent(
                             initiator_id=self.uuid,
-                            target_id=self.target_id,
+                            target_id=target_id,
                             damage=weapon_damage,
                             source=engine.position.to_vector(),
                         )

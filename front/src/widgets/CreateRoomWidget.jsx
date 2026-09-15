@@ -3,18 +3,15 @@ import * as game_controller from "../controllers/game_controller";
 import "../styles/CreateRoomWidget.css";
 
 
-function CreateRoomWidget({ onCreated, onConnectionChange   }) {
+function CreateRoomWidget({ onCreated, onConnectionChange }) {
     const [isOpen, setIsOpen] = useState(false);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
     const [form, setForm] = useState({
         player_name: "",
-        size_x: 10,
-        size_y: 10,
-        speed: 4,
-        n_bots: 0,
-        respawn: true,
+        n_players: 2,
+        max_fleet_points: 1000
     });
 
 
@@ -51,9 +48,9 @@ function CreateRoomWidget({ onCreated, onConnectionChange   }) {
                     player_name,
                     () => {
                         console.log("CreateRoomWidget.create_room_and_connect")
-                        if (onConnectionChange ){
+                        if (onConnectionChange) {
                             console.log("CreateRoomWidget.if onConnected")
-                            onConnectionChange (true)
+                            onConnectionChange(true)
                         }
                     }
                 );
@@ -82,7 +79,7 @@ function CreateRoomWidget({ onCreated, onConnectionChange   }) {
     const handleOpen = () => {
         setError(null);
         setIsOpen(true);
-        onConnectionChange (false)
+        onConnectionChange(false)
     };
 
 
@@ -138,50 +135,8 @@ function CreateRoomWidget({ onCreated, onConnectionChange   }) {
                         />
                     </label>
 
-
-                    <div className="form-row">
-                        <label>
-                            Width
-
-                            <input
-                                type="number"
-                                name="size_x"
-                                min="1"
-                                value={form.size_x}
-                                onChange={handleChange}
-                            />
-                        </label>
-
-
-                        <label>
-                            Height
-
-                            <input
-                                type="number"
-                                name="size_y"
-                                min="1"
-                                value={form.size_y}
-                                onChange={handleChange}
-                            />
-                        </label>
-                    </div>
-
-
                     <label>
-                        Speed
-
-                        <input
-                            type="number"
-                            name="speed"
-                            min="1"
-                            value={form.speed}
-                            onChange={handleChange}
-                        />
-                    </label>
-
-
-                    <label>
-                        Bots
+                        Players
 
                         <input
                             type="number"
@@ -192,16 +147,16 @@ function CreateRoomWidget({ onCreated, onConnectionChange   }) {
                         />
                     </label>
 
+                    <label>
+                        Fleet points
 
-                    <label className="checkbox-row">
                         <input
-                            type="checkbox"
-                            name="respawn"
-                            checked={form.respawn}
+                            type="number"
+                            name="n_bots"
+                            min="0"
+                            value={form.max_fleet_points}
                             onChange={handleChange}
                         />
-
-                        Respawn
                     </label>
 
 

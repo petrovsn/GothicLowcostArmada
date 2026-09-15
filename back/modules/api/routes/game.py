@@ -78,3 +78,10 @@ async def create_room(request: Request, room_creation_request: RoomCreationReque
     return {
         "room_id": room_id
     }
+
+from modules.core.ship.factory import load_templates
+@game_router.get("/templates")
+async def get_templates():
+    templates = load_templates()
+    return templates
+    

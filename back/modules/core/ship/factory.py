@@ -72,7 +72,7 @@ def load_templates(templates_directory = "configs/templates"):
     return templates
 
 class ShipFactory:
-    templates = load_templates()
+    templates: dict[str, ShipTemplate] = load_templates()
 
     @staticmethod
     def defence_from_template(vessel_class: str,defence_dto: DefenceTemplate):
@@ -118,6 +118,12 @@ class ShipFactory:
         ship.pattern = template_name
         return ship
 
-
+    @staticmethod
     def get_random_template():
         return random.choice(list(ShipFactory.templates.keys()))
+
+    @staticmethod
+    def get_cost(pattern_name):
+        if pattern_name in ShipFactory.templates:
+            return ShipFactory.templates[pattern_name].cost
+        return float("Inf")

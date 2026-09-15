@@ -17,8 +17,8 @@ class EngineedVessel(AbstractVessel):
         super().__init__(vessel_class, events_queue)
         self.engine = ShipEngine()
         
-    def place(self, x, y, rotation):
-        self.engine.position = Position(x= x, y=y, rotation=rotation)
+    def place(self, position: Position):
+        self.engine.position = position
 
     @property
     def position(self):

@@ -24,6 +24,24 @@ from modules.core.ship.vessels.torpedo import Torpedo
 from modules.utils.geometry import get_relative_polar_position
 from typing import Any
 
+
+class FleetRoster:
+    def __init__(self, max_fleet_points):
+        self.content = []
+        self.current_fleet_points = 0
+        self.max_fleet_points = max_fleet_points
+
+    def clear(self):
+        self.content = []
+        self.current_fleet_points = 0
+
+    def add(self, pattern_name):
+        cost = ShipFactory.get_cost(pattern_name)
+        if self.current_fleet_points+cost < self.max_fleet_points:
+            self.current_fleet_points+=cost
+            self.content.append(pattern_name)
+
+
 class GameEngine:
     def __init__(self):
         self.ships: dict[str, AbstractVessel] = {}
@@ -110,7 +128,8 @@ class GameEngine:
                 params=event.params,
                 events_queue=self.events
             )
-            torpedo_instance.place(event.source.x, event.source.y, event.bearing)
+            spawn_position = Position(event.source.x, event.source.y, event.bearing)
+            torpedo_instance.place(spawn_position)
             self.ships[torpedo_instance.uuid] = torpedo_instance
 
     def _handle_ship_death(self, ship_id):
@@ -119,7 +138,7 @@ class GameEngine:
             if ship_id in self.fleets[owner_id]:
                 self.fleets[owner_id].remove(ship_id)
             debris = Debris(self.ships[ship_id].as_dict())
-            debris.place(**self.ships[ship_id].position.as_dict())
+            debris.place(self.ships[ship_id].position)
             self.static_objects[ship_id] = debris
         self.owning.pop(ship_id,-1)
         self.ships.pop(ship_id, -1)
@@ -134,15 +153,18 @@ class GameEngine:
     def add_bot(self, participant_id):
         self.ai[participant_id] = CoreAi()
         
-    def add_ship(self, player_id):
-        pattern_name = ShipFactory.get_random_template()
+    def add_ship(self, player_id, pattern_name = None, position: Position = None):
+        if pattern_name is None:
+            pattern_name = ShipFactory.get_random_template()
         order_report_queue = None
         if player_id in self.ai:
             order_report_queue = self.ai.get(player_id).order_report_queue
 
         ship: Ship = ShipFactory.ship_from_template(pattern_name, self.events, order_report_queue)
 
-        ship.place(randint(-30,30),randint(-30,30),randint(0,359))
+        if position is None:
+            position = Position(randint(-30,30),randint(-30,30),randint(0,359))
+        ship.place(position)
 
         self.ships[ship.uuid] = ship
         self.owning[ship.uuid] = player_id
@@ -172,6 +194,19 @@ class GameEngine:
         return {
             ship_id: self.ships[ship_id].get_info() for ship_id in self.fleets[player_id]
         }
+
+
+    def place_rosters(self, n_total_players, rosters: dict[str, FleetRoster]):
+        RADIUS = 100
+        SPANW_AREA_RADIUS = 20
+
+        for player_id, roster in rosters.items():
+            for ship_pattern in roster.content:
+                selected_position = 
+                self.add_ship(player_id, ship_pattern)
+
+
+            
 
             
     def get_entities(self):

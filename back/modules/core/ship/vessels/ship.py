@@ -12,12 +12,12 @@ from modules.core.entities.space import Position, Vector2, RelativePolarPosition
 from modules.core.engine.game_events import TorpedosLaunchEvent
 from modules.core.ship.vessels.engineed_vessel import EngineedVessel
 from modules.utils.geometry import get_relative_polar_position
-
+from modules.utils.names import get_ship_name
 class Ship(EngineedVessel):
     def __init__(self, vessel_class: VesselClass, events_queue: Queue = None):
         super().__init__(vessel_class, events_queue)
         self.pattern = "default_ship"
-        self.name = f"Ship: {self.uuid[-5:]}"
+        self.name = get_ship_name(self.uuid)
 
         self.weapons = ShipWeaponry()
 
@@ -27,6 +27,7 @@ class Ship(EngineedVessel):
 
     def set_ai_report_channel(self, order_report_queue: Queue):
         self.order_report_queue = order_report_queue
+        self.tactical_ai.set_fire_behavior(FireBehavior.FIRE_AT_WILL)
         
     def update_perception(self, new_perception:ShipPerception):
         self.perception = new_perception
