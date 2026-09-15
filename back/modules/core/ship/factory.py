@@ -120,8 +120,11 @@ class ShipFactory:
         return ship
 
     @staticmethod
-    def get_random_template():
-        return random.choice(list(ShipFactory.templates.keys()))
+    def get_random_template(no_more_cost = float("Inf")):
+        templates = [pattern_name for pattern_name in ShipFactory.templates if ShipFactory.templates[pattern_name].cost<=no_more_cost]
+        if templates != []:
+            return random.choice(templates)
+        return None
 
     @staticmethod
     def get_cost(pattern_name):

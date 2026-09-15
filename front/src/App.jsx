@@ -165,7 +165,6 @@ function App() {
 
                 <section className="players-area">
 
-                    <PlayersTable />
                     <ShipControlPanel/>
 
                 </section>

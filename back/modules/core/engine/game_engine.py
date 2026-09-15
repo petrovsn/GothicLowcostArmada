@@ -41,6 +41,11 @@ class FleetRoster:
             self.current_fleet_points+=cost
             self.content.append(pattern_name)
 
+    def autofill(self):
+        pattern = ShipFactory.get_random_template(self.max_fleet_points - self.current_fleet_points)
+        while pattern is None:
+            self.add(pattern)
+
 
 class GameEngine:
     def __init__(self):
@@ -198,14 +203,12 @@ class GameEngine:
 
     def place_rosters(
         self,
-        n_total_players,
         rosters: dict[str, FleetRoster],
     ):
         RADIUS = 100
         SPAWN_AREA_RADIUS = 20
 
-        if n_total_players <= 0:
-            return
+        n_total_players = len(rosters)
 
         angle_step = 360 / n_total_players
 

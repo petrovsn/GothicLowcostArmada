@@ -18,15 +18,6 @@ const MOUNTING_POINTS = {
 };
 
 
-const MOUNTING_POINT_NAMES = {
-    [MOUNTING_POINTS.PROW]: "НОС",
-    [MOUNTING_POINTS.PORT]: "ЛЕВЫЙ БОРТ",
-    [MOUNTING_POINTS.STARBOARD]: "ПРАВЫЙ БОРТ",
-    [MOUNTING_POINTS.DORSAL]: "ДОРСАЛЬ",
-    [MOUNTING_POINTS.KEEL]: "КИЛЬ",
-};
-
-
 function parseWeapon(weapon) {
     const parts =
         weapon
@@ -169,6 +160,9 @@ function ShipDetails({
     const weapons =
         template.weapons ?? {};
 
+    const armor =
+        defence.armor ?? {};
+
     const prowWeapons =
         weapons[
             MOUNTING_POINTS.PROW
@@ -201,7 +195,9 @@ function ShipDetails({
 
     return (
         <div className="fleet-roster-details">
+
             <div className="fleet-roster-details-header">
+
                 <div>
                     <div className="fleet-roster-details-name">
                         {template.pattern}
@@ -215,6 +211,7 @@ function ShipDetails({
                 <div className="fleet-roster-details-cost">
                     {template.cost} очков
                 </div>
+
             </div>
 
 
@@ -225,10 +222,7 @@ function ShipDetails({
                     <SectorPanel
                         title="НОС"
                         armor={
-                            defence.armor?.front ??
-                            defence.front ??
-                            defence.hp ??
-                            0
+                            armor.front ?? 0
                         }
                         weapons={
                             prowWeapons
@@ -241,9 +235,7 @@ function ShipDetails({
                         <SectorPanel
                             title="ЛЕВЫЙ БОРТ"
                             armor={
-                                defence.armor?.left ??
-                                defence.left ??
-                                0
+                                armor.left ?? 0
                             }
                             weapons={
                                 portWeapons
@@ -253,9 +245,7 @@ function ShipDetails({
                         <SectorPanel
                             title="ПРАВЫЙ БОРТ"
                             armor={
-                                defence.armor?.right ??
-                                defence.right ??
-                                0
+                                armor.right ?? 0
                             }
                             weapons={
                                 starboardWeapons
@@ -268,9 +258,7 @@ function ShipDetails({
                     <SectorPanel
                         title="КОРМА"
                         armor={
-                            defence.armor?.rear ??
-                            defence.rear ??
-                            0
+                            armor.rear ?? 0
                         }
                         weapons={
                             rearWeapons
@@ -288,6 +276,7 @@ function ShipDetails({
 
                     <div className="roster-stat-row">
                         <span>Корпус</span>
+
                         <strong>
                             {defence.hp ?? 0}
                         </strong>
@@ -295,6 +284,7 @@ function ShipDetails({
 
                     <div className="roster-stat-row">
                         <span>Щит</span>
+
                         <strong>
                             {defence.shield ?? 0}
                         </strong>
@@ -302,6 +292,7 @@ function ShipDetails({
 
                     <div className="roster-stat-row">
                         <span>Башни</span>
+
                         <strong>
                             {defence.turrets ?? 0}
                         </strong>
@@ -318,6 +309,7 @@ function ShipDetails({
 
                     <div className="roster-stat-row">
                         <span>Тяга</span>
+
                         <strong>
                             {engine.speed ?? 0}
                         </strong>
@@ -325,6 +317,7 @@ function ShipDetails({
 
                     <div className="roster-stat-row">
                         <span>Поворот</span>
+
                         <strong>
                             {engine.turns ?? 0}
                         </strong>
@@ -346,6 +339,7 @@ function ShipDetails({
                     : "Недостаточно очков"
                 }
             </button>
+
         </div>
     );
 }
@@ -414,9 +408,7 @@ function FleetRosterBuilder({
 
     const maxFleetPoints =
         Number(
-            gameState?.config?.max_fleet_points ??
-            gameState?.service_info?.max_fleet_points ??
-            0
+            gameState?.service_info?.max_fleet_points ?? 0
         );
 
 
@@ -637,6 +629,7 @@ function FleetRosterBuilder({
                             >
 
                                 <div className="fleet-roster-template-icon">
+
                                     {template.vessel_class ===
                                         "escort" &&
                                         "▲"
@@ -651,6 +644,7 @@ function FleetRosterBuilder({
                                         "battleship" &&
                                         "■"
                                     }
+
                                 </div>
 
                                 <div className="fleet-roster-template-info">

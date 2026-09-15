@@ -83,8 +83,7 @@ class GameRoom:
 
         self.game_engine.add_bot(participant_id)
 
-        for i in range(5):
-            self.game_engine.add_ship(participant_id)
+        self.rosters[participant_id].autofill()
 
         return participant_id
 
@@ -98,9 +97,6 @@ class GameRoom:
             is_ready = False,
             color=player_color
         )
-
-        for i in range(3):
-            self.game_engine.add_ship(player_id)
 
         return player_id
 
@@ -122,9 +118,13 @@ class GameRoom:
             if not participant.is_ready: 
                 return False
         if self.current_phase == GameRoomPhase.PREPARATION:
-            self.current_phase = GameRoomPhase.BATTLE
-            self.game_engine.place_rosters(self.rosters)
+            self._activate_battlefield()
+            
         return True
+
+    def _activate_battlefield(self):
+        self.current_phase = GameRoomPhase.BATTLE
+        self.game_engine.place_rosters(self.rosters)
 
     def handle_command(self, player_id, command: dict):
         new_command = CommonCommand(**command)
