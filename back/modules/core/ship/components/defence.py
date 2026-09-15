@@ -83,6 +83,14 @@ class ShipDefence:
     def is_alive(self):
         return self.hp>0
 
+    def _take_macro_shot(self, source_polar: RelativePolarPosition, damage):
+        if damage == 0: return 0
+        defence_sector = DefenceSector.from_bearing(source_polar.bearing)
+        armor_value = self.armor[defence_sector]
+        success = get_success_tries(damage, armor_value-1)
+        return success
+
+
     def _take_laser_shot(self, damage):
         if damage == 0: return 0
         success = get_success_tries(damage, 3)
@@ -101,6 +109,8 @@ class ShipDefence:
         hit_taken+= self._take_laser_shot(weapon_damage.LASERS)
 
         self.handle_hits(hit_taken)
+
+        self.hp = max(0, self.hp-weapon_damage.TORPEDOS)
 
         return hit_taken
 

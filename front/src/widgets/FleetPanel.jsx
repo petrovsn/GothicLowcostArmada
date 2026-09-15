@@ -23,6 +23,49 @@ function getReadyTorpedos(ship) {
 }
 
 
+function HealthBar({
+    ship,
+}) {
+    const hp = Math.max(
+        0,
+        Math.floor(Number(ship.defence?.hp) || 0)
+    );
+
+    const shield = Math.max(
+        0,
+        Math.floor(Number(ship.defence?.shield) || 0)
+    );
+
+    return (
+        <div className="fleet-ship-card-health">
+            {Array.from(
+                { length: hp },
+                (_, index) => (
+                    <span
+                        key={`hp-${index}`}
+                        className="fleet-ship-card-heart hp"
+                    >
+                        ♥
+                    </span>
+                )
+            )}
+
+            {Array.from(
+                { length: shield },
+                (_, index) => (
+                    <span
+                        key={`shield-${index}`}
+                        className="fleet-ship-card-heart shield"
+                    >
+                        ♥
+                    </span>
+                )
+            )}
+        </div>
+    );
+}
+
+
 function FleetShipCard({
     ship,
     selected,
@@ -74,7 +117,7 @@ function FleetShipCard({
                 </div>
 
                 <div className="fleet-ship-card-class">
-                    [{ship.vessel_class}]
+                    [{ship.pattern}]
                 </div>
 
             </div>
@@ -85,6 +128,8 @@ function FleetShipCard({
                 &nbsp;&nbsp;
                 Turn: {engine.max_ang_velocity ?? 0}
             </div>
+
+            <HealthBar ship={ship} />
 
 
             <div className="fleet-ship-card-torpedos">

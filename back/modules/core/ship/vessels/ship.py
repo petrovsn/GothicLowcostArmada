@@ -71,14 +71,13 @@ class Ship(EngineedVessel):
 
             case ShipCommandType.TORPEDOS_LAUNCH:
                 polar_position: RelativePolarPosition = self._get_bearing(new_order.params)
-                abs_bearing:RelativePolarPosition = get_relative_polar_position(Position(0,0,0),new_order.params)
                 torp_launch_data: TorpedosLaunchData = self.weapons.torpedos_launch(polar_position)
                 if torp_launch_data is not None:
                     event = TorpedosLaunchEvent(
                         initiator_id=self.uuid,
                         target_id=self.uuid,
                         source=self.position.to_vector(),
-                        bearing = abs_bearing.bearing,
+                        bearing = self.position.rotation+polar_position.bearing,
                         params=torp_launch_data
                     )
                     self.events_queue.put(event)

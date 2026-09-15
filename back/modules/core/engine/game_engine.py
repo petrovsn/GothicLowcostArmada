@@ -121,8 +121,8 @@ class GameEngine:
             debris = Debris(self.ships[ship_id].as_dict())
             debris.place(**self.ships[ship_id].position.as_dict())
             self.static_objects[ship_id] = debris
-            self.owning.pop(ship_id,-1)
-            self.ships.pop(ship_id, -1)
+        self.owning.pop(ship_id,-1)
+        self.ships.pop(ship_id, -1)
 
     def remove_participant(self, participant_id):
         fleet_to_remove = self.fleets[participant_id]
