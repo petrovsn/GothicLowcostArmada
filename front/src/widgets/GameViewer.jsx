@@ -15,9 +15,12 @@ import ShipIcon, {
     TIER_CONFIG,
 } from "./ShipIcon.jsx";
 
+import TorpedoSwarm from "./TorpedoSwarm.jsx";
+
 import "../styles/GameViewer.css";
 import EffectsLayer from "./EffectsLayer.jsx";
 import useEffects from "./useEffects.js";
+
 
 const VIEW_BOX_SIZE = 1000;
 const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
@@ -246,8 +249,26 @@ function GameViewer({
     const entities =
         gameState.entities ?? {};
 
+const allEntities = [
+    ...(entities.ships ?? []),
+    ...(entities.static_objects ?? []),
+];
+
     const ships =
-        entities.ships ?? [];
+        allEntities.filter(
+            entity =>
+                entity.vessel_class !==
+                "torpedos"
+        );
+
+    const torpedos =
+        allEntities.filter(
+            entity =>
+                entity.vessel_class ===
+                "torpedos" &&
+                entity.is_active
+        );
+
 
     const fleets =
         gameState.fleets ?? {};
@@ -569,8 +590,8 @@ function GameViewer({
                 worldPosition
             );
 
-        // Торпеды запускаются только
-        // по свободному полю.
+        // Двойной клик по кораблю
+        // не является запуском торпед.
         if (ship) {
             return;
         }
@@ -594,16 +615,11 @@ function GameViewer({
 
         dragState.current = null;
 
-        // Это был drag камеры,
-        // а не клик.
         if (drag.moved) {
             return;
         }
 
 
-        // Второй клик в пределах
-        // DOUBLE_CLICK_DELAY означает
-        // двойной клик.
         if (clickTimer.current) {
             clearTimeout(
                 clickTimer.current
@@ -617,8 +633,6 @@ function GameViewer({
         }
 
 
-        // Первый клик пока не выполняем.
-        // Ждём, не последует ли второй.
         clickTimer.current =
             setTimeout(() => {
                 clickTimer.current = null;
@@ -676,6 +690,7 @@ function GameViewer({
                         camera={camera}
                     />
 
+
                     {ships.map(
                         ship => {
                             const isSelected =
@@ -706,6 +721,7 @@ function GameViewer({
                                         />
                                     )}
 
+
                                     <ShipIcon
                                         vessel_class={
                                             vessel_class
@@ -730,6 +746,17 @@ function GameViewer({
                             );
                         }
                     )}
+
+
+                    {torpedos.map(
+                        torpedo => (
+                            <TorpedoSwarm
+                                key={torpedo.uuid}
+                                torpedo={torpedo}
+                            />
+                        )
+                    )}
+
 
                     <EffectsLayer
                         effects={effects}

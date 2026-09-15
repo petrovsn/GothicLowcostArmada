@@ -28,7 +28,7 @@ export function attack_ship(
         action: "fire_to",
         params: {
             ship_id: shipId,
-            target: targetShipId,
+            params: targetShipId,
         },
     });
 }

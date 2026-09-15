@@ -3,16 +3,10 @@ from queue import Queue
 from modules.core.engine.game_events import Event
 from modules.core.entities.space import Position
 from modules.core.ship.vessel_class import VesselClass
-from modules.core.ship.vessels.abc_vessel import AbstractVessel
 
 
-class Debris(AbstractVessel):
-    def __init__(self):
-        super().__init__(None)
-        self.vessel_class = VesselClass.ESCORT
-        self._position = Position(float('Inf'), float('Inf'), 0)
-
-    def from_ship_dict(self, ship_dict: dict):
+class Debris:
+    def __init__(self, ship_dict: dict):
         self.uuid = ship_dict.get("uuid")
         self.name = ship_dict.get("name")+"[D]"
         self.vessel_class = VesselClass(ship_dict.get("vessel_class"))

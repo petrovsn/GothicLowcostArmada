@@ -20,8 +20,12 @@ class ShipCommand(BaseModel):
     params: Vector2|float|str
 
 def parse_ship_command(command: CommonCommand) -> ShipCommand:
-    return ShipCommand(
-        ship_id=command.params["ship_id"],
-        action=ShipCommandType(command.action),
-        params=command.params["params"],
-    )
+    try:
+        return ShipCommand(
+            ship_id=command.params["ship_id"],
+            action=ShipCommandType(command.action),
+            params=command.params["params"],
+        )
+    except Exception as e:
+        print(e)
+        

@@ -63,7 +63,7 @@ def get_angle_between(vector1: Vector2, vector2: Vector2) -> float:
 
 def get_relative_polar_position(position: Position,
     signal: Vector2,
-) -> float:
+) -> RelativePolarPosition:
     bearing = get_relative_bearing(position = position, signal= signal)
     distance = get_distance(position, signal)
 

@@ -11,6 +11,7 @@ from modules.core.ship.components.tactical_ai import TacticalBehavior, TacticalT
 from modules.core.entities.space import Position, Vector2, RelativePolarPosition
 from modules.core.engine.game_events import TorpedosLaunchEvent
 from modules.core.ship.vessels.engineed_vessel import EngineedVessel
+from modules.utils.geometry import get_relative_polar_position
 
 class Ship(EngineedVessel):
     def __init__(self, vessel_class: VesselClass, events_queue: Queue = None):
@@ -70,14 +71,17 @@ class Ship(EngineedVessel):
 
             case ShipCommandType.TORPEDOS_LAUNCH:
                 polar_position: RelativePolarPosition = self._get_bearing(new_order.params)
+                abs_bearing:RelativePolarPosition = get_relative_polar_position(Position(0,0,0),new_order.params)
                 torp_launch_data: TorpedosLaunchData = self.weapons.torpedos_launch(polar_position)
-                event = TorpedosLaunchEvent(
-                    initiator_id=self.uuid,
-                    target_id=self.uuid,
-                    source=self.position.to_vector(),
-                    params=torp_launch_data
-                )
-                self.events_queue.put(event)
+                if torp_launch_data is not None:
+                    event = TorpedosLaunchEvent(
+                        initiator_id=self.uuid,
+                        target_id=self.uuid,
+                        source=self.position.to_vector(),
+                        bearing = abs_bearing.bearing,
+                        params=torp_launch_data
+                    )
+                    self.events_queue.put(event)
     
 
     def as_dict(self):

@@ -67,7 +67,6 @@ class WeaponMountingPoint(str, enum.Enum):
 class TorpedosLaunchData:
     speed: int
     power: int
-    bearing: int
 
 class ShipWeaponry:
     def __init__(self):
@@ -134,7 +133,7 @@ class ShipWeaponry:
     def torpedos_launch(self, target: RelativePolarPosition) -> TorpedosLaunchData:
         weapons: list[Weapon] = self.get_weapons_for_target(target, need_torpedos=True)
         if len(weapons) == 0: return None
-        torpedo_launch_data = TorpedosLaunchData(30,0,target.bearing)
+        torpedo_launch_data = TorpedosLaunchData(30,0)
         for weapon in weapons:
             self.reloading[weapon.uuid] = weapon.reloading
             torpedo_launch_data.power+=weapon.power

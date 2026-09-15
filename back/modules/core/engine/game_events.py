@@ -43,5 +43,6 @@ class VesselDeathEvent(Event):
 class TorpedosLaunchEvent(Event):
     event_type: ClassVar[str] = "torpedos_launch"
     source: Vector2
+    bearing: float
     params: TorpedosLaunchData
     

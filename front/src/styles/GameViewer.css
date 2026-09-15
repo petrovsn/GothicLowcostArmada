@@ -58,3 +58,26 @@
 .coordinate-grid line {
     fill: none;
 }
+
+
+.torpedo-swarm {
+    pointer-events: none;
+}
+
+
+.torpedo {
+    fill: #f5f5f5;
+    stroke: #ffffff;
+    stroke-width: 0.08;
+
+    filter:
+        drop-shadow(0 0 0.35px #ffffff)
+        drop-shadow(0 0 0.7px #ffffff);
+}
+
+
+.torpedo-trail {
+    stroke: #d6d6d6;
+    stroke-width: 0.12;
+    stroke-linecap: round;
+}

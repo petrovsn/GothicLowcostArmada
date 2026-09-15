@@ -22,11 +22,12 @@ from modules.core.ship.vessels.ship import Ship
 from modules.core.ship.vessels.target import Target
 from modules.core.ship.vessels.torpedo import Torpedo
 from modules.utils.geometry import get_relative_polar_position
-
+from typing import Any
 
 class GameEngine:
     def __init__(self):
         self.ships: dict[str, AbstractVessel] = {}
+        self.static_objects: dict[str, Any] = {}
         self.owning: dict[str,str] = {}
         self.fleets: dict[str, list] = defaultdict(list)
         self.events = Queue()
@@ -54,8 +55,10 @@ class GameEngine:
         owner_position = self.ships[ship_id].position
 
         perception = ShipPerception(
-            allied_entities={ship.uuid: self._get_relative_ship_info(owner_position,ship) for ship_id, ship in self.ships.items() if ship_id in self.fleets[owner_id]},
-            enemy_entities={ship.uuid: self._get_relative_ship_info(owner_position,ship) for ship_id, ship in self.ships.items() if ship_id not in self.fleets[owner_id]},
+            allied_entities={ship.uuid: self._get_relative_ship_info(owner_position,ship) for ship_id, ship in self.ships.items() 
+                             if ship_id in self.fleets.get(owner_id, []) and not isinstance(ship, Debris)},
+            enemy_entities={ship.uuid: self._get_relative_ship_info(owner_position,ship) for ship_id, ship in self.ships.items()
+                             if ship_id not in self.fleets.get(owner_id, []) and not isinstance(ship, Debris)}
         )
         return perception
 
@@ -107,16 +110,19 @@ class GameEngine:
                 params=event.params,
                 events_queue=self.events
             )
+            torpedo_instance.place(event.source.x, event.source.y, event.bearing)
             self.ships[torpedo_instance.uuid] = torpedo_instance
 
     def _handle_ship_death(self, ship_id):
         owner_id = self._get_owner_id(ship_id)
-        self.fleets[owner_id].remove(ship_id)
-        debris = Debris()
-        debris.from_ship_dict(self.ships[ship_id].as_dict())
-        debris.place(**self.ships[ship_id].position.as_dict())
-        self.ships[ship_id] = debris
-        self.owning.pop(ship_id,-1)
+        if owner_id is not None:
+            if ship_id in self.fleets[owner_id]:
+                self.fleets[owner_id].remove(ship_id)
+            debris = Debris(self.ships[ship_id].as_dict())
+            debris.place(**self.ships[ship_id].position.as_dict())
+            self.static_objects[ship_id] = debris
+            self.owning.pop(ship_id,-1)
+            self.ships.pop(ship_id, -1)
 
     def remove_participant(self, participant_id):
         fleet_to_remove = self.fleets[participant_id]
@@ -171,6 +177,7 @@ class GameEngine:
     def get_entities(self):
         result =  {
             "ships": [ship.as_dict() for ship in self.ships.values()],
+            "static_objects": [ship.as_dict() for ship in self.static_objects.values()],
             "events": self.events_output,
             "torpedos": [],
         }
