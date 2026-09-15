@@ -104,13 +104,7 @@ class ShipFactory:
             for weapon_str in weapons_str_list:
                 weapon = ShipFactory._weapon_from_string(weapon_str)
                 weapons.add_weapon(mp,weapon)
-        torpedo_block = Weapon(
-            type=WeaponType.TORPEDOS,
-            fire_arc=FireArc.FRONT,
-            range=30,
-            power=6
-        )
-        weapons.add_weapon(WeaponMountingPoint.PROW, torpedo_block)
+
         return weapons
 
     @staticmethod
