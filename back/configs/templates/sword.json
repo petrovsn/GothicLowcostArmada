@@ -1,0 +1,20 @@
+{
+    "pattern": "Sword",
+    "faction": "imperium",
+    "cost": 35,
+    "vessel_class": "escort",
+    "defence": {
+        "hp": 1,
+        "shield": 1,
+        "turrets": 2
+    },
+    "engine": {
+        "speed": 25,
+        "turns": 90
+    },
+    "weapons": {
+        "prow": [
+            "all_around/M/30/4"
+        ]
+    }
+}

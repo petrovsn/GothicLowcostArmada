@@ -1,0 +1,28 @@
+{
+    "pattern": "Tyrant",
+    "faction": "imperium",
+    "cost": 185,
+    "vessel_class": "cruiser",
+    "defence": {
+        "hp": 8,
+        "shield": 2,
+        "turrets": 2
+    },
+    "engine": {
+        "speed": 20,
+        "turns": 45
+    },
+    "weapons": {
+        "prow": [
+            "front/T/30/6"
+        ],
+        "port": [
+            "left/M/45/4",
+            "left/M/30/6"
+        ],
+        "starboard": [
+            "right/M/45/4",
+            "right/M/30/6"
+        ]
+    }
+}

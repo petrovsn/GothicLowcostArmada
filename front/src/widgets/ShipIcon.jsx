@@ -17,7 +17,7 @@ const TIER_CONFIG = {
 
 
 function ShipIcon({
-    tier,
+    vessel_class,
     x = 0,
     y = 0,
     rotation = 0,
@@ -26,7 +26,7 @@ function ShipIcon({
     className = "ship",
 }) {
     const config =
-        TIER_CONFIG[tier] ??
+        TIER_CONFIG[vessel_class] ??
         TIER_CONFIG.cruiser;
 
     return (

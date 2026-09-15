@@ -28,6 +28,10 @@ class ShipEngine:
         self.velocity = self.max_velocity
 
         self.thrust = 1
+        self.max_thrust = 1
+
+    def set_max_thrust(self, max_thrust):
+        self.max_thrust = max_thrust
 
     def set_destination(self, destination:Vector2):
         self.destination = destination
@@ -39,13 +43,13 @@ class ShipEngine:
             return -1
 
     def _bearing_out_of_turn(self, bearing):
-        if self.max_round_rotation < bearing < (360 - self.max_round_rotation):
+        if 45 < bearing < (360 - 45):
             return True
         return False
         
 
     def update_velocities(self):
-        self.thrust = 1.0
+        self.thrust = min(1.0, self.max_thrust)
         self.ang_velocity = 0
         if self.destination is None:
             return 
@@ -56,7 +60,7 @@ class ShipEngine:
             closest_turn = self.get_closest_turn(destination_polar_position.bearing)
             self.ang_velocity = closest_turn*self.max_ang_velocity
             if self._bearing_out_of_turn(destination_polar_position.bearing):
-                self.thrust = 0.5
+                self.thrust = min(0.5, self.max_thrust)
 
 
         self.velocity = self.apply_velocity_modificators()
@@ -82,4 +86,6 @@ class ShipEngine:
             "position": self.position.as_dict(),
             "destination": self.destination.as_dict() if self.destination is not None else None,
             "thrust": self.thrust,
+            "max_velocity": self.max_velocity*GAME_ROUND,
+            "max_ang_velocity": self.max_ang_velocity*GAME_ROUND
         }

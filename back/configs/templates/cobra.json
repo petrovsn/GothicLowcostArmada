@@ -1,0 +1,21 @@
+{
+    "pattern": "Cobra",
+    "faction": "imperium",
+    "cost": 30,
+    "vessel_class": "escort",
+    "defence": {
+        "hp": 1,
+        "shield": 1,
+        "turrets": 1
+    },
+    "engine": {
+        "speed": 30,
+        "turns": 90
+    },
+    "weapons": {
+        "prow": [
+            "front/T/30/2",
+            "front/M/30/1"
+        ]
+    }
+}

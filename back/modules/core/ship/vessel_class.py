@@ -6,13 +6,13 @@ class VesselClass(StrEnum):
     CRUISER = "cruiser"
     ESCORT = "escort"
     BEAKON = "beakon"
-    ORDNANCE = "ordnance"
+    TORPEDOS = "torpedos"
 
     def is_capital(self):
         return self.value in [VesselClass.BATTLESHIP, VesselClass.CRUISER]
     
-    def is_ordnance(self):
-        return self.value == VesselClass.ORDNANCE
+    def is_torpedos(self):
+        return self.value == VesselClass.TORPEDOS
 
 
 

@@ -1,19 +1,26 @@
 
-from modules.core.ship.commands import parse_ship_command, ShipCommand
-from modules.core.entities.commands import CommonCommand, CommandType
-from modules.core.entities.space import Vector2, Position, RelativePolarPosition
-from modules.utils.geometry import get_relative_polar_position
-from random import randint
 from collections import defaultdict
-from modules.core.ship.perception import ShipPerception, ShipPerceptionInfo
-from functools import lru_cache
 from queue import Queue
-from modules.core.engine.game_events import Event, FireEvent, FireEventResult, ShipDeathEvent
-from modules.core.ship.abc_vessel import AbstractVessel
-from modules.core.ship.ship import Ship
-from modules.core.ship.target import Target
-from modules.core.ship.debris import Debris
-from modules.core.ai.core_ai import CoreAi, AiPerception
+from random import randint
+
+from modules.core.ai.core_ai import AiPerception, CoreAi
+from modules.core.engine.game_events import (
+    Event,
+    FireEvent,
+    FireEventResult,
+    VesselDeathEvent,
+)
+from modules.core.entities.commands import CommonCommand
+from modules.core.entities.space import Position
+from modules.core.ship.commands import ShipCommand
+from modules.core.ship.factory import ShipFactory
+from modules.core.ship.perception import ShipPerception, ShipPerceptionInfo
+from modules.core.ship.vessels.abc_vessel import AbstractVessel
+from modules.core.ship.vessels.debris import Debris
+from modules.core.ship.vessels.ship import Ship
+from modules.core.ship.vessels.target import Target
+from modules.utils.geometry import get_relative_polar_position
+
 
 class GameEngine:
     def __init__(self):
@@ -88,7 +95,7 @@ class GameEngine:
         if type(event) in [FireEventResult]:
             self.events_output.append(event.as_dict())
 
-        if isinstance(event, ShipDeathEvent):
+        if isinstance(event, VesselDeathEvent):
             self.events_output.append(event.as_dict())
             self._handle_ship_death(event.target_id)
 
@@ -108,23 +115,23 @@ class GameEngine:
         self.fleets.pop(participant_id, -1)
         self.ai.pop(participant_id, -1)
         
-
     def add_bot(self, participant_id):
         self.ai[participant_id] = CoreAi()
         
     def add_ship(self, player_id):
-        ship = Ship(events_queue=self.events)
+        pattern_name = ShipFactory.get_random_template()
+        order_report_queue = None
+        if player_id in self.ai:
+            order_report_queue = self.ai.get(player_id).order_report_queue
+
+        ship: Ship = ShipFactory.ship_from_template(pattern_name, self.events, order_report_queue)
 
         ship.place(randint(-30,30),randint(-30,30),randint(0,359))
 
-        if player_id in self.ai:
-            ship.set_ai_report_channel(self.ai.get(player_id).order_report_queue)
-
         self.ships[ship.uuid] = ship
-        self.fleets[player_id].append(ship.uuid)
         self.owning[ship.uuid] = player_id
-
-        
+        self.fleets[player_id].append(ship.uuid)
+         
     def add_target(self, participant_id):
         target = Target(events_queue=self.events)
         x = randint(-30, 30)
@@ -135,22 +142,26 @@ class GameEngine:
         self.owning[target.uuid] = participant_id
         return target.uuid
 
+
     def proceed_ship_command(self, ship_command: ShipCommand):
         if ship_command.ship_id in self.ships:
             self.ships[ship_command.ship_id].handle_command(ship_command)
 
+
     def proceed_command(self, new_command: CommonCommand):
         ...
+
 
     def get_fleet_info(self, player_id):
         return {
             ship_id: self.ships[ship_id].get_info() for ship_id in self.fleets[player_id]
         }
+
             
     def get_entities(self):
         result =  {
             "ships": [ship.as_dict() for ship in self.ships.values()],
             "events": self.events_output,
-            "ordnance": [],
+            "torpedos": [],
         }
         return result

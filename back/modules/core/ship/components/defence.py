@@ -4,8 +4,8 @@ import pandas as pd
 
 from modules.core.entities.space import RelativePolarPosition
 from modules.core.entities.time import GAME_FPS, GAME_ROUND
-from modules.core.ship.entities import VesselClass
-from modules.core.ship.weaponry import WeaponDamage
+from modules.core.ship.vessel_class import VesselClass
+from modules.core.ship.components.weaponry import WeaponDamage
 from modules.utils.config_loader import ConfigLoader
 from modules.utils.random import get_success_tries
 
@@ -43,7 +43,7 @@ class DefenceMacroTable:
         return cls._instance
 
     def _get_column(self, target_class: VesselClass, defence_sector: DefenceSector):
-        if target_class.is_ordnance():
+        if target_class.is_torpedos():
             return 5
         
         column_idx = 2
@@ -125,5 +125,5 @@ class ShipDefence:
                 "hp":self.hp,
                 "shield": self.shield,
                 "armor": self.armor,
-                "aa_point": self.aa_points
+                "turrets": self.turrets
             }

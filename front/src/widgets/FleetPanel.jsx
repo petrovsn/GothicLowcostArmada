@@ -7,6 +7,10 @@ import { setSelectedShip } from "../store/gameSlice.js";
 
 import "../styles/FleetPanel.css";
 
+const SHIP_ICONS = {
+    "escort": "▲",
+
+}
 
 function FleetShipCard({
     ship,
@@ -16,16 +20,27 @@ function FleetShipCard({
     return (
         <button
             className={
-                `fleet-ship-card ${
-                    selected
-                        ? "selected"
-                        : ""
+                `fleet-ship-card ${selected
+                    ? "selected"
+                    : ""
                 }`
             }
             onClick={onClick}
         >
-            <div className="fleet-ship-card-icon">
-                ▲
+            <div className={`fleet-ship-card-icon ${ship.vessel_class}`}>
+                {ship.vessel_class === "escort" && (
+                    <div className="ship-icon-escort">▲</div>
+                )}
+
+                {ship.vessel_class === "cruiser" && (
+                    <div className="ship-icon-cruiser" />
+                )}
+
+                {ship.vessel_class === "battleship" && (
+                    <div className="ship-icon-battleship">
+                        <div className="ship-icon-battleship-line" />
+                    </div>
+                )}
             </div>
 
             <div className="fleet-ship-card-info">
@@ -35,7 +50,7 @@ function FleetShipCard({
                 </div>
 
                 <div className="fleet-ship-card-tier">
-                    {ship.tier}
+                    {ship.pattern}[{ship.vessel_class}]
                 </div>
 
             </div>

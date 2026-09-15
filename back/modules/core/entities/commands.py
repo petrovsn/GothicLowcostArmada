@@ -9,4 +9,4 @@ class CommandType(str, enum.Enum):
 class CommonCommand(BaseModel):
     type: CommandType
     action: str
-    params: dict
+    params: dict = None

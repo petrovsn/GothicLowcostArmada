@@ -601,9 +601,8 @@ function GameViewer({
                                 ship.uuid ===
                                 selectedShipId;
 
-                            const tier =
-                                ship.tier ??
-                                ship.class ??
+                            const vessel_class =
+                                ship.vessel_class ??
                                 "cruiser";
 
                             return (
@@ -627,7 +626,7 @@ function GameViewer({
                                     )}
 
                                     <ShipIcon
-                                        tier={tier}
+                                        vessel_class={vessel_class}
                                         x={
                                             ship.position.x
                                         }

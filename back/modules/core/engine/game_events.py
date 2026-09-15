@@ -3,7 +3,7 @@ from enum import StrEnum
 from typing import ClassVar
 
 from modules.core.entities.space import Vector2
-from modules.core.ship.weaponry import WeaponDamage
+from modules.core.ship.components.weaponry import WeaponDamage
 
 
 class EventType(StrEnum):
@@ -35,6 +35,16 @@ class FireEventResult(FireEvent):
 
 
 @dataclass
-class ShipDeathEvent(Event):
+class VesselDeathEvent(Event):
     event_type: ClassVar[str] = "ship_death_event"
     position: Vector2
+
+
+@dataclass
+class TorpedosLaunchEvent(Event):
+    event_type: ClassVar[str] = "torpedos_launch"
+    source: Vector2
+    bearing: float
+    power: int
+    speed: int
+    

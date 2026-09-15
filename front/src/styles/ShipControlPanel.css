@@ -200,7 +200,9 @@
 }
 
 
-.ship-engine-thrust {
+.ship-engine-stats {
+    display: flex;
+    flex-direction: column;
     margin-bottom: 5px;
 
     color: #d8dce3;

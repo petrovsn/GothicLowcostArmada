@@ -19,6 +19,7 @@ class WeaponType(enum.StrEnum):
 class WeaponDamage:
     LASERS: int
     MACRO: int
+    TORPEDOS: int
 
 class FireArc(enum.StrEnum):
     FRONT = "front"
@@ -50,8 +51,9 @@ class Weapon:
     )
 
     @property
-    def reloaing(self):
+    def reloading(self):
         return GAME_ROUND*GAME_FPS
+
 
 
 class WeaponMountingPoint(str, enum.Enum):
@@ -60,6 +62,12 @@ class WeaponMountingPoint(str, enum.Enum):
     STARBOARD = "starboard"
     DORSAL = "dorsal"
     KEEL = "keel"
+
+@dataclass
+class TorpedosLaunchData:
+    speed: int
+    power: int
+    bearing: int
 
 class ShipWeaponry:
     def __init__(self):
@@ -73,7 +81,7 @@ class ShipWeaponry:
         self.reloading[weapon.uuid] = 0
 
     def get_weapons_for_target(
-        self, polar_position: RelativePolarPosition
+        self, polar_position: RelativePolarPosition, required_weapon_types: list[WeaponType]
     ) -> list[Weapon]:
         fire_arcs = FireArc.from_bearing(polar_position.bearing)
         all_weapons_with_fire_arc = list(
@@ -84,8 +92,10 @@ class ShipWeaponry:
             for weapon in all_weapons_with_fire_arc
             if weapon.range >= polar_position.distance and
             self.reloading[weapon.uuid] == 0
+            and weapon.type in required_weapon_types
         ]
         return weapons_with_enough_range
+
 
     def is_target_in_fire_range(self, target: RelativePolarPosition):
         fire_arc = FireArc.from_bearing(target.bearing)
@@ -98,8 +108,9 @@ class ShipWeaponry:
     def get_available_targets(self, target_list: list[RelativePolarPosition]):
         return []
 
+
     def fire_to(self, target: RelativePolarPosition) -> WeaponDamage: 
-        weapons: list[Weapon] = self.get_weapons_for_target(target)
+        weapons: list[Weapon] = self.get_weapons_for_target(target, [WeaponType.MACRO, WeaponType.LASERS])
         if len(weapons) == 0: return None
         summary_damage = Counter()
         for weapon in weapons:
@@ -108,8 +119,24 @@ class ShipWeaponry:
 
         return WeaponDamage(
             LASERS=summary_damage[WeaponType.LASERS],
-            MACRO=summary_damage[WeaponType.MACRO]
+            MACRO=summary_damage[WeaponType.MACRO],
+            TORPEDOS=0
         )
+
+    def torpedos_launch(self, target: RelativePolarPosition) -> TorpedosLaunchData:
+        weapons: list[Weapon] = self.get_weapons_for_target(target, [WeaponType.TORPEDOS])
+        if len(weapons) == 0: return None
+        torpedos_launchs = []
+        for weapon in weapons:
+            self.reloading[weapon.uuid] = weapon.reloading
+            torpedos_launchs.append(
+                OrdnanceLaunchData(
+                            speed=we
+                        )
+            )
+            
+
+        return 
 
     def tick(self):
         for weapon_id in self.reloading:
@@ -125,6 +152,7 @@ class ShipWeaponry:
                         "fire_arc": weapon.fire_arc.value,
                         "range": weapon.range,
                         "power": weapon.power,
+                        "reloading": self.reloading[weapon.uuid]
                     }
                     for weapon in weapons
                 ]

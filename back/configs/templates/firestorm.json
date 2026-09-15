@@ -1,0 +1,21 @@
+{
+    "pattern": "Firestorm",
+    "faction": "imperium",
+    "cost": 40,
+    "vessel_class": "escort",
+    "defence": {
+        "hp": 1,
+        "shield": 1,
+        "turrets": 2
+    },
+    "engine": {
+        "speed": 25,
+        "turns": 90
+    },
+    "weapons": {
+        "prow": [
+            "front/L/30/1",
+            "front/M/30/2"
+        ]
+    }
+}

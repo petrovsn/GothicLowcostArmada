@@ -28,12 +28,12 @@
 }
 """
 
-from modules.core.ship.ship import Ship
-from modules.core.ship.weaponry import ShipWeaponry, Weapon, FireArc, WeaponMountingPoint, WeaponType
-from modules.core.ship.engine import ShipEngine
-from modules.core.ship.defence import ShipDefence
-from modules.core.ship.entities import VesselClass
-
+from modules.core.ship.vessels.ship import Ship
+from modules.core.ship.components.weaponry import ShipWeaponry, Weapon, FireArc, WeaponMountingPoint, WeaponType
+from modules.core.ship.components.engine import ShipEngine
+from modules.core.ship.components.defence import ShipDefence
+from modules.core.ship.vessel_class import VesselClass
+import random
 from pydantic import BaseModel
 
 class DefenceTemplate(BaseModel):
@@ -104,14 +104,26 @@ class ShipFactory:
             for weapon_str in weapons_str_list:
                 weapon = ShipFactory._weapon_from_string(weapon_str)
                 weapons.add_weapon(mp,weapon)
+        torpedo_block = Weapon(
+            type=WeaponType.TORPEDOS,
+            fire_arc=FireArc.FRONT,
+            range=30,
+            power=6
+        )
+        weapons.add_weapon(WeaponMountingPoint.PROW, torpedo_block)
         return weapons
 
     @staticmethod
-    def ship_from_template(template_name, events_queue = None, reports_queue = None):
+    def ship_from_template(template_name = None, events_queue = None, reports_queue = None) -> Ship:
         template:ShipTemplate = ShipFactory.templates[template_name]
-        ship = Ship(events_queue)
+        ship = Ship(template.vessel_class, events_queue)
         ship.engine = ShipFactory.engine_from_template(template.engine)
         ship.defence = ShipFactory.defence_from_template(template.vessel_class, template.defence)
         ship.weapons = ShipFactory.weapons_from_template(template.weapons)
         ship.set_ai_report_channel(reports_queue)
+        ship.pattern = template_name
         return ship
+
+
+    def get_random_template():
+        return random.choice(list(ShipFactory.templates.keys()))

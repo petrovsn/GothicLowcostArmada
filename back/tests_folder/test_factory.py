@@ -1,6 +1,6 @@
 import pytest
-from modules.core.ship.entities import VesselClass
-from modules.core.ship.ship import Ship
+from modules.core.ship.vessel_class import VesselClass
+from modules.core.ship.vessels.ship import Ship
 from modules.core.ship.factory import ShipFactory
 
 

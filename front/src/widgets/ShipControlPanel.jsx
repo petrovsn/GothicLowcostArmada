@@ -235,7 +235,7 @@ function ShipControlPanel() {
                 </div>
 
                 <div className="ship-control-tier">
-                    {ship.tier}
+                    {ship.vessel_class} · {ship.pattern}
                 </div>
 
             </div>
@@ -315,8 +315,10 @@ function ShipControlPanel() {
                     ДВИГАТЕЛЬ
                 </div>
 
-                <div className="ship-engine-thrust">
-                    Тяга: {engine.thrust ?? 0}
+                <div className="ship-engine-stats">
+                    <label>Тяга: {engine.thrust ?? 0}</label>
+                    <label>Макс. скорость: {engine.max_velocity ?? 0}</label>
+                    <label>Макс. поворот: {engine.max_ang_velocity ?? 0}</label>
                 </div>
 
                 <div className="ship-engine-controls">
@@ -354,7 +356,7 @@ function ShipControlPanel() {
                             handleClearTarget
                         }
                     >
-                        clear target
+                        clear destination
                     </button>
 
                 </div>

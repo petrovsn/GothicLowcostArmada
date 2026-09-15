@@ -1,5 +1,6 @@
 {
     "pattern": "Lunar",
+    "faction": "imperium",
     "cost":180,
     "vessel_class": "cruiser",
     "defence":{

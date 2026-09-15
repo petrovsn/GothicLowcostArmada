@@ -71,3 +71,41 @@
     color: #8d96a3;
     text-transform: uppercase;
 }
+
+.fleet-ship-card-icon {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ship-icon-escort {
+    font-size: 24px;
+    line-height: 1;
+}
+
+.ship-icon-cruiser {
+    width: 10px;
+    height: 24px;
+    border: 2px solid currentColor;
+    background-color: currentColor;
+}
+
+.ship-icon-battleship {
+    width: 14px;
+    height: 26px;
+    border: 2px solid currentColor;
+    background-color: currentColor;
+    position: relative;
+}
+
+.ship-icon-battleship-line {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 50%;
+    width: 2px;
+    transform: translateX(-50%);
+    background: black;
+}
