@@ -10,7 +10,7 @@ export function move_ship(
         action: "move_to",
         params: {
             ship_id: shipId,
-            target: {
+            params: {
                 x: position.x,
                 y: position.y,
             },
@@ -29,6 +29,24 @@ export function attack_ship(
         params: {
             ship_id: shipId,
             target: targetShipId,
+        },
+    });
+}
+
+
+export function launch_torpedos(
+    shipId,
+    position
+) {
+    game_controller.send_command({
+        type: "ship",
+        action: "torpedos_launch",
+        params: {
+            ship_id: shipId,
+            params: {
+                x: position.x,
+                y: position.y,
+            },
         },
     });
 }
@@ -60,4 +78,3 @@ export function clear_ship_target(
 ) {
     // TODO
 }
-

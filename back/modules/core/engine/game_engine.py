@@ -9,6 +9,7 @@ from modules.core.engine.game_events import (
     FireEvent,
     FireEventResult,
     VesselDeathEvent,
+    TorpedosLaunchEvent
 )
 from modules.core.entities.commands import CommonCommand
 from modules.core.entities.space import Position
@@ -19,6 +20,7 @@ from modules.core.ship.vessels.abc_vessel import AbstractVessel
 from modules.core.ship.vessels.debris import Debris
 from modules.core.ship.vessels.ship import Ship
 from modules.core.ship.vessels.target import Target
+from modules.core.ship.vessels.torpedo import Torpedo
 from modules.utils.geometry import get_relative_polar_position
 
 
@@ -98,6 +100,14 @@ class GameEngine:
         if isinstance(event, VesselDeathEvent):
             self.events_output.append(event.as_dict())
             self._handle_ship_death(event.target_id)
+
+        if isinstance(event, TorpedosLaunchEvent):
+            torpedo_instance = Torpedo(
+                owner_id=event.initiator_id,
+                params=event.params,
+                events_queue=self.events
+            )
+            self.ships[torpedo_instance.uuid] = torpedo_instance
 
     def _handle_ship_death(self, ship_id):
         owner_id = self._get_owner_id(ship_id)

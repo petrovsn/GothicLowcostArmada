@@ -7,52 +7,102 @@ import { setSelectedShip } from "../store/gameSlice.js";
 
 import "../styles/FleetPanel.css";
 
-const SHIP_ICONS = {
-    "escort": "▲",
 
+function getReadyTorpedos(ship) {
+    const mountingPoints =
+        ship.weapons?.mounting_points ?? {};
+
+    return Object.values(mountingPoints)
+        .flat()
+        .filter(
+            weapon =>
+                weapon.type === "torpedos" &&
+                weapon.reloading === 0
+        )
+        .length;
 }
+
 
 function FleetShipCard({
     ship,
     selected,
     onClick,
 }) {
+    const engine =
+        ship.engine ?? {};
+
+    const torpedos =
+        getReadyTorpedos(ship);
+
     return (
         <button
             className={
-                `fleet-ship-card ${selected
-                    ? "selected"
-                    : ""
+                `fleet-ship-card ${
+                    selected
+                        ? "selected"
+                        : ""
                 }`
             }
             onClick={onClick}
         >
-            <div className={`fleet-ship-card-icon ${ship.vessel_class}`}>
-                {ship.vessel_class === "escort" && (
-                    <div className="ship-icon-escort">▲</div>
-                )}
+            <div className="fleet-ship-card-header">
 
-                {ship.vessel_class === "cruiser" && (
-                    <div className="ship-icon-cruiser" />
-                )}
+                <div
+                    className={
+                        `fleet-ship-card-icon ${ship.vessel_class}`
+                    }
+                >
+                    {ship.vessel_class === "escort" && (
+                        <div className="ship-icon-escort">
+                            ▲
+                        </div>
+                    )}
 
-                {ship.vessel_class === "battleship" && (
-                    <div className="ship-icon-battleship">
-                        <div className="ship-icon-battleship-line" />
-                    </div>
-                )}
-            </div>
+                    {ship.vessel_class === "cruiser" && (
+                        <div className="ship-icon-cruiser" />
+                    )}
 
-            <div className="fleet-ship-card-info">
+                    {ship.vessel_class === "battleship" && (
+                        <div className="ship-icon-battleship">
+                            <div className="ship-icon-battleship-line" />
+                        </div>
+                    )}
+                </div>
 
                 <div className="fleet-ship-card-name">
                     {ship.name}
                 </div>
 
-                <div className="fleet-ship-card-tier">
-                    {ship.pattern}[{ship.vessel_class}]
+                <div className="fleet-ship-card-class">
+                    [{ship.vessel_class}]
                 </div>
 
+            </div>
+
+
+            <div className="fleet-ship-card-stats">
+                Speed: {engine.max_velocity ?? 0}
+                &nbsp;&nbsp;
+                Turn: {engine.max_ang_velocity ?? 0}
+            </div>
+
+
+            <div className="fleet-ship-card-torpedos">
+                Torpedos:
+
+                {Array.from(
+                    { length: torpedos },
+                    (_, index) => (
+                        <span
+                            key={index}
+                            className="fleet-ship-card-torpedo"
+                        >
+                            ↑
+                        </span>
+                    )
+                )}
+
+                {torpedos === 0 && " —"}
             </div>
         </button>
     );
@@ -78,35 +128,22 @@ function FleetPanel({
         return null;
     }
 
-    const playerId =
-        gameState.player_id;
 
-    const fleets =
-        gameState.fleets ?? {};
-
-    const ships =
-        gameState.entities?.ships ?? [];
-
-    const shipsById =
-        Object.fromEntries(
-            ships.map(
-                ship => [
-                    ship.uuid,
-                    ship,
-                ]
-            )
-        );
-
-    const playerShipIds =
-        fleets[playerId] ?? [];
-
+    /*
+     * player_fleet имеет структуру:
+     *
+     * {
+     *     "ship_uuid_1": {...},
+     *     "ship_uuid_2": {...},
+     *     ...
+     * }
+     *
+     * Поэтому берём Object.values().
+     */
     const playerShips =
-        playerShipIds
-            .map(
-                shipId =>
-                    shipsById[shipId]
-            )
-            .filter(Boolean);
+        Object.values(
+            gameState.player_fleet ?? {}
+        );
 
 
     const handleShipClick = (
@@ -135,6 +172,7 @@ function FleetPanel({
     return (
         <div className="fleet-panel">
             <div className="fleet-panel-ships">
+
                 {playerShips.map(
                     ship => (
                         <FleetShipCard
@@ -152,6 +190,7 @@ function FleetPanel({
                         />
                     )
                 )}
+
             </div>
         </div>
     );

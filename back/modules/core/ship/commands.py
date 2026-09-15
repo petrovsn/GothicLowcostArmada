@@ -17,11 +17,11 @@ class ShipCommandType(str, enum.Enum):
 class ShipCommand(BaseModel):
     ship_id: str
     action: ShipCommandType
-    params: Any
+    params: Vector2|float|str
 
 def parse_ship_command(command: CommonCommand) -> ShipCommand:
     return ShipCommand(
         ship_id=command.params["ship_id"],
         action=ShipCommandType(command.action),
-        params=command.params["target"],
+        params=command.params["params"],
     )

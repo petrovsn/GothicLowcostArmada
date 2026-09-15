@@ -18,8 +18,8 @@
     display: flex;
     flex-direction: column;
 
-    width: 120px;
-    min-width: 120px;
+    width: 150px;
+    min-width: 150px;
     height: 100px;
 
     padding: 6px;
@@ -41,21 +41,63 @@
     border-color: #e6c75a;
 }
 
-.fleet-ship-card-icon {
+/* Первая строка: иконка + название + класс */
+
+.fleet-ship-card-header {
     display: flex;
-    flex: 1;
-
     align-items: center;
-    justify-content: center;
+    gap: 7px;
 
-    font-size: 32px;
+    min-height: 32px;
 }
 
-.fleet-ship-card-info {
-    text-align: left;
+.fleet-ship-card-icon {
+    width: 22px;
+    min-width: 22px;
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ship-icon-escort {
+    font-size: 22px;
+    line-height: 1;
+}
+
+.ship-icon-cruiser {
+    width: 8px;
+    height: 24px;
+
+    background: currentColor;
+}
+
+.ship-icon-battleship {
+    width: 12px;
+    height: 26px;
+
+    background: currentColor;
+    position: relative;
+}
+
+.ship-icon-battleship-line {
+    position: absolute;
+
+    top: 3px;
+    bottom: 3px;
+    left: 50%;
+
+    width: 2px;
+
+    transform: translateX(-50%);
+
+    background: #11151c;
 }
 
 .fleet-ship-card-name {
+    min-width: 0;
+
     font-size: 13px;
     font-weight: bold;
 
@@ -64,48 +106,53 @@
     text-overflow: ellipsis;
 }
 
-.fleet-ship-card-tier {
+.fleet-ship-card-class {
+    font-size: 11px;
+    color: #8d96a3;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
+
+/* Вторая строка: скорость + поворот */
+
+.fleet-ship-card-stats {
     margin-top: 2px;
 
     font-size: 11px;
     color: #8d96a3;
-    text-transform: uppercase;
+
+    white-space: nowrap;
 }
 
-.fleet-ship-card-icon {
-    width: 32px;
-    height: 32px;
+/* Третья строка: торпеды */
+
+.fleet-ship-card-torpedos {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 4px;
+
+    margin-top: 2px;
+
+    min-height: 20px;
+
+    font-size: 11px;
+    color: #8d96a3;
+
+    white-space: nowrap;
 }
 
-.ship-icon-escort {
-    font-size: 24px;
-    line-height: 1;
-}
+.fleet-ship-card-torpedo {
+    display: inline-flex;
 
-.ship-icon-cruiser {
     width: 10px;
-    height: 24px;
-    border: 2px solid currentColor;
-    background-color: currentColor;
-}
+    height: 16px;
 
-.ship-icon-battleship {
-    width: 14px;
-    height: 26px;
-    border: 2px solid currentColor;
-    background-color: currentColor;
-    position: relative;
-}
+    align-items: center;
+    justify-content: center;
 
-.ship-icon-battleship-line {
-    position: absolute;
-    top: 3px;
-    bottom: 3px;
-    left: 50%;
-    width: 2px;
-    transform: translateX(-50%);
-    background: black;
+    font-size: 15px;
+    line-height: 1;
+
+    color: #d8dce3;
 }

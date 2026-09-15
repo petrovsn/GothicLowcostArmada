@@ -12,12 +12,11 @@ from modules.utils.config_loader import ConfigLoader
 GAME_ROUND = ConfigLoader().get_round_duration()
 GAME_FPS = ConfigLoader().get_fps()
 
-@dataclass
 class ShipEngine:
-    position: Position
-    destination: Vector2 = None
-
     def __init__(self, max_round_velocity = 0, max_round_rotation = 0):
+        self.position:Position = Position(float("Inf"), float("Inf"), 0)
+        self.destination: Vector2 = None
+
         self.max_round_velocity = max_round_velocity
         self.max_round_rotation = max_round_rotation
 

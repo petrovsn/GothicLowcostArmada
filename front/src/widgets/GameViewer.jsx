@@ -23,6 +23,7 @@ const VIEW_BOX_SIZE = 1000;
 const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
 
 const CLICK_THRESHOLD = 10;
+const DOUBLE_CLICK_DELAY = 200;
 
 const SHIP_SELECTION_RADIUS = 0.5;
 
@@ -126,13 +127,15 @@ function GameViewer({
             state.game.gameState?.payload
     );
 
-
     const selectedShipId = useSelector(
         state =>
             state.game.selectedShipId
     );
 
     const dragState =
+        useRef(null);
+
+    const clickTimer =
         useRef(null);
 
     const svgRef =
@@ -156,12 +159,14 @@ function GameViewer({
 
         for (const event of events) {
             addFireEffect(event);
-            addDeathEffect(event)
+            addDeathEffect(event);
         }
     }, [
         gameState,
         addFireEffect,
+        addDeathEffect,
     ]);
+
 
     useEffect(() => {
         if (!gameState) {
@@ -214,6 +219,19 @@ function GameViewer({
         Boolean(gameState),
         setCamera,
     ]);
+
+
+    useEffect(() => {
+        return () => {
+            if (clickTimer.current) {
+                clearTimeout(
+                    clickTimer.current
+                );
+
+                clickTimer.current = null;
+            }
+        };
+    }, []);
 
 
     if (!gameState) {
@@ -370,6 +388,7 @@ function GameViewer({
         return closestShip;
     };
 
+
     const handleMouseDown = (
         event
     ) => {
@@ -452,22 +471,9 @@ function GameViewer({
     };
 
 
-    const handleMouseUp = (
+    const handleClick = (
         event
     ) => {
-        const drag =
-            dragState.current;
-
-        if (!drag) {
-            return;
-        }
-
-        dragState.current = null;
-
-        if (drag.moved) {
-            return;
-        }
-
         const worldPosition =
             getWorldPosition(event);
 
@@ -506,7 +512,7 @@ function GameViewer({
 
         const shipOwnerId =
             shipFleetMap[
-            ship.uuid
+                ship.uuid
             ];
 
         const isPlayerShip =
@@ -546,6 +552,81 @@ function GameViewer({
             );
         }
     };
+
+
+    const handleDoubleClick = (
+        event
+    ) => {
+        if (!selectedShipId) {
+            return;
+        }
+
+        const worldPosition =
+            getWorldPosition(event);
+
+        const ship =
+            findShipAtPosition(
+                worldPosition
+            );
+
+        // Торпеды запускаются только
+        // по свободному полю.
+        if (ship) {
+            return;
+        }
+
+        orders_controller.launch_torpedos(
+            selectedShipId,
+            worldPosition
+        );
+    };
+
+
+    const handleMouseUp = (
+        event
+    ) => {
+        const drag =
+            dragState.current;
+
+        if (!drag) {
+            return;
+        }
+
+        dragState.current = null;
+
+        // Это был drag камеры,
+        // а не клик.
+        if (drag.moved) {
+            return;
+        }
+
+
+        // Второй клик в пределах
+        // DOUBLE_CLICK_DELAY означает
+        // двойной клик.
+        if (clickTimer.current) {
+            clearTimeout(
+                clickTimer.current
+            );
+
+            clickTimer.current = null;
+
+            handleDoubleClick(event);
+
+            return;
+        }
+
+
+        // Первый клик пока не выполняем.
+        // Ждём, не последует ли второй.
+        clickTimer.current =
+            setTimeout(() => {
+                clickTimer.current = null;
+
+                handleClick(event);
+            }, DOUBLE_CLICK_DELAY);
+    };
+
 
     const handleMouseLeave = () => {
         dragState.current = null;
@@ -626,7 +707,9 @@ function GameViewer({
                                     )}
 
                                     <ShipIcon
-                                        vessel_class={vessel_class}
+                                        vessel_class={
+                                            vessel_class
+                                        }
                                         x={
                                             ship.position.x
                                         }
@@ -648,7 +731,10 @@ function GameViewer({
                         }
                     )}
 
-                    <EffectsLayer effects={effects} />
+                    <EffectsLayer
+                        effects={effects}
+                    />
+
                 </g>
 
             </svg>

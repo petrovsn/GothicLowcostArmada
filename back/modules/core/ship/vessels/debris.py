@@ -7,7 +7,8 @@ from modules.core.ship.vessels.abc_vessel import AbstractVessel
 
 
 class Debris(AbstractVessel):
-    def __init__(self, events_queue: Queue = None):
+    def __init__(self):
+        super().__init__(None)
         self.vessel_class = VesselClass.ESCORT
         self._position = Position(float('Inf'), float('Inf'), 0)
 

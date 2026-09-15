@@ -72,7 +72,7 @@ class TacticalBehavior:
             if self.fire_behavior == FireBehavior.FIRE_AT_WILL:
                 if len(perception.enemy_entities) > 0:
                     target_id = min(
-                        perception.enemy_entities, key=lambda x: x.position.distance
+                        perception.enemy_entities, key=lambda x: perception.enemy_entities[x].position.distance
                     )
                     target_info = perception.enemy_entities.get(target_id, None)
                     weapon_damage = weapons.fire_to(target_info.position)

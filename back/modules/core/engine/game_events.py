@@ -1,9 +1,8 @@
 from dataclasses import asdict, dataclass
 from enum import StrEnum
 from typing import ClassVar
-
 from modules.core.entities.space import Vector2
-from modules.core.ship.components.weaponry import WeaponDamage
+from modules.core.ship.components.weaponry import WeaponDamage, TorpedosLaunchData
 
 
 class EventType(StrEnum):
@@ -44,7 +43,5 @@ class VesselDeathEvent(Event):
 class TorpedosLaunchEvent(Event):
     event_type: ClassVar[str] = "torpedos_launch"
     source: Vector2
-    bearing: float
-    power: int
-    speed: int
+    params: TorpedosLaunchData
     

@@ -81,20 +81,28 @@ class ShipWeaponry:
         self.reloading[weapon.uuid] = 0
 
     def get_weapons_for_target(
-        self, polar_position: RelativePolarPosition, required_weapon_types: list[WeaponType]
+        self, polar_position: RelativePolarPosition, need_torpedos: bool = False
     ) -> list[Weapon]:
         fire_arcs = FireArc.from_bearing(polar_position.bearing)
         all_weapons_with_fire_arc = list(
             chain.from_iterable(self.fire_arcs[key] for key in fire_arcs)
         )
-        weapons_with_enough_range = [
+        weapons_loaded: list[Weapon] = [
             weapon
             for weapon in all_weapons_with_fire_arc
-            if weapon.range >= polar_position.distance and
-            self.reloading[weapon.uuid] == 0
-            and weapon.type in required_weapon_types
+            if self.reloading[weapon.uuid] == 0
         ]
-        return weapons_with_enough_range
+        weapons_out = []
+
+        if need_torpedos:
+            weapons_out = [weapon for weapon in weapons_loaded if weapon.type == WeaponType.TORPEDOS ]
+        else:
+            weapons_out = [weapon for weapon in weapons_loaded 
+                           if weapon.type != WeaponType.TORPEDOS 
+                           and weapon.range >= polar_position.distance
+                           ]
+
+        return weapons_out
 
 
     def is_target_in_fire_range(self, target: RelativePolarPosition):
@@ -110,7 +118,7 @@ class ShipWeaponry:
 
 
     def fire_to(self, target: RelativePolarPosition) -> WeaponDamage: 
-        weapons: list[Weapon] = self.get_weapons_for_target(target, [WeaponType.MACRO, WeaponType.LASERS])
+        weapons: list[Weapon] = self.get_weapons_for_target(target)
         if len(weapons) == 0: return None
         summary_damage = Counter()
         for weapon in weapons:
@@ -124,19 +132,14 @@ class ShipWeaponry:
         )
 
     def torpedos_launch(self, target: RelativePolarPosition) -> TorpedosLaunchData:
-        weapons: list[Weapon] = self.get_weapons_for_target(target, [WeaponType.TORPEDOS])
+        weapons: list[Weapon] = self.get_weapons_for_target(target, need_torpedos=True)
         if len(weapons) == 0: return None
-        torpedos_launchs = []
+        torpedo_launch_data = TorpedosLaunchData(30,0,target.bearing)
         for weapon in weapons:
             self.reloading[weapon.uuid] = weapon.reloading
-            torpedos_launchs.append(
-                OrdnanceLaunchData(
-                            speed=we
-                        )
-            )
+            torpedo_launch_data.power+=weapon.power
             
-
-        return 
+        return torpedo_launch_data 
 
     def tick(self):
         for weapon_id in self.reloading:

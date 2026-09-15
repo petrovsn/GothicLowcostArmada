@@ -4,7 +4,7 @@ from modules.core.entities.space import Position
 from modules.core.ship.vessels.abc_vessel import AbstractVessel
 from modules.core.ship.commands import ShipCommand, ShipCommandType
 from modules.core.ship.components.engine import ShipEngine
-from modules.core.ship.components.weaponry import ShipWeaponry
+from modules.core.ship.components.weaponry import ShipWeaponry, TorpedosLaunchData
 from modules.core.ship.vessel_class import VesselClass
 from modules.core.ship.perception import ShipPerception
 from modules.core.ship.components.tactical_ai import TacticalBehavior, TacticalTickReport, FireBehavior
@@ -48,13 +48,13 @@ class Ship(EngineedVessel):
     def handle_command(self, new_order: ShipCommand):
         match new_order.action:
             case ShipCommandType.MOVE_TO:
-                self.tactical_ai.set_destination(new_order.target)
+                self.tactical_ai.set_destination(new_order.params)
 
             case ShipCommandType.FIRE_TO:
-                self.tactical_ai.set_target(new_order.target)
+                self.tactical_ai.set_target(new_order.params)
 
             case ShipCommandType.SET_THRUST:
-                self.engine.set_max_thrust(new_order.target)
+                self.engine.set_max_thrust(new_order.params)
 
             case ShipCommandType.CLEAR_DESTINATION:
                 self.tactical_ai.set_destination(None)
@@ -69,13 +69,13 @@ class Ship(EngineedVessel):
                 self.tactical_ai.set_destination(None)
 
             case ShipCommandType.TORPEDOS_LAUNCH:
-                polar_position: RelativePolarPosition = self._get_bearing(new_order.target)
-                torpedos_power = self.weapons.torpedos_launch(polar_position)
+                polar_position: RelativePolarPosition = self._get_bearing(new_order.params)
+                torp_launch_data: TorpedosLaunchData = self.weapons.torpedos_launch(polar_position)
                 event = TorpedosLaunchEvent(
                     initiator_id=self.uuid,
                     target_id=self.uuid,
                     source=self.position.to_vector(),
-                    bearing=polar_position.bearing
+                    params=torp_launch_data
                 )
                 self.events_queue.put(event)
     
