@@ -38,9 +38,30 @@
     align-items: center;
     justify-content: center;
 
+    box-sizing: border-box;
+
+    width: 100vw;
+    height: 100vh;
+
     padding: 20px;
 
     background: rgba(0, 0, 0, 0.65);
+
+    overflow-y: auto;
+}
+
+
+/* ============================================================
+   WIDGET
+   ============================================================ */
+
+.create-room-widget {
+    box-sizing: border-box;
+
+    width: 100%;
+    max-width: 420px;
+
+    margin: auto;
 }
 
 
@@ -49,7 +70,10 @@
    ============================================================ */
 
 .create-room-form {
-    width: min(420px, 100%);
+    box-sizing: border-box;
+
+    width: 100%;
+    max-width: 420px;
 
     display: flex;
     flex-direction: column;
@@ -102,7 +126,10 @@
 }
 
 
+.create-room-form input[type="text"],
 .create-room-form input[type="number"] {
+    box-sizing: border-box;
+
     width: 100%;
 
     padding: 9px 10px;
@@ -117,6 +144,7 @@
 }
 
 
+.create-room-form input[type="text"]:focus,
 .create-room-form input[type="number"]:focus {
     outline: none;
 
@@ -205,4 +233,30 @@
     opacity: 0.5;
 
     cursor: default;
+}
+
+
+/* ============================================================
+   PHONE
+   ============================================================ */
+
+@media (max-width: 520px) {
+
+    .create-room-overlay {
+        padding: 12px 8px;
+    }
+
+
+    .create-room-widget {
+        width: 100%;
+        max-width: 420px;
+    }
+
+
+    .create-room-form {
+        width: 100%;
+        max-width: 420px;
+
+        padding: 20px;
+    }
 }

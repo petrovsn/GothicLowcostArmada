@@ -12,6 +12,7 @@ export function pause() {
 
 
 export function setup_roster(roster) {
+    console.log("setup_roster", roster)
     game_controller.send_command({
         type: "game_room",
         action: "setup_roster",
@@ -21,6 +22,7 @@ export function setup_roster(roster) {
 
 
 export function resume() {
+    console.log("resume")
     game_controller.send_command({
         type: "game_room",
         action: "resume",

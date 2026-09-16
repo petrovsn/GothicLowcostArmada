@@ -35,9 +35,16 @@
     align-items: center;
     justify-content: center;
 
+    box-sizing: border-box;
+
+    width: 100vw;
+    height: 100vh;
+
     padding: 20px;
 
     background: rgba(0, 0, 0, 0.65);
+
+    overflow-y: auto;
 }
 
 
@@ -46,7 +53,12 @@
    ============================================================ */
 
 .join-room-widget {
-    width: min(400px, 100%);
+    box-sizing: border-box;
+
+    width: 100%;
+    max-width: 400px;
+
+    margin: auto;
 
     padding: 24px;
 
@@ -98,6 +110,8 @@
 
 
 .join-room-form input {
+    box-sizing: border-box;
+
     width: 100%;
 
     padding: 10px 12px;
@@ -176,3 +190,24 @@
 
     cursor: default;
 }
+
+
+/* ============================================================
+   PHONE
+   ============================================================ */
+
+@media (max-width: 520px) {
+
+    .join-room-overlay {
+        padding: 12px 8px;
+    }
+
+
+    .join-room-widget {
+        width: 100%;
+        max-width: 400px;
+
+        padding: 20px;
+    }
+}
+
