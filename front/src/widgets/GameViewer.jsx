@@ -411,12 +411,16 @@ function GameViewer({
     };
 
 
-    const handleMouseDown = (
+    const handlePointerDown = (
         event
     ) => {
         if (event.button !== 0) {
             return;
         }
+
+        event.currentTarget.setPointerCapture(
+            event.pointerId
+        );
 
         dragState.current = {
             startX: event.clientX,
@@ -430,7 +434,7 @@ function GameViewer({
     };
 
 
-    const handleMouseMove = (
+    const handlePointerMove = (
         event
     ) => {
         const drag =
@@ -538,7 +542,8 @@ function GameViewer({
             ];
 
         const isPlayerShip =
-            shipOwnerId === playerId;
+            shipOwnerId ===
+            playerId;
 
 
         if (isPlayerShip) {
@@ -604,7 +609,7 @@ function GameViewer({
     };
 
 
-    const handleMouseUp = (
+    const handlePointerUp = (
         event
     ) => {
         const drag =
@@ -615,6 +620,16 @@ function GameViewer({
         }
 
         dragState.current = null;
+
+        if (
+            event.currentTarget.hasPointerCapture(
+                event.pointerId
+            )
+        ) {
+            event.currentTarget.releasePointerCapture(
+                event.pointerId
+            );
+        }
 
         if (drag.moved) {
             return;
@@ -643,8 +658,20 @@ function GameViewer({
     };
 
 
-    const handleMouseLeave = () => {
+    const handlePointerCancel = (
+        event
+    ) => {
         dragState.current = null;
+
+        if (
+            event.currentTarget.hasPointerCapture(
+                event.pointerId
+            )
+        ) {
+            event.currentTarget.releasePointerCapture(
+                event.pointerId
+            );
+        }
     };
 
 
@@ -667,17 +694,17 @@ function GameViewer({
                 ref={svgRef}
                 className="game-board"
                 viewBox="-500 -500 1000 1000"
-                onMouseDown={
-                    handleMouseDown
+                onPointerDown={
+                    handlePointerDown
                 }
-                onMouseMove={
-                    handleMouseMove
+                onPointerMove={
+                    handlePointerMove
                 }
-                onMouseUp={
-                    handleMouseUp
+                onPointerUp={
+                    handlePointerUp
                 }
-                onMouseLeave={
-                    handleMouseLeave
+                onPointerCancel={
+                    handlePointerCancel
                 }
             >
 
@@ -721,8 +748,6 @@ function GameViewer({
                                             className="ship-selection"
                                         />
                                     )}
-
-
 
 
                                     <ShipIcon
