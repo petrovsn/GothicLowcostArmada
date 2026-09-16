@@ -33,6 +33,7 @@ export function create_connection(room_id, player_name) {
         },
 
         on_open(callback) {
+            console.log("websocket.on_open")
             socket.addEventListener("open", () => {
                 socket.send(JSON.stringify({
                     "set_player_name": player_name,
@@ -42,6 +43,7 @@ export function create_connection(room_id, player_name) {
         },
 
         on_message(callback) {
+            console.log("websocket.on_message")
             socket.addEventListener("message", (event) => {
                 let data;
 
@@ -56,10 +58,12 @@ export function create_connection(room_id, player_name) {
         },
 
         on_close(callback) {
+            console.log("websocket.on_close")
             socket.addEventListener("close", callback);
         },
 
         on_error(callback) {
+            console.log("websocket.on_error")
             socket.addEventListener("error", callback);
         },
     };

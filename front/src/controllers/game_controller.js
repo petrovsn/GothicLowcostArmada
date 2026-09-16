@@ -18,6 +18,7 @@ let lastFrameTime = null;
 let frameIntervals = [];
 
 
+
 export async function create_room_and_connect(
     roomConfig,
     playerName,
@@ -41,6 +42,7 @@ export async function create_room_and_connect(
 
     return roomId;
 }
+
 
 
 export function connect_to_room(
@@ -71,6 +73,7 @@ export function connect_to_room(
 }
 
 
+
 function connect(
     roomId,
     playerName,
@@ -87,14 +90,17 @@ function connect(
         setGameStateFps(null)
     );
 
-    connection =
+
+    const newConnection =
         create_connection(
             roomId,
             playerName
         );
 
+    connection = newConnection;
 
-    connection.on_open(() => {
+
+    newConnection.on_open(() => {
         console.log(
             "Game WebSocket connected"
         );
@@ -105,7 +111,7 @@ function connect(
     });
 
 
-    connection.on_message((data) => {
+    newConnection.on_message((data) => {
         const currentFrameTime =
             performance.now();
 
@@ -165,7 +171,7 @@ function connect(
     });
 
 
-    connection.on_error((error) => {
+    newConnection.on_error((error) => {
         console.error(
             "Game WebSocket error:",
             error
@@ -173,10 +179,21 @@ function connect(
     });
 
 
-    connection.on_close(() => {
+    newConnection.on_close(() => {
         console.log(
             "Game WebSocket closed"
         );
+
+        /*
+         * The connection may have been replaced
+         * before this old socket finished closing.
+         *
+         * Do not destroy the reference to the
+         * newer WebSocket in that case.
+         */
+        if (connection !== newConnection) {
+            return;
+        }
 
         connection = null;
 
@@ -188,6 +205,7 @@ function connect(
         );
     });
 }
+
 
 
 export function send_command(command) {
@@ -206,10 +224,15 @@ export function send_command(command) {
 }
 
 
+
 export function disconnect() {
     if (connection !== null) {
-        connection.close();
+        const currentConnection =
+            connection;
+
         connection = null;
+
+        currentConnection.close();
     }
 
     lastFrameTime = null;
@@ -219,4 +242,3 @@ export function disconnect() {
         setGameStateFps(null)
     );
 }
-
