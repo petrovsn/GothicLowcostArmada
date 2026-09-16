@@ -15,10 +15,6 @@ function JoinRoomWidget({ onConnectionChange }) {
     const handleOpen = () => {
         setError(null);
         setIsOpen(true);
-
-        if (onConnectionChange) {
-            onConnectionChange(false);
-        }
     };
 
 

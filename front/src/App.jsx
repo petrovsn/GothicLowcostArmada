@@ -17,6 +17,7 @@ import JoinRoomWidget from "./widgets/JoinRoomWidget.jsx";
 import PlayerStatusWidget from "./widgets/PlayerStatusWidget.jsx";
 import FleetPanel from "./widgets/FleetPanel.jsx";
 import ShipControlPanel from "./widgets/ShipControlPanel.jsx";
+
 import "./styles/App.css";
 
 
@@ -155,18 +156,22 @@ function App() {
 
                     <FleetPanel
                         onCenterShip={
-                            (position) => {
-                                if (!position) {
+                            (shipId) => {
+                                const ship =
+                                    gameState.entities?.ships?.find(
+                                        currentShip =>
+                                            currentShip.uuid === shipId
+                                    );
+
+                                if (!ship?.position) {
                                     return;
                                 }
 
-                                setCamera(
-                                    previous => ({
-                                        ...previous,
-                                        x: position.x,
-                                        y: position.y,
-                                    })
-                                );
+                                setCamera(previous => ({
+                                    ...previous,
+                                    x: ship.position.x,
+                                    y: ship.position.y,
+                                }));
                             }
                         }
                     />

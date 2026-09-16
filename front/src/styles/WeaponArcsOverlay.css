@@ -1,0 +1,39 @@
+.weapon-arcs-overlay {
+    pointer-events: none;
+}
+
+
+.weapon-arc-group {
+    pointer-events: none;
+}
+
+
+.weapon-arc-sector {
+    fill: rgba(80, 180, 255, 0.08);
+    stroke: none;
+}
+
+
+.weapon-arc-line {
+    fill: none;
+    stroke: rgba(100, 200, 255, 0.75);
+    stroke-width: 0.12;
+    stroke-dasharray: 0.5 0.35;
+    vector-effect: non-scaling-stroke;
+}
+
+
+.weapon-arc-boundary {
+    stroke: rgba(100, 200, 255, 0.55);
+    stroke-width: 0.1;
+    vector-effect: non-scaling-stroke;
+}
+
+
+.weapon-arc-all-around {
+    fill: rgba(80, 180, 255, 0.06);
+    stroke: rgba(100, 200, 255, 0.65);
+    stroke-width: 0.12;
+    stroke-dasharray: 0.5 0.35;
+    vector-effect: non-scaling-stroke;
+}

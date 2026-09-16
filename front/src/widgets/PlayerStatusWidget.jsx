@@ -1,7 +1,7 @@
 import { useSelector } from "react-redux";
 
 import * as service_controller from "../controllers/service_controller";
-
+import HelpPopup from "./HelpPopup.jsx";
 import "../styles/PlayerStatusWidget.css";
 
 
@@ -75,7 +75,7 @@ function PlayerStatusWidget({
                     Pause
                 </button>
             )}
-
+            <HelpPopup/>
         </div>
     );
 }

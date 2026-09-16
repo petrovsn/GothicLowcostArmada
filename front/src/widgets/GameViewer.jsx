@@ -22,6 +22,7 @@ import EffectsLayer from "./EffectsLayer.jsx";
 import useEffects from "./useEffects.js";
 
 
+
 const VIEW_BOX_SIZE = 1000;
 const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
 
@@ -249,10 +250,10 @@ function GameViewer({
     const entities =
         gameState.entities ?? {};
 
-const allEntities = [
-    ...(entities.ships ?? []),
-    ...(entities.static_objects ?? []),
-];
+    const allEntities = [
+        ...(entities.ships ?? []),
+        ...(entities.static_objects ?? []),
+    ];
 
     const ships =
         allEntities.filter(
@@ -533,7 +534,7 @@ const allEntities = [
 
         const shipOwnerId =
             shipFleetMap[
-                ship.uuid
+            ship.uuid
             ];
 
         const isPlayerShip =
@@ -720,6 +721,8 @@ const allEntities = [
                                             className="ship-selection"
                                         />
                                     )}
+
+
 
 
                                     <ShipIcon

@@ -80,10 +80,9 @@ function FleetShipCard({
     return (
         <button
             className={
-                `fleet-ship-card ${
-                    selected
-                        ? "selected"
-                        : ""
+                `fleet-ship-card ${selected
+                    ? "selected"
+                    : ""
                 }`
             }
             onClick={onClick}
@@ -199,10 +198,7 @@ function FleetPanel({
             selectedShipId;
 
         if (isAlreadySelected) {
-            onCenterShip?.(
-                ship.position
-            );
-
+            onCenterShip?.(ship.uuid);
             return;
         }
 
