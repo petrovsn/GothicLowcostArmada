@@ -10,7 +10,7 @@ const [error, setError] = useState(null);
 const [form, setForm] = useState({
     player_name: "",
     n_players: 2,
-    max_fleet_points: 1000
+    max_fleet_points: 500
 });
 
 

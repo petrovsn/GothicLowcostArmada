@@ -204,7 +204,7 @@ class GameEngine:
         self,
         rosters: dict[str, FleetRoster],
     ):
-        RADIUS = 100
+        RADIUS = 70
         SPAWN_AREA_RADIUS = 20
 
         n_total_players = len(rosters)
