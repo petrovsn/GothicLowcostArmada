@@ -34,7 +34,7 @@ class FireBehavior(StrEnum):
 class TacticalBehavior:
     def __init__(self, uuid):
         self.uuid = uuid
-        self.fire_behavior = FireBehavior.CEASE_FIRE
+        self.fire_behavior = FireBehavior.FIRE_AT_WILL
         self.target_id = None
         self.destination = None
 
