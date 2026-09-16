@@ -73,40 +73,6 @@ function RoomStatusWidget() {
                 </span>
             </div>
 
-
-            <div className="room-status-row">
-                <span className="room-status-label">
-                    Speed
-                </span>
-
-                <span className="room-status-value">
-                    {speed}
-                </span>
-            </div>
-
-
-            <div className="room-status-row">
-                <span className="room-status-label">
-                    Respawn
-                </span>
-
-                <span className="room-status-value">
-                    {respawn ? "ON" : "OFF"}
-                </span>
-            </div>
-
-
-            <div className="room-status-row">
-                <span className="room-status-label">
-                    Players
-                </span>
-
-                <span className="room-status-value">
-                    {participants.length}
-                </span>
-            </div>
-
-
             <div className="room-status-row">
                 <span className="room-status-label">
                     Performance
