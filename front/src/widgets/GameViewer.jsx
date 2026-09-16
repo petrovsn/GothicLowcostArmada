@@ -22,7 +22,6 @@ import EffectsLayer from "./EffectsLayer.jsx";
 import useEffects from "./useEffects.js";
 
 
-
 const VIEW_BOX_SIZE = 1000;
 const VIEW_BOX_HALF = VIEW_BOX_SIZE / 2;
 
@@ -145,6 +144,15 @@ function GameViewer({
     const svgRef =
         useRef(null);
 
+    // Активные Pointer Events.
+    // Нужны для pinch-to-zoom на мобильных устройствах.
+    const activePointers =
+        useRef(new Map());
+
+    // Состояние pinch-жеста.
+    const pinchState =
+        useRef(null);
+
     const {
         effects,
         addEffect,
@@ -177,7 +185,8 @@ function GameViewer({
             return;
         }
 
-        const svg = svgRef.current;
+        const svg =
+            svgRef.current;
 
         if (!svg) {
             return;
@@ -411,6 +420,66 @@ function GameViewer({
     };
 
 
+    const getPointerDistance = (
+        pointerA,
+        pointerB
+    ) => {
+        const dx =
+            pointerA.x -
+            pointerB.x;
+
+        const dy =
+            pointerA.y -
+            pointerB.y;
+
+        return Math.sqrt(
+            dx * dx +
+            dy * dy
+        );
+    };
+
+
+    const startPinch = () => {
+        const pointers =
+            Array.from(
+                activePointers.current.values()
+            );
+
+        if (pointers.length !== 2) {
+            return;
+        }
+
+        const [
+            pointerA,
+            pointerB,
+        ] = pointers;
+
+        const distance =
+            getPointerDistance(
+                pointerA,
+                pointerB
+            );
+
+        if (distance <= 0) {
+            return;
+        }
+
+        pinchState.current = {
+            initialDistance:
+                distance,
+
+            initialZoom:
+                camera.zoom,
+        };
+
+        // Два пальца больше не должны
+        // продолжать обычный drag.
+        if (dragState.current) {
+            dragState.current.moved = true;
+        }
+    };
+
+
     const handlePointerDown = (
         event
     ) => {
@@ -418,9 +487,25 @@ function GameViewer({
             return;
         }
 
+        activePointers.current.set(
+            event.pointerId,
+            {
+                x: event.clientX,
+                y: event.clientY,
+            }
+        );
+
         event.currentTarget.setPointerCapture(
             event.pointerId
         );
+
+        if (
+            activePointers.current.size === 2
+        ) {
+            startPinch();
+
+            return;
+        }
 
         dragState.current = {
             startX: event.clientX,
@@ -437,6 +522,87 @@ function GameViewer({
     const handlePointerMove = (
         event
     ) => {
+        if (
+            !activePointers.current.has(
+                event.pointerId
+            )
+        ) {
+            return;
+        }
+
+        activePointers.current.set(
+            event.pointerId,
+            {
+                x: event.clientX,
+                y: event.clientY,
+            }
+        );
+
+
+        // -------------------------------------------------
+        // PINCH ZOOM
+        // -------------------------------------------------
+
+        if (
+            activePointers.current.size >= 2
+        ) {
+            const pointers =
+                Array.from(
+                    activePointers.current.values()
+                );
+
+            const [
+                pointerA,
+                pointerB,
+            ] = pointers;
+
+            const distance =
+                getPointerDistance(
+                    pointerA,
+                    pointerB
+                );
+
+            if (
+                !pinchState.current ||
+                pinchState.current.initialDistance <= 0
+            ) {
+                startPinch();
+
+                return;
+            }
+
+            const {
+                initialDistance,
+                initialZoom,
+            } = pinchState.current;
+
+            const zoomFactor =
+                distance /
+                initialDistance;
+
+            const newZoom =
+                Math.min(
+                    MAX_ZOOM,
+                    Math.max(
+                        MIN_ZOOM,
+                        initialZoom *
+                        zoomFactor
+                    )
+                );
+
+            setCamera(previous => ({
+                ...previous,
+                zoom: newZoom,
+            }));
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // Обычный DRAG
+        // -------------------------------------------------
+
         const drag =
             dragState.current;
 
@@ -538,7 +704,7 @@ function GameViewer({
 
         const shipOwnerId =
             shipFleetMap[
-            ship.uuid
+                ship.uuid
             ];
 
         const isPlayerShip =
@@ -612,14 +778,9 @@ function GameViewer({
     const handlePointerUp = (
         event
     ) => {
-        const drag =
-            dragState.current;
-
-        if (!drag) {
-            return;
-        }
-
-        dragState.current = null;
+        activePointers.current.delete(
+            event.pointerId
+        );
 
         if (
             event.currentTarget.hasPointerCapture(
@@ -630,6 +791,37 @@ function GameViewer({
                 event.pointerId
             );
         }
+
+
+        // Если был pinch и один палец
+        // отпустили — завершаем pinch.
+        if (
+            activePointers.current.size < 2
+        ) {
+            pinchState.current = null;
+        }
+
+
+        // Если второй палец всё ещё на экране,
+        // обычный click/drag не обрабатываем.
+        if (
+            activePointers.current.size > 0
+        ) {
+            dragState.current = null;
+
+            return;
+        }
+
+
+        const drag =
+            dragState.current;
+
+        if (!drag) {
+            return;
+        }
+
+        dragState.current = null;
+
 
         if (drag.moved) {
             return;
@@ -661,6 +853,11 @@ function GameViewer({
     const handlePointerCancel = (
         event
     ) => {
+        activePointers.current.delete(
+            event.pointerId
+        );
+
+        pinchState.current = null;
         dragState.current = null;
 
         if (
