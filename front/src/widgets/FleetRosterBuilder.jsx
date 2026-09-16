@@ -333,6 +333,14 @@ function FleetRosterBuilder({
     const [selectedPattern, setSelectedPattern] =
         useState(null);
 
+    /*
+     * Единственный формат ростера:
+     *
+     * {
+     *     Lunar: 2,
+     *     Sword: 4,
+     * }
+     */
     const [roster, setRoster] =
         useState({});
 
@@ -397,29 +405,6 @@ function FleetRosterBuilder({
             cancelled = true;
         };
     }, []);
-
-
-    useEffect(() => {
-        if (!onRosterChange) {
-            return;
-        }
-
-        const flattenedRoster =
-            Object.entries(roster).flatMap(
-                ([pattern, count]) =>
-                    Array.from(
-                        { length: count },
-                        () => pattern
-                    )
-            );
-
-        onRosterChange(
-            flattenedRoster
-        );
-    }, [
-        roster,
-        onRosterChange,
-    ]);
 
 
     const templateList =
@@ -515,16 +500,23 @@ function FleetRosterBuilder({
             return;
         }
 
+        const pattern =
+            selectedTemplate.pattern;
+
+        const nextRoster = {
+            ...roster,
+            [pattern]:
+                (
+                    roster[pattern] ?? 0
+                ) + 1,
+        };
+
         setRoster(
-            previous => ({
-                ...previous,
-                [selectedTemplate.pattern]:
-                    (
-                        previous[
-                            selectedTemplate.pattern
-                        ] ?? 0
-                    ) + 1,
-            })
+            nextRoster
+        );
+
+        onRosterChange?.(
+            nextRoster
         );
     };
 
@@ -534,31 +526,36 @@ function FleetRosterBuilder({
             return;
         }
 
+        const pattern =
+            selectedTemplate.pattern;
+
+        const currentCount =
+            roster[pattern] ?? 0;
+
+        if (currentCount <= 0) {
+            return;
+        }
+
+        const nextRoster = {
+            ...roster,
+        };
+
+        if (currentCount === 1) {
+            delete nextRoster[
+                pattern
+            ];
+        }
+        else {
+            nextRoster[pattern] =
+                currentCount - 1;
+        }
+
         setRoster(
-            previous => {
-                const currentCount =
-                    previous[
-                        selectedTemplate.pattern
-                    ] ?? 0;
+            nextRoster
+        );
 
-                if (currentCount <= 1) {
-                    const next = {
-                        ...previous,
-                    };
-
-                    delete next[
-                        selectedTemplate.pattern
-                    ];
-
-                    return next;
-                }
-
-                return {
-                    ...previous,
-                    [selectedTemplate.pattern]:
-                        currentCount - 1,
-                };
-            }
+        onRosterChange?.(
+            nextRoster
         );
     };
 
@@ -670,6 +667,7 @@ function FleetRosterBuilder({
 
                                     </div>
 
+
                                     <div className="fleet-roster-template-info">
 
                                         <div className="fleet-roster-template-name">
@@ -682,8 +680,9 @@ function FleetRosterBuilder({
 
                                     </div>
 
+
                                     <div className="fleet-roster-template-cost">
-                                        [x{count}]{" "}
+                                        [x{count}]{' '}
                                         {template.cost}
                                     </div>
 

@@ -31,8 +31,16 @@ function App() {
         zoom: 8,
     });
 
+    /*
+     * Ростер:
+     *
+     * {
+     *     Lunar: 2,
+     *     Sword: 4,
+     * }
+     */
     const [roster, setRoster] =
-        useState([]);
+        useState({});
 
 
     const gameState = useSelector(
@@ -160,7 +168,8 @@ function App() {
                                 const ship =
                                     gameState?.entities?.ships?.find(
                                         currentShip =>
-                                            currentShip.uuid === shipId
+                                            currentShip.uuid ===
+                                            shipId
                                     );
 
                                 if (!ship?.position) {

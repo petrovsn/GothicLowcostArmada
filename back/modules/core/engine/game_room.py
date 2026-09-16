@@ -150,10 +150,12 @@ class GameRoom:
                 if self.current_phase == GameRoomPhase.PREPARATION:
                     self._setup_roster(player_id, command.params)
 
-    def _setup_roster(self, player_id, fleet_roster: list[str]):
+    def _setup_roster(self, player_id, fleet_roster: dict[str, int]):
         self.rosters[player_id].clear()
-        for pattern_name in fleet_roster:
-            self.rosters[player_id].add(pattern_name)
+
+        for pattern_name, count in fleet_roster.items():
+            for _ in range(count):
+                self.rosters[player_id].add(pattern_name)
            
     def next_step(self):
         self.statistics.timestamp+=1
