@@ -90,9 +90,7 @@ function WeaponsTable({
                 {weapons.map(
                     (weapon, index) => {
                         const parsed =
-                            parseWeapon(
-                                weapon
-                            );
+                            parseWeapon(weapon);
 
                         return (
                             <tr
@@ -125,35 +123,12 @@ function WeaponsTable({
 }
 
 
-function SectorPanel({
-    title,
-    armor,
-    weapons,
-}) {
-    return (
-        <div className="roster-ship-sector">
-            <div className="roster-ship-sector-header">
-                <span>
-                    {title}
-                </span>
-
-                <span className="roster-ship-sector-armor">
-                    {armor}
-                </span>
-            </div>
-
-            <WeaponsTable
-                weapons={weapons}
-            />
-        </div>
-    );
-}
-
-
 function ShipDetails({
     template,
     onAdd,
+    onRemove,
     canAdd,
+    canRemove,
 }) {
     if (!template) {
         return (
@@ -200,9 +175,12 @@ function ShipDetails({
             MOUNTING_POINTS.KEEL
         ] ?? [];
 
-    const rearWeapons = [
-        ...keelWeapons,
+    const allWeapons = [
+        ...prowWeapons,
+        ...portWeapons,
+        ...starboardWeapons,
         ...dorsalWeapons,
+        ...keelWeapons,
     ];
 
     return (
@@ -229,52 +207,14 @@ function ShipDetails({
 
             <div className="fleet-roster-details-content">
 
-                <div className="roster-ship-sectors">
+                <div className="roster-ship-weapons">
 
-                    <SectorPanel
-                        title="НОС"
-                        armor={
-                            armor.front ?? 0
-                        }
-                        weapons={
-                            prowWeapons
-                        }
-                    />
-
-
-                    <div className="roster-ship-sector-row">
-
-                        <SectorPanel
-                            title="ЛЕВЫЙ БОРТ"
-                            armor={
-                                armor.left ?? 0
-                            }
-                            weapons={
-                                portWeapons
-                            }
-                        />
-
-                        <SectorPanel
-                            title="ПРАВЫЙ БОРТ"
-                            armor={
-                                armor.right ?? 0
-                            }
-                            weapons={
-                                starboardWeapons
-                            }
-                        />
-
+                    <div className="roster-section-title">
+                        ОРУДИЯ
                     </div>
 
-
-                    <SectorPanel
-                        title="КОРМА"
-                        armor={
-                            armor.rear ?? 0
-                        }
-                        weapons={
-                            rearWeapons
-                        }
+                    <WeaponsTable
+                        weapons={allWeapons}
                     />
 
                 </div>
@@ -284,6 +224,19 @@ function ShipDetails({
 
                     <div className="roster-section-title">
                         ЗАЩИТА
+                    </div>
+
+                    <div className="roster-stat-row">
+                        <span>Броня:</span>
+
+                        <strong>
+                            {[
+                                armor.front ?? 0,
+                                armor.left ?? 0,
+                                armor.right ?? 0,
+                                armor.rear ?? 0,
+                            ].join("/")}
+                        </strong>
                     </div>
 
                     <div className="roster-stat-row">
@@ -340,59 +293,30 @@ function ShipDetails({
             </div>
 
 
-            <button
-                type="button"
-                className="fleet-roster-add-button"
-                disabled={!canAdd}
-                onClick={onAdd}
-            >
-                {canAdd
-                    ? "Добавить в ростер"
-                    : "Недостаточно очков"
-                }
-            </button>
+            <div className="fleet-roster-actions">
 
-        </div>
-    );
-}
+                <button
+                    type="button"
+                    className="fleet-roster-add-button"
+                    disabled={!canAdd}
+                    onClick={onAdd}
+                >
+                    {canAdd
+                        ? "Добавить в ростер"
+                        : "Недостаточно очков"
+                    }
+                </button>
 
-
-function RosterItem({
-    template,
-    index,
-    onRemove,
-}) {
-    return (
-        <div className="fleet-roster-item">
-
-            <div className="fleet-roster-item-number">
-                {index + 1}
-            </div>
-
-            <div className="fleet-roster-item-info">
-
-                <div className="fleet-roster-item-name">
-                    {template.pattern}
-                </div>
-
-                <div className="fleet-roster-item-class">
-                    {template.vessel_class}
-                </div>
+                <button
+                    type="button"
+                    className="fleet-roster-add-button"
+                    disabled={!canRemove}
+                    onClick={onRemove}
+                >
+                    Удалить из ростера
+                </button>
 
             </div>
-
-            <div className="fleet-roster-item-cost">
-                {template.cost}
-            </div>
-
-            <button
-                type="button"
-                className="fleet-roster-remove-button"
-                onClick={onRemove}
-                title="Удалить"
-            >
-                ×
-            </button>
 
         </div>
     );
@@ -410,7 +334,7 @@ function FleetRosterBuilder({
         useState(null);
 
     const [roster, setRoster] =
-        useState([]);
+        useState({});
 
     const [loading, setLoading] =
         useState(true);
@@ -476,13 +400,22 @@ function FleetRosterBuilder({
 
 
     useEffect(() => {
-        if (onRosterChange) {
-            onRosterChange(
-                roster.map(
-                    template => template.pattern
-                )
-            );
+        if (!onRosterChange) {
+            return;
         }
+
+        const flattenedRoster =
+            Object.entries(roster).flatMap(
+                ([pattern, count]) =>
+                    Array.from(
+                        { length: count },
+                        () => pattern
+                    )
+            );
+
+        onRosterChange(
+            flattenedRoster
+        );
     }, [
         roster,
         onRosterChange,
@@ -502,18 +435,34 @@ function FleetRosterBuilder({
     const totalCost =
         useMemo(
             () =>
-                roster.reduce(
+                Object.entries(
+                    roster
+                ).reduce(
                     (
                         total,
-                        template
-                    ) =>
-                        total +
-                        Number(
-                            template.cost
-                        ),
+                        [pattern, count]
+                    ) => {
+                        const template =
+                            templates[pattern];
+
+                        if (!template) {
+                            return total;
+                        }
+
+                        return (
+                            total +
+                            Number(
+                                template.cost
+                            ) *
+                            count
+                        );
+                    },
                     0
                 ),
-            [roster]
+            [
+                roster,
+                templates,
+            ]
         );
 
 
@@ -530,6 +479,16 @@ function FleetRosterBuilder({
             : null;
 
 
+    const selectedCount =
+        selectedPattern
+            ? (
+                roster[
+                    selectedPattern
+                ] ?? 0
+            )
+            : 0;
+
+
     const canAddSelected =
         selectedTemplate !== null &&
         Number(
@@ -537,37 +496,69 @@ function FleetRosterBuilder({
         ) <= remainingPoints;
 
 
+    const canRemoveSelected =
+        selectedTemplate !== null &&
+        selectedCount > 0;
+
+
     const handleAddShip = () => {
         if (!selectedTemplate) {
             return;
         }
 
-        if (
+        const cost =
             Number(
                 selectedTemplate.cost
-            ) > remainingPoints
-        ) {
+            );
+
+        if (cost > remainingPoints) {
             return;
         }
 
         setRoster(
-            previous => [
+            previous => ({
                 ...previous,
-                selectedTemplate,
-            ]
+                [selectedTemplate.pattern]:
+                    (
+                        previous[
+                            selectedTemplate.pattern
+                        ] ?? 0
+                    ) + 1,
+            })
         );
     };
 
 
-    const handleRemoveShip = (
-        index
-    ) => {
+    const handleRemoveShip = () => {
+        if (!selectedTemplate) {
+            return;
+        }
+
         setRoster(
-            previous =>
-                previous.filter(
-                    (_, itemIndex) =>
-                        itemIndex !== index
-                )
+            previous => {
+                const currentCount =
+                    previous[
+                        selectedTemplate.pattern
+                    ] ?? 0;
+
+                if (currentCount <= 1) {
+                    const next = {
+                        ...previous,
+                    };
+
+                    delete next[
+                        selectedTemplate.pattern
+                    ];
+
+                    return next;
+                }
+
+                return {
+                    ...previous,
+                    [selectedTemplate.pattern]:
+                        currentCount - 1,
+                };
+            }
         );
     };
 
@@ -633,64 +624,72 @@ function FleetRosterBuilder({
                     </div>
 
                     {templateList.map(
-                        template => (
-                            <button
-                                key={
+                        template => {
+                            const count =
+                                roster[
                                     template.pattern
-                                }
-                                type="button"
-                                className={
-                                    `fleet-roster-template-item ${
-                                        selectedPattern ===
+                                ] ?? 0;
+
+                            return (
+                                <button
+                                    key={
                                         template.pattern
-                                            ? "selected"
-                                            : ""
-                                    }`
-                                }
-                                onClick={() =>
-                                    setSelectedPattern(
-                                        template.pattern
-                                    )
-                                }
-                            >
-
-                                <div className="fleet-roster-template-icon">
-
-                                    {template.vessel_class ===
-                                        "escort" &&
-                                        "▲"
                                     }
-
-                                    {template.vessel_class ===
-                                        "cruiser" &&
-                                        "◆"
+                                    type="button"
+                                    className={
+                                        `fleet-roster-template-item ${
+                                            selectedPattern ===
+                                            template.pattern
+                                                ? "selected"
+                                                : ""
+                                        }`
                                     }
-
-                                    {template.vessel_class ===
-                                        "battleship" &&
-                                        "■"
+                                    onClick={() =>
+                                        setSelectedPattern(
+                                            template.pattern
+                                        )
                                     }
+                                >
 
-                                </div>
+                                    <div className="fleet-roster-template-icon">
 
-                                <div className="fleet-roster-template-info">
+                                        {template.vessel_class ===
+                                            "escort" &&
+                                            "▲"
+                                        }
 
-                                    <div className="fleet-roster-template-name">
-                                        {template.pattern}
+                                        {template.vessel_class ===
+                                            "cruiser" &&
+                                            "◆"
+                                        }
+
+                                        {template.vessel_class ===
+                                            "battleship" &&
+                                            "■"
+                                        }
+
                                     </div>
 
-                                    <div className="fleet-roster-template-class">
-                                        {template.vessel_class}
+                                    <div className="fleet-roster-template-info">
+
+                                        <div className="fleet-roster-template-name">
+                                            {template.pattern}
+                                        </div>
+
+                                        <div className="fleet-roster-template-class">
+                                            {template.vessel_class}
+                                        </div>
+
                                     </div>
 
-                                </div>
+                                    <div className="fleet-roster-template-cost">
+                                        [x{count}]{" "}
+                                        {template.cost}
+                                    </div>
 
-                                <div className="fleet-roster-template-cost">
-                                    {template.cost}
-                                </div>
-
-                            </button>
-                        )
+                                </button>
+                            );
+                        }
                     )}
 
                 </div>
@@ -705,75 +704,16 @@ function FleetRosterBuilder({
                         canAdd={
                             canAddSelected
                         }
+                        canRemove={
+                            canRemoveSelected
+                        }
                         onAdd={
                             handleAddShip
                         }
+                        onRemove={
+                            handleRemoveShip
+                        }
                     />
-
-                </div>
-
-
-                <div className="fleet-roster-current">
-
-                    <div className="fleet-roster-current-header">
-
-                        <div className="fleet-roster-list-title">
-                            РОСТЕР
-                        </div>
-
-                        <div className="fleet-roster-current-count">
-                            {roster.length}
-                        </div>
-
-                    </div>
-
-
-                    <div className="fleet-roster-items">
-
-                        {roster.length === 0 && (
-                            <div className="fleet-roster-empty">
-                                Ростер пуст
-                            </div>
-                        )}
-
-                        {roster.map(
-                            (
-                                template,
-                                index
-                            ) => (
-                                <RosterItem
-                                    key={
-                                        `${template.pattern}-${index}`
-                                    }
-                                    template={
-                                        template
-                                    }
-                                    index={
-                                        index
-                                    }
-                                    onRemove={() =>
-                                        handleRemoveShip(
-                                            index
-                                        )
-                                    }
-                                />
-                            )
-                        )}
-
-                    </div>
-
-
-                    <div className="fleet-roster-total">
-
-                        <span>
-                            Всего:
-                        </span>
-
-                        <strong>
-                            {totalCost}
-                        </strong>
-
-                    </div>
 
                 </div>
 
