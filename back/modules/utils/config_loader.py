@@ -30,4 +30,7 @@ class ConfigLoader(metaclass = SingletonMeta):
     def get_round_duration(self)->int:
         return int(self.config["game"]["round"])
 
+    def get_torpedo_reloading_scale(self)->int:
+        return int(self.config["game"]["torpedo_reloading_scale"])
+
     

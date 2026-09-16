@@ -9,6 +9,7 @@ from modules.utils.config_loader import ConfigLoader
 
 GAME_ROUND = ConfigLoader().get_round_duration()
 GAME_FPS = ConfigLoader().get_fps()
+TORPEDO_RELOADING_SCALE = ConfigLoader().get_torpedo_reloading_scale()
 
 class WeaponType(enum.StrEnum):
     TORPEDOS = "torpedos"
@@ -52,7 +53,10 @@ class Weapon:
 
     @property
     def reloading(self):
-        return GAME_ROUND*GAME_FPS
+        scale = 1
+        if self.type == WeaponType.TORPEDOS:
+            scale = TORPEDO_RELOADING_SCALE
+        return GAME_ROUND*GAME_FPS*scale
 
 
 
