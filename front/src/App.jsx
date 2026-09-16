@@ -126,7 +126,7 @@ function App() {
 
             <main className="game-layout">
 
-                <aside className="game-sidebar">
+                <section className="game-sidebar">
 
                     <RoomStatusWidget />
 
@@ -134,7 +134,7 @@ function App() {
                         roster={roster}
                     />
 
-                </aside>
+                </section>
 
 
                 <section className="game-area">
