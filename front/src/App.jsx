@@ -28,7 +28,7 @@ function App() {
     const [camera, setCamera] = useState({
         x: 0,
         y: 0,
-        zoom: 10,
+        zoom: 8,
     });
 
     const [roster, setRoster] =
