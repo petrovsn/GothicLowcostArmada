@@ -158,7 +158,7 @@ function App() {
                         onCenterShip={
                             (shipId) => {
                                 const ship =
-                                    gameState.entities?.ships?.find(
+                                    gameState?.entities?.ships?.find(
                                         currentShip =>
                                             currentShip.uuid === shipId
                                     );

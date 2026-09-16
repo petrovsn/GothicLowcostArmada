@@ -1,15 +1,17 @@
 .help-button {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    padding: 10px 16px;
 
-    padding: 0;
+    border: 0;
+    border-radius: 8px;
 
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #4fd17b;
+    color: #11151c;
 
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
 
     cursor: pointer;
 }

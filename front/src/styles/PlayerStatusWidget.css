@@ -122,3 +122,9 @@
     cursor: default;
     opacity: 0.5;
 }
+
+.player-ready-button_layer{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}

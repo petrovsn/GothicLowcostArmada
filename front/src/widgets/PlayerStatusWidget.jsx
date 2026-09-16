@@ -59,6 +59,7 @@ function PlayerStatusWidget({
                 {participant.name}
             </div>
 
+            <div className="player-ready-button_layer">
 
             {!participant.is_ready ? (
                 <button
@@ -76,6 +77,7 @@ function PlayerStatusWidget({
                 </button>
             )}
             <HelpPopup/>
+            </div>
         </div>
     );
 }

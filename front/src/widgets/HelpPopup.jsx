@@ -73,12 +73,26 @@ function HelpPopup() {
 
                             <p>
                                 <strong>
-                                    Left click
+                                    Left click(on your ship)
                                 </strong>
                                 {" — "}
-                                select your ship or
-                                give an order to the
-                                selected ship.
+                                select your ship
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Left click(on empty space)
+                                </strong>
+                                {" — "}
+                                select designation for move
+                            </p>
+
+                            <p>
+                                <strong>
+                                    Left click(on enemy ship)
+                                </strong>
+                                {" — "}
+                                select target to attack
                             </p>
 
                             <p>
@@ -108,13 +122,12 @@ function HelpPopup() {
 
 
                             <h3>
-                                Ship orders
+                                Fleet panel
                             </h3>
 
                             <p>
-                                Use the ship control panel
-                                to control speed, targeting
-                                and weapons.
+                                Shows hp, armor, shilds,
+                                max speed and loaded torpedos.
                             </p>
                         </div>
                     </div>
