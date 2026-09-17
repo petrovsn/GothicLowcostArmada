@@ -25,7 +25,7 @@ function PlayerStatusWidget({
 
     const participant =
         gameState.service_info?.participants?.[
-            playerId
+        playerId
         ];
 
     const currentPhase =
@@ -35,6 +35,10 @@ function PlayerStatusWidget({
     if (!participant) {
         return null;
     }
+
+    const participants = gameState.service_info?.participants ?? {};
+    const playersTotal = Object.keys(participants).length; 
+    const playersActive = Object.values(participants).filter(participant => participant.is_ready === true).length;
 
 
     const handleReady = () => {
@@ -46,6 +50,8 @@ function PlayerStatusWidget({
 
         service_controller.resume();
     };
+
+    
 
 
     const handlePause = () => {
@@ -67,14 +73,14 @@ function PlayerStatusWidget({
                         className="player-ready-button"
                         onClick={handleReady}
                     >
-                        Ready
+                        Ready [{playersActive}/{playersTotal}]
                     </button>
                 ) : (
                     <button
                         className="player-ready-button"
                         onClick={handlePause}
                     >
-                        Pause
+                        Pause [{playersActive}/{playersTotal}]
                     </button>
                 )}
 
