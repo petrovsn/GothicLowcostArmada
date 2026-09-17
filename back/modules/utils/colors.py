@@ -6,7 +6,6 @@ def get_color(used_colors:list) -> int:
         "#3949AB",  # indigo
         "#00ACC1",  # cyan
         "#00897B",  # teal
-        "#7CB342",  # light green
         "#FDD835",  # yellow
         "#FB8C00",  # orange
         "#AB47BC",  # bright purple

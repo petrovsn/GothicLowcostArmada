@@ -37,7 +37,7 @@ function PlayerStatusWidget({
     }
 
     const participants = gameState.service_info?.participants ?? {};
-    const playersTotal = Object.keys(participants).length; 
+    const playersTotal = Object.keys(participants).length;
     const playersActive = Object.values(participants).filter(participant => participant.is_ready === true).length;
 
 
@@ -51,7 +51,7 @@ function PlayerStatusWidget({
         service_controller.resume();
     };
 
-    
+
 
 
     const handlePause = () => {
@@ -62,8 +62,9 @@ function PlayerStatusWidget({
     return (
         <div className="player-status-widget">
 
-            <div className="player-status-name">
-                {participant.name}
+            <div className="player-status-header">
+                <div className="player-status-name"> {participant.name} </div>
+                <div className="player-status-color" style={{ backgroundColor: participant.color, }} />
             </div>
 
             <div className="player-ready-button_layer">
