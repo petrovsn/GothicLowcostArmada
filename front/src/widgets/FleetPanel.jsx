@@ -111,12 +111,14 @@ function FleetShipCard({
                     )}
                 </div>
 
-                <div className="fleet-ship-card-name">
-                    {ship.name}
-                </div>
+                <div className="fleet-ship-card-title">
+                    <div className="fleet-ship-card-name">
+                        {ship.name}
+                    </div>
 
-                <div className="fleet-ship-card-class">
-                    [{ship.pattern}]
+                    <div className="fleet-ship-card-class">
+                        [{ship.pattern}]
+                    </div>
                 </div>
 
             </div>

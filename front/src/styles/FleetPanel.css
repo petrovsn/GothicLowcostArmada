@@ -43,6 +43,8 @@
 
 /* Первая строка: иконка + название + класс */
 
+/* Первая строка: иконка + название и паттерн */
+
 .fleet-ship-card-header {
     display: flex;
     align-items: center;
@@ -51,6 +53,32 @@
     min-height: 32px;
 }
 
+.fleet-ship-card-title {
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    line-height: 1.15;
+}
+
+.fleet-ship-card-name {
+    font-size: 13px;
+    font-weight: bold;
+
+    white-space: nowrap;
+}
+
+.fleet-ship-card-class {
+    margin-top: 2px;
+
+    font-size: 11px;
+    color: #8d96a3;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+}
 .fleet-ship-card-icon {
     width: 10px;
     min-width: 10px;
@@ -95,16 +123,6 @@
     background: #11151c;
 }
 
-.fleet-ship-card-name {
-    min-width: 0;
-
-    font-size: 13px;
-    font-weight: bold;
-
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
 
 .fleet-ship-card-class {
     font-size: 11px;
